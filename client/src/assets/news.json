@@ -1,0 +1,70 @@
+{
+    "news": [
+        {
+            "type": "Official",
+            "title": "Random Title",
+            "body": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugit, officiis nulla! Vitae, exercitationem molestias. Aperiam, nisi? Veniam dolor laboriosam sed debitis adipisci numquam veritatis possimus velit maiores nobis, vel libero.",
+            "date": 1551960904002
+        },
+        {
+            "type": "Holiday",
+            "title": "Second Title",
+            "body": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugit, officiis nulla! Vitae, exercitationem molestias. Aperiam, nisi? Veniam dolor laboriosam sed debitis adipisci numquam veritatis possimus velit maiores nobis, vel libero.",
+            "date": 1551960904122
+        },
+        {
+            "type": "Holiday",
+            "title": "Third Title",
+            "body": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugit, officiis nulla! Vitae, exercitationem molestias. Aperiam, nisi? Veniam dolor laboriosam sed debitis adipisci numquam veritatis possimus velit maiores nobis, vel libero.",
+            "date": 1551960900002
+        },
+        {
+            "type": "Official",
+            "title": "Fourth Title",
+            "body": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugit, officiis nulla! Vitae, exercitationem molestias. Aperiam, nisi? Veniam dolor laboriosam sed debitis adipisci numquam veritatis possimus velit maiores nobis, vel libero.",
+            "date": 1551964104002
+        },
+        {
+            "type": "Notification",
+            "title": "Fifth Title",
+            "body": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugit, officiis nulla! Vitae, exercitationem molestias. Aperiam, nisi? Veniam dolor laboriosam sed debitis adipisci numquam veritatis possimus velit maiores nobis, vel libero.",
+            "date": 1551960444002
+        },
+        {
+            "type": "Official",
+            "title": "Sixth Title",
+            "body": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugit, officiis nulla! Vitae, exercitationem molestias. Aperiam, nisi? Veniam dolor laboriosam sed debitis adipisci numquam veritatis possimus velit maiores nobis, vel libero.",
+            "date": 1551110904002
+        },
+        {
+            "type": "Holiday",
+            "title": "Seventh Title",
+            "body": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugit, officiis nulla! Vitae, exercitationem molestias. Aperiam, nisi? Veniam dolor laboriosam sed debitis adipisci numquam veritatis possimus velit maiores nobis, vel libero.",
+            "date": 1551990904002
+        },
+        {
+            "type": "Official",
+            "title": "Eigth Title",
+            "body": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugit, officiis nulla! Vitae, exercitationem molestias. Aperiam, nisi? Veniam dolor laboriosam sed debitis adipisci numquam veritatis possimus velit maiores nobis, vel libero.",
+            "date": 1551964704002
+        },
+        {
+            "type": "Notification",
+            "title": "Ninth Title",
+            "body": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugit, officiis nulla! Vitae, exercitationem molestias. Aperiam, nisi? Veniam dolor laboriosam sed debitis adipisci numquam veritatis possimus velit maiores nobis, vel libero.",
+            "date": 1551935904002
+        },
+        {
+            "type": "Holiday",
+            "title": "Tenth Title",
+            "body": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugit, officiis nulla! Vitae, exercitationem molestias. Aperiam, nisi? Veniam dolor laboriosam sed debitis adipisci numquam veritatis possimus velit maiores nobis, vel libero.",
+            "date": 1551961204002
+        },
+        {
+            "type": "Holiday",
+            "title": "Eleventh Title",
+            "body": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugit, officiis nulla! Vitae, exercitationem molestias. Aperiam, nisi? Veniam dolor laboriosam sed debitis adipisci numquam veritatis possimus velit maiores nobis, vel libero.",
+            "date": 1551961206666
+        }
+    ]
+}

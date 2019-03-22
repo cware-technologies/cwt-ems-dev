@@ -1,19 +1,26 @@
 import React, { Component } from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
 import './App.css';
 import SignIn from './components/SignIn';
-import Dashboard from './components/Dashboard';
+import Portal from './components/Portal';
+import blue from '@material-ui/core/colors/blue';
 
 const theme = createMuiTheme(
 	{
 		palette: {
 			primary: {
-				main: '#0071BC',
+				light: '#5472d3',
+				main: '#0d47a1',
+				dark: '#002171',
+				contrastText: '#fff',
 			},
 			secondary: {
-				main: '#29ABE2',
+				light: '#52c7b8',
+				main: '#009688',
+				dark: '#00675b',
+				contrastText: '#000',
 			},
 			textPrimary: {
 				main: '#0071BC',
@@ -42,12 +49,15 @@ const theme = createMuiTheme(
 			h6: {
 				color: '#0071BC',
 			},
-		}
+		},
+		drawerWidth: 240
 	}
 )
 
 class App extends Component {
 	render() {
+		let { match } = this.props
+
 		return (
 			<MuiThemeProvider theme={theme}>
 				<Router>
@@ -55,7 +65,8 @@ class App extends Component {
 						<CssBaseline />
 						<div className="App">
 							<Route path='/signin' component={ SignIn } />
-							<Route exact path='/' component={ Dashboard }/>
+							<Route strict path='/portal/' component={ Portal }/>
+							{/* <Redirect exact from='/' to='/portal/' /> */}
 						</div>
 					</React.Fragment>	
 				</Router>
