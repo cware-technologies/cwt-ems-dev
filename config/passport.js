@@ -1,35 +1,90 @@
 const passport = require('passport'),
     localStrategy = require('passport-local').Strategy,
-    JWTStrategy = require('passport-jwt').Strategy,
+    JWTstrategy = require('passport-jwt').Strategy,
     ExtractJWT = require('passport-jwt').ExtractJwt,
-    bcrypt = require('bcryptjs');
+    models = require('../db/models'),
+    Employee = models.Employee,
+    bcrypt = require('bcryptjs'),
+    debug = require('debug')('passport'),
+    { secret } = require('../config/jwtSecret.json');
+
+const BCRYPT_SALT_ROUNDS = 12;
 
 passport.use(
-    'login',
+    'register',
     new localStrategy(
         {
-        usernameField: 'username',
+            usernameField: 'email',
+            passwordField: 'password',
+            passReqToCallback: true,
+            session: false,
+        },
+        (req, username, password, done) => {
+            try{
+                debug(Employee)
+                Employee.findOne({
+                    where: {
+                        email: username,
+                    },
+                }).then(user => {
+                    if(user !== null){
+                        debug('Username Already Taken');
+                        return done(null, false, { message: 'username already taken' });
+                    }
+                    else {
+                        bcrypt.hash(password, BCRYPT_SALT_ROUNDS).then(hashedPassword => {
+                            console.log(username, hashedPassword)
+                            Employee.create({email: username, password: hashedPassword}).then(user => {
+                                debug("User Created");
+                                return done(null, user)
+                            })
+                        })
+                    }
+                })
+            }
+            catch(err){
+                done(err);
+            }
+        }
+    )
+)
+passport.use(
+    'signin',
+    new localStrategy(
+        {
+        usernameField: 'email',
         passwordField: 'password',
+        passReqToCallback: true,
         session: false,
         },
-        (username, password, done) => {
+        (req, username, password, done) => {
         try {
-            User.findOne({
+            Employee.findOne({
             where: {
-                username: username,
+                email: username,
             },
             }).then(user => {
             if (user === null) {
-                return done(null, false, { message: 'bad username' });
+                let err = new Error('Username Or Password Is Wrong.')
+                err.status = 401
+                req.errorMessage = err
+                return done(null, false, { message: 'Username Or Password Is Wrong.' });
             } else {
                 bcrypt.compare(password, user.password).then(response => {
-                if (response !== true) {
-                    console.log('passwords do not match');
-                    return done(null, false, { message: 'passwords do not match' });
-                }
-                console.log('user found & authenticated');
-                // note the return needed with passport local - remove this return for passport JWT
-                return done(null, user);
+                    if (response !== true) {
+                        let err = new Error('Username Or Password Is Wrong.')
+                        err.status = 401
+                        req.errorMessage = err
+                        return done(null, false, { message: 'Username Or Password Is Wrong.' });
+                    }
+                    // note the return needed with passport local - remove this return for passport JWT
+                    req.jwtPayload = {
+                        id: user.id,
+                        name: user.email,
+                    }
+
+                    return done(null, user);
+
                 });
             }
             });
@@ -38,14 +93,14 @@ passport.use(
         }
         },
     ),
-    );
+);
     
-    const opts = {
+const opts = {
     jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
-    secretOrKey: jwtSecret.secret,
-    };
-    
-    passport.use(
+    secretOrKey: secret,
+};
+
+passport.use(
     'jwt',
     new JWTstrategy(opts, (jwt_payload, done) => {
         try {
@@ -67,4 +122,4 @@ passport.use(
         done(err);
         }
     }),
-    );
+);

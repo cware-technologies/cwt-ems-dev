@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
+import { Link, withRouter } from 'react-router-dom';
 import classNames from 'classnames';
 import AppBarMUI from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -68,7 +69,7 @@ class AppBar extends React.Component {
     };
 
     render() {
-        let { classes, handleDrawerOpen, drawerOpen } = this.props;
+        let { classes, handleDrawerOpen, drawerOpen, match } = this.props;
         let { userMenuAnchorEl } = this.state;
         const userMenuOpen = Boolean(userMenuAnchorEl);
 
@@ -129,7 +130,9 @@ class AppBar extends React.Component {
                         open={userMenuOpen}
                         onClose={this.handleClose}
                     >
-                        <MenuItem onClick={this.handleClose}>Edit Profile</MenuItem>
+                        <Link to={`${match.url}edit_profile`} style={{ textDecoration: 'none' }}>
+                            <MenuItem onClick={this.handleClose}>Edit Profile</MenuItem>
+                        </Link>
                         <MenuItem onClick={this.handleClose}>Sign Out</MenuItem>
                     </Menu>
                 </Toolbar>
@@ -144,4 +147,4 @@ AppBar.propTypes = {
     drawerOpen: PropTypes.bool.isRequired,
 };
 
-export default withStyles(styles)(AppBar);
+export default withRouter(withStyles(styles)(AppBar));

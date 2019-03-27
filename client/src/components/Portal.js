@@ -6,7 +6,7 @@ import { Route, Switch } from 'react-router-dom';
 import AppBar from './AppBar';
 import Drawer from './Drawer';
 import Dashboard from './Dashboard';
-import CreateAccount from './CreateAccount';
+import RegisterEmployeeForm from './RegisterEmployeeForm';
 import LeaveTabs from './LeaveTabs';
 import AdminLeaves from './AdminLeaves';
 import LeaveForm from './LeaveForm';
@@ -14,6 +14,7 @@ import PaySlipTabs from './PaySlipTabs';
 import ITTicketTabs from './ITTicketTabs';
 import NewsAndUpdates from './NewsAndUpdates';
 import PostUpdateForm from './PostUpdateForm';
+import ProfileEditForm from './ProfileEditForm';
 
 const styles = theme => ({
   root: {
@@ -50,7 +51,7 @@ class Portal extends React.Component {
         />
         <Switch>
           <Route path={`${match.path}dashboard`} component={Dashboard} />
-          <Route path={`${match.path}create`} component={CreateAccount} />
+          <Route path={`${match.path}create`} component={RegisterEmployeeForm} />
           <Route path={`${match.path}leaves`} component={LeaveTabs} />
           <Route path={`${match.path}manage_leaves`} component={AdminLeaves} />
           <Route path={`${match.path}apply_leave`} component={LeaveForm} />
@@ -58,6 +59,7 @@ class Portal extends React.Component {
           <Route path={`${match.path}it_tickets`} component={ITTicketTabs} />
           <Route path={`${match.path}news_and_updates`} component={NewsAndUpdates} />
           <Route path={`${match.path}post_update`} component={PostUpdateForm} />
+          <Route path={`${match.path}edit_profile`} component={ProfileEditForm} />
         </Switch>
       </div>
     );

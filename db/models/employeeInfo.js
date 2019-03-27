@@ -2,7 +2,7 @@
 module.exports = (sequelize, DataTypes) => {
   const EmployeeInfo = sequelize.define('EmployeeInfo', {
     employee_id: {
-      type: Sequelize.INTEGER,
+      type: DataTypes.INTEGER,
       references: {
         model: 'employee',
         key: 'id'
