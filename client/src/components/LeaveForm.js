@@ -17,20 +17,20 @@ import { formStyle } from '../styles/form';
 
 const leaveTypes = [
     {
-      value: 'Casual Leave',
-      label: 'Casual Leave',
+        value: 'Casual Leave',
+        label: 'Casual Leave',
     },
     {
-      value: 'Sick Leave',
-      label: 'Sick Leave',
+        value: 'Sick Leave',
+        label: 'Sick Leave',
     },
     {
-      value: 'Annual Leave',
-      label: 'Annual Leave',
+        value: 'Annual Leave',
+        label: 'Annual Leave',
     },
     {
-      value: 'Urgent Leave',
-      label: 'Urgent Leave',
+        value: 'Urgent Leave',
+        label: 'Urgent Leave',
     },
 ];
 
@@ -39,32 +39,32 @@ const ITEM_PADDING_TOP = 8;
 
 const MenuProps = {
     PaperProps: {
-      style: {
-        maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-        width: 250,
-      },
+        style: {
+            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+            width: 250,
+        },
     },
 };
 
 const names = [
-'Oliver Hansen',
-'Van Henry',
-'April Tucker',
-'Ralph Hubbard',
-'Omar Alexander',
-'Carlos Abbott',
-'Miriam Wagner',
-'Bradley Wilkerson',
-'Virginia Andrews',
-'Kelly Snyder',
+    'Oliver Hansen',
+    'Van Henry',
+    'April Tucker',
+    'Ralph Hubbard',
+    'Omar Alexander',
+    'Carlos Abbott',
+    'Miriam Wagner',
+    'Bradley Wilkerson',
+    'Virginia Andrews',
+    'Kelly Snyder',
 ];
 
 function getStyles(name, that) {
     return {
         fontWeight:
-        that.state.name.indexOf(name) === -1
-            ? that.props.theme.typography.fontWeightRegular
-            : that.props.theme.typography.fontWeightMedium,
+            that.state.name.indexOf(name) === -1
+                ? that.props.theme.typography.fontWeightRegular
+                : that.props.theme.typography.fontWeightMedium,
     };
 }
 
@@ -88,16 +88,16 @@ class CreateAccount extends React.Component {
     };
 
     handleChangeTypeOfLeave = event => {
-        
+
     }
 
-    render(){
+    render() {
         let { classes } = this.props;
 
-        return(
+        return (
             <Container>
                 <div className={classes.formSection}>
-                    <Typography variant="h6" gutterBottom component="h6" className={ classes.heading }>
+                    <Typography variant="h6" gutterBottom component="h6" className={classes.heading}>
                         Personal Information
                     </Typography>
                     <TextField
@@ -190,7 +190,7 @@ class CreateAccount extends React.Component {
                         InputLabelProps={{
                             className: classes.inputLabel,
                         }}
-                        >
+                    >
                         {leaveTypes.map(option => (
                             <option key={option.value} value={option.value}>
                                 {option.label}
@@ -234,25 +234,25 @@ class CreateAccount extends React.Component {
                         }}
                     />
                     <FormControl className={classNames(classes.formControl, classes.inputRoot, classes.textField)}>
-                        <InputLabel htmlFor="apply-to" className={classes.inputLabel} style={{zIndex:'1',marginLeft:'5px',}}>Apply To</InputLabel>
+                        <InputLabel htmlFor="apply-to" className={classes.inputLabel} style={{ zIndex: '1', marginLeft: '5px', }}>Apply To</InputLabel>
                         <Select
                             multiple
                             value={this.state.applyTo}
                             onChange={this.handleChange}
                             input={<FilledInput id="apply-to" className={classes.input} />}
                             renderValue={selected => (
-                            <div className={classes.chips}>
-                                {selected && selected.map(value => (
-                                <Chip key={value} label={value} className={classes.chip} />
-                                ))}
-                            </div>
+                                <div className={classes.chips}>
+                                    {selected && selected.map(value => (
+                                        <Chip key={value} label={value} className={classes.chip} />
+                                    ))}
+                                </div>
                             )}
                             MenuProps={MenuProps}
                         >
                             {names.map(name => (
-                            <MenuItem key={name} value={name} >
-                                {name}
-                            </MenuItem>
+                                <MenuItem key={name} value={name} >
+                                    {name}
+                                </MenuItem>
                             ))}
                         </Select>
                     </FormControl>

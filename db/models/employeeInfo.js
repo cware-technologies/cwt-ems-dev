@@ -1,10 +1,16 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
-  const EmployeeInfo = sequelize.define('EmployeeInfo', {
+  const EmployeeInfo = sequelize.define('C_EMP', {
+    row_id: {
+      allowNull: false,
+      autoIncrement: true,
+      primaryKey: true,
+      type: DataTypes.INTEGER(10),
+    },
     employee_id: {
       type: DataTypes.INTEGER,
       references: {
-        model: 'employee',
+        model: 'c_user',
         key: 'id'
       },
     },
@@ -72,7 +78,7 @@ module.exports = (sequelize, DataTypes) => {
     },
   }, {});
   EmployeeInfo.associate = function(models) {
-    EmployeeInfo.belongsTo(models.Employee);
+    EmployeeInfo.belongsTo(models.C_USER);
   };
   return EmployeeInfo;
 };

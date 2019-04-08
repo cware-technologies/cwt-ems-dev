@@ -15,12 +15,10 @@ import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
-import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import ApproveIcon from '@material-ui/icons/DoneOutline';
 import RejectIcon from '@material-ui/icons/Cancel';
 import { lighten } from '@material-ui/core/styles/colorManipulator';
-import { red } from '@material-ui/core/colors';
 
 let counter = 0;
 function createData(name, detail, date, status) {

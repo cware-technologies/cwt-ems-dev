@@ -8,7 +8,7 @@ import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import { MainListItems, AdminListItems } from './ListItems';
-import { ReactComponent as Logo} from '../assets/cwaret-logo-outlined-shadow.svg';
+import { ReactComponent as Logo} from '../assets/ems-logo.svg';
 
 const styles = theme => ({
     toolbarIcon: {
@@ -42,8 +42,8 @@ const styles = theme => ({
         },
       },
       logo: {
-        height: '80%',
-        width: '80%',
+        height: '60%',
+        width: '60%',
       },
     
 })

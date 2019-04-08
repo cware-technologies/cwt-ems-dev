@@ -10,15 +10,26 @@ import AppBar from './AppBar';
 import Drawer from './Drawer';
 import SimpleCard from './SimpleCard';
 import Container from './MainContainer'
-import { news as newsList } from '../assets/news';
+import Employees from './EmployeesBoard';
+import Announcements from './AnnouncementsBoard';
+import ExternalFeedsBoard from './ExternalFeedsBoard';
+import NewsBoard from './NewsBoard';
 
 const styles = theme => ({
   board: {
-      width: '100%',
-      padding: theme.spacing.unit,
-      margin: theme.spacing.unit * 2,
-      backgroundColor: theme.palette.grey[300],
-    }
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    gridTemplateRows: 'auto 100vh 60vh 60vh',
+    gridTemplateAreas: '". ." "news news" "announcements employees" "feed feed"',
+    rowGap: '20px',
+    columnGap: '20px',
+    [theme.breakpoints.down('sm')]: {
+      gridTemplateColumns: '1fr',
+      gridTemplateRows: 'auto auto 60vh 60vh 60vh',
+      gridTemplateAreas: '"." "news" "announcements" "employees" "feed"',
+      gridAutoFlow: 'column dense',
+    },
+  },
 });
 
 class Dashboard extends React.Component {
@@ -36,33 +47,14 @@ class Dashboard extends React.Component {
 
   render() {
     const { classes } = this.props;
-    const news = newsList.slice(0, 5);
 
     return (
-      <Container>
+      <Container _className={classes.board}>
         <div className={classes.appBarSpacer} />
-        <Paper className={classes.board} elevation={5}>
-          <Typography variant="h4" gutterBottom component="h2">
-            News And Updates
-          </Typography>
-          { news.map((item, index) => {
-                return <SimpleCard 
-                  title={item.title}
-                  body={item.body}
-                  date={item.date}
-                />
-              }
-            )
-          }
-          <Button component={Link} to="news_and_updates">
-            Show All
-          </Button>
-        </Paper>
-        <Paper className={classes.board} elevation={5}>
-          <Typography variant="h4" gutterBottom component="h2">
-            Tasks
-          </Typography>
-        </Paper>
+        <NewsBoard />
+        <Announcements />
+        <Employees />
+        <ExternalFeedsBoard />
       </Container>
     );
   }

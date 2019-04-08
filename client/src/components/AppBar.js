@@ -13,6 +13,7 @@ import Menu from '@material-ui/core/Menu';
 import MenuIcon from '@material-ui/icons/Menu';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import PersonIcon from '@material-ui/icons/PersonSharp';
+import SearchBar from './SearchBar';
 
 const styles = theme => ({
     toolbar: {
@@ -49,6 +50,9 @@ const styles = theme => ({
     },
     title: {
         flexGrow: 1,
+        [theme.breakpoints.down('sm')]: {
+            display: 'none',
+        },
     },
 });
 
@@ -62,10 +66,10 @@ class AppBar extends React.Component {
 
     handleMenu = event => {
         this.setState({ userMenuAnchorEl: event.currentTarget });
-      };
+    };
     
     handleClose = () => {
-    this.setState({ userMenuAnchorEl: null });
+        this.setState({ userMenuAnchorEl: null });
     };
 
     render() {
@@ -98,12 +102,17 @@ class AppBar extends React.Component {
                         className={classes.title}
                     >
                         Welcome &#91;Enter Name Here&#93;
-                </Typography>
-                    <IconButton color="inherit">
-                        <Badge badgeContent={4} color="secondary">
-                            <NotificationsIcon />
-                        </Badge>
-                    </IconButton>
+                    </Typography>
+                    <SearchBar />
+                    <Link to={`${match.url}notifications`} style={{ textDecoration: 'none' }}>
+                        <div style={{ color: 'white' }}>
+                            <IconButton color="inherit">
+                                <Badge badgeContent={4} color="secondary">
+                                    <NotificationsIcon />
+                                </Badge>
+                            </IconButton>
+                        </div>
+                    </Link>
                     <IconButton
                         color="inherit"
                         aria-owns={userMenuOpen ? 'menu-appbar' : undefined}
@@ -130,8 +139,17 @@ class AppBar extends React.Component {
                         open={userMenuOpen}
                         onClose={this.handleClose}
                     >
-                        <Link to={`${match.url}edit_profile`} style={{ textDecoration: 'none' }}>
+                        <Link to={`${match.url}my-profile`} style={{ textDecoration: 'none' }}>
+                            <MenuItem onClick={this.handleClose}>My Account</MenuItem>
+                        </Link>
+                        <Link to={`${match.url}edit-profile`} style={{ textDecoration: 'none' }}>
                             <MenuItem onClick={this.handleClose}>Edit Profile</MenuItem>
+                        </Link>
+                        <Link to={`${match.url}attendance`} style={{ textDecoration: 'none' }}>
+                            <MenuItem onClick={this.handleClose}>View Attendance</MenuItem>
+                        </Link>
+                        <Link to={`${match.url}password-reset`} style={{ textDecoration: 'none' }}>
+                            <MenuItem onClick={this.handleClose}>Reset Password</MenuItem>
                         </Link>
                         <MenuItem onClick={this.handleClose}>Sign Out</MenuItem>
                     </Menu>

@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
 
 const styles = theme => ({
@@ -9,11 +10,15 @@ const styles = theme => ({
   },
   content: {
     flexGrow: 1,
-    // padding: theme.spacing.unit * 3,
-    margin: '5vh 5%',
+    padding: theme.spacing.unit * 3,
+    paddingTop: theme.spacing.unit * 8,
+    margin: '0px 5%',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
+    [theme.breakpoints.down('sm')]: {
+      margin: '0px',
+    }
   },
 });
 
@@ -22,8 +27,7 @@ class Dashboard extends React.Component {
     const { classes, children } = this.props;
 
     return (
-      <main className={classes.content}>
-        <div className={classes.appBarSpacer} />
+      <main className={classNames(classes.content, this.props._className)}>
         {children}
       </main>
     );

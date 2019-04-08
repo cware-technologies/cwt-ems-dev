@@ -13,6 +13,8 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import withStyles from '@material-ui/core/styles/withStyles';
 import { ReactComponent as Logo} from '../assets/ems-logo.svg';
+import { addAuthHeaderAsBearerToken } from '../helpers/axiosConfig';
+import { setAuthToken } from '../helpers/utils';
 
 const styles = theme => ({
   main: {
@@ -105,6 +107,8 @@ class SignIn extends React.Component {
     }
 
     else if(res.data.status >=200 && res.data.status <300){
+      setAuthToken({token: res.data.token})
+      addAuthHeaderAsBearerToken()
       window.location.href = `${res.data.redirectURL}`;
     }
   }

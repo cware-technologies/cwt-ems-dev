@@ -6,6 +6,7 @@ import './App.css';
 import SignIn from './components/SignIn';
 import Portal from './components/Portal';
 import blue from '@material-ui/core/colors/blue';
+import { addAuthHeaderAsBearerToken } from './helpers/axiosConfig';
 
 const theme = createMuiTheme(
 	{
@@ -50,9 +51,18 @@ const theme = createMuiTheme(
 				color: '#0071BC',
 			},
 		},
-		drawerWidth: 240
+		overrides: {
+			MuiPaper: {
+				root: {
+					backgroundColor: 'white',
+				},
+			},
+		},
+		drawerWidth: 240,
 	}
 )
+
+addAuthHeaderAsBearerToken()
 
 class App extends Component {
 	render() {
@@ -64,11 +74,11 @@ class App extends Component {
 					<React.Fragment>
 						<CssBaseline />
 						<div className="App">
-							<Route path='/signin' component={ SignIn } />
-							<Route strict path='/portal/' component={ Portal }/>
+							<Route path='/signin' component={SignIn} />
+							<Route strict path='/portal/' component={Portal} />
 							{/* <Redirect exact from='/' to='/portal/' /> */}
 						</div>
-					</React.Fragment>	
+					</React.Fragment>
 				</Router>
 			</MuiThemeProvider>
 		);

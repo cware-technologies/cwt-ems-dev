@@ -1,5 +1,5 @@
 import React from 'react';
-import { withTheme, withStyles } from '@material-ui/core/styles'
+import { withStyles } from '@material-ui/core/styles'
 import PropTypes from 'prop-types';
 import { Link, withRouter } from 'react-router-dom';
 import List from '@material-ui/core/List';
@@ -11,12 +11,10 @@ import ListSubheader from '@material-ui/core/ListSubheader';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import Collapse from '@material-ui/core/Collapse';
-import StarBorder from '@material-ui/icons/StarBorder';
 import SvgIcon from '@material-ui/core/SvgIcon';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import SettingsIcon from '@material-ui/icons/Settings';
 import BarChartIcon from '@material-ui/icons/BarChart';
-import AssignmentIcon from '@material-ui/icons/Assignment';
 import CreditCardIcon from '@material-ui/icons/CreditCard';
 import ListIcon from '@material-ui/icons/List';
 import AddIcon from '@material-ui/icons/Add';
@@ -25,6 +23,13 @@ import ViewIcon from '@material-ui/icons/ViewList';
 import NewsIcon from '@material-ui/icons/NoteAddTwoTone';
 import EmpAddIcon from '@material-ui/icons/PersonAdd';
 import AdminIcon from '@material-ui/icons/HowToReg';
+import EducationIcon from '@material-ui/icons/School';
+import ContactIcon from '@material-ui/icons/ContactPhone';
+import SkillIcon from '@material-ui/icons/Stars'
+import ITTicketIcon from '@material-ui/icons/ConfirmationNumber';
+import DocumentIcon from '@material-ui/icons/Description';
+import CertificateIcon from '@material-ui/icons/Book';
+import ProfileIcon from '@material-ui/icons/Face';
 
 const styles = theme => ({
   '@global': {
@@ -73,6 +78,7 @@ class MainList extends React.Component {
     super(props);
 
     this.state = {
+      openMyProfile: false,
       openServices: false,
       openChart: false,
       openManager: false,
@@ -99,6 +105,53 @@ class MainList extends React.Component {
             <ListItemText classes={{ root: classes.listItemText }} primary="Dashboard" />
           </ListItem>
         </Link>
+        <ListItem className={classes.listItem} button id="openMyProfile" onClick={this.handleClick}>
+          <ListItemIcon>
+            <ProfileIcon />
+          </ListItemIcon>
+          <ListItemText classes={{ root: classes.listItemText }} primary="My Profile" />
+          {this.state.openMyProfile ? <ExpandLess /> : <ExpandMore />}
+        </ListItem>
+        <Collapse in={this.state.openMyProfile} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding>
+            <Link to={`${match.url}pay-slips`} style={{ textDecoration: 'none' }}>
+              <ListItem button className={classes.nested}>
+                <ListItemIcon>
+                  <SvgIcon>
+                    <EducationIcon />
+                  </SvgIcon>
+                </ListItemIcon>
+                <ListItemText inset primary="Education" />
+              </ListItem>
+            </Link>
+            <Link to={`${match.url}it-tickets`} style={{ textDecoration: 'none' }}>
+              <ListItem button className={classes.nested}>
+                <ListItemIcon>
+                  <SvgIcon>
+                    <ContactIcon />
+                  </SvgIcon>
+                </ListItemIcon>
+                <ListItemText inset primary="Contact" />
+              </ListItem>
+            </Link>
+            <ListItem button className={classes.nested}>
+              <ListItemIcon>
+                <SvgIcon>
+                  <CertificateIcon />
+                </SvgIcon>
+              </ListItemIcon>
+              <ListItemText inset primary="Certificates" />
+            </ListItem>
+            <ListItem button className={classes.nested}>
+              <ListItemIcon>
+                <SvgIcon>
+                  <SkillIcon />
+                </SvgIcon>
+              </ListItemIcon>
+              <ListItemText inset primary="Skills" />
+            </ListItem>
+          </List>
+        </Collapse>
         <ListItem className={classes.listItem} button id="openServices" onClick={this.handleClick}>
           <ListItemIcon>
             <SettingsIcon />
@@ -108,7 +161,7 @@ class MainList extends React.Component {
         </ListItem>
         <Collapse in={this.state.openServices} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
-            <Link to={`${match.url}pay_slips`} style={{ textDecoration: 'none' }}>
+            <Link to={`${match.url}pay-slips`} style={{ textDecoration: 'none' }}>
               <ListItem button className={classes.nested}>
                 <ListItemIcon>
                 <SvgIcon>
@@ -118,11 +171,11 @@ class MainList extends React.Component {
                 <ListItemText inset primary="Get Payslip" />
               </ListItem>
             </Link>
-            <Link to={`${match.url}it_tickets`} style={{ textDecoration: 'none' }}>
+            <Link to={`${match.url}it-tickets`} style={{ textDecoration: 'none' }}>
               <ListItem button className={classes.nested}>
                 <ListItemIcon>
                   <SvgIcon>
-                    <path fill="#757575" d="M13,8.5H11V6.5H13V8.5M13,13H11V11H13V13M13,17.5H11V15.5H13V17.5M22,10V6C22,4.89 21.1,4 20,4H4A2,2 0 0,0 2,6V10C3.11,10 4,10.9 4,12A2,2 0 0,1 2,14V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V14A2,2 0 0,1 20,12A2,2 0 0,1 22,10Z" />
+                    <ITTicketIcon />
                   </SvgIcon>
                 </ListItemIcon>
                 <ListItemText inset primary="Get IT Ticket" />
@@ -131,7 +184,7 @@ class MainList extends React.Component {
             <ListItem button className={classes.nested}>
               <ListItemIcon>
                 <SvgIcon>
-                  <path fill="#757575" d="M13,9H18.5L13,3.5V9M6,2H14L20,8V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V4C4,2.89 4.89,2 6,2M15,18V16H6V18H15M18,14V12H6V14H18Z" />
+                  <DocumentIcon />
                 </SvgIcon>
               </ListItemIcon>
               <ListItemText inset primary="HR Documents" />
@@ -190,7 +243,7 @@ class MainList extends React.Component {
                 <ListItemText inset primary="My Leave List" />
               </ListItem>
             </Link>
-            <Link to={`${match.url}apply_leave`} style={{ textDecoration: 'none' }}>
+            <Link to={`${match.url}apply-leave`} style={{ textDecoration: 'none' }}>
               <ListItem button className={classes.nested}>
                 <ListItemIcon>
                   <AddIcon />
@@ -230,7 +283,7 @@ class AdminList extends React.Component {
     return (
       <React.Fragment>
         <Divider classes={{ root: classes.divider }} />
-          <ListSubheader classes={{ root: classes.listSubheader }}>
+          <ListSubheader component='div' classes={{ root: classes.listSubheader }}>
             <ListItem>
               <ListItemIcon>
                 <AdminIcon className={ classes.listSubheaderText } />
@@ -247,7 +300,7 @@ class AdminList extends React.Component {
             </ListItem>
             <Collapse in={this.state.openManager} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
-              <Link to={`${match.url}post_update`} style={{ textDecoration: 'none' }}>
+              <Link to={`${match.url}post-update`} style={{ textDecoration: 'none' }}>
                   <ListItem button className={classes.nested}>
                     <ListItemIcon>
                       <NewsIcon />
@@ -263,7 +316,7 @@ class AdminList extends React.Component {
                     <ListItemText inset primary="Add Employee" />
                   </ListItem>
                 </Link>
-                <Link to={`${match.url}manage_leaves`} style={{ textDecoration: 'none' }}>
+                <Link to={`${match.url}manage-leaves`} style={{ textDecoration: 'none' }}>
                   <ListItem button className={classes.nested}>
                     <ListItemIcon>
                     <SvgIcon>

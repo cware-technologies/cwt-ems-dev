@@ -6,6 +6,10 @@ function connectMySQL() {
         const sequelize = new Sequelize('EMS', 'root', 'cwaret155,', {
             host: 'localhost',
             dialect: 'mysql',
+            define: {
+                //prevent sequelize from pluralizing table names
+                freezeTableName: true
+            }
         });
 
         // var conn = mysql.createConnection({

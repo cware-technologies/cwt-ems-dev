@@ -9,12 +9,6 @@ import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import FormHelperText from '@material-ui/core/FormHelperText';
-import Checkbox from '@material-ui/core/Checkbox';
-import FormLabel from '@material-ui/core/FormLabel';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import Radio from '@material-ui/core/Radio';
-import FormControl from '@material-ui/core/FormControl';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import Container from './MainContainer';
@@ -23,10 +17,6 @@ import { formStyle } from '../styles/form';
 import validate from 'validate.js';
 
 let constraints = {
-    email: {
-      presence: true,
-      email: true,
-    },
     password: {
       presence: true,
       format: /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^\w\d\s])(?!.*\s).{8,}/,
@@ -109,8 +99,7 @@ class CreateAccount extends React.Component {
             confirmPasswordVal = ["Not the same as the password"]
         else
             confirmPasswordVal = undefined
-        
-        console.log(val_errors);
+
         this.setState(prevState => ({
             errors: {
                 ...prevState.errors,
@@ -121,13 +110,10 @@ class CreateAccount extends React.Component {
     }
 
     allValid = () => {
-        console.log("IN ALL VALID")
         if(validate(this.state.employee, constraints) === undefined){
-            console.log("NO ERRORS")
             return true
         }
         else{
-            console.log("ERRORS FOUND")
             let response = {
                 status: 412,
                 message: 'Please Fill The Form Correctly',
@@ -135,7 +121,7 @@ class CreateAccount extends React.Component {
 
             this.setState(prevState => ({
                 response,
-            }), console.log(this.state))
+            }))
             return false
         }
     }
@@ -168,7 +154,7 @@ class CreateAccount extends React.Component {
 
         this.setState(prevState => ({
             response
-        }),console.log(this.state.response))
+        }))
     }
 
     render(){
@@ -179,31 +165,9 @@ class CreateAccount extends React.Component {
             <Container>
                 <div className={classes.formSection}>
                     <Typography variant="h6" gutterBottom component="h6" className={ classes.heading }>
-                        Register An Employee
+                        Reset Password
                     </Typography>
-                    <FormHelperText>{response.status && <ul className={response.status<300?classes.successList:classes.errorList}><li className={classes.errorListItem}>{response.message}</li></ul>}</FormHelperText>
-                    <TextField
-                        error={errors.email}
-                        helperText={errors.email && <ul className={classes.errorList}> {errors.email.map((error)=>{ return <li className={classes.errorListItem}>{error}</li>})}</ul>}
-                        id="email"
-                        label="Email Address"
-                        value={employee.email_id}
-                        onChange={this.handleTextChange}
-                        onBlur={this.validate}
-                        classes={{
-                            root: classes.inputRoot,
-                        }}
-                        className={classNames(classes.textField, classes.dense)}
-                        margin="dense"
-                        variant="filled"
-                        InputProps={{
-                            className: classes.input,
-                        }}
-                        InputLabelProps={{
-                            className: classes.inputLabel,
-                        }}
-                    />
- 
+                    <FormHelperText className={classes.formResponseText}>{response.status && <ul className={response.status<300?classes.successList:classes.errorList}><li className={classes.errorListItem}>{response.message}</li></ul>}</FormHelperText>
                     <TextField
                         id="password"
                         label="Password"
@@ -263,72 +227,8 @@ class CreateAccount extends React.Component {
                             className: classes.inputLabel,
                         }}
                     />
-                    <TextField
-                        id="firstName"
-                        label="First Name"
-                        classes={{
-                            root: classes.inputRoot,
-                        }}
-                        className={classNames(classes.textField, classes.dense, classes.singleSpanInput)}
-                        margin="dense"
-                        variant="filled"
-                        onChange={this.handleTextChange}
-                        InputProps={{
-                            className: classes.input,
-                        }}
-                        InputLabelProps={{
-                            className: classes.inputLabel,
-                        }}
-                        InputLabelProps={{
-                            className: classes.inputLabel,
-                        }}
-                    />
-                    <TextField
-                        id="lastName"
-                        label="Last Name"
-                        classes={{
-                            root: classes.inputRoot,
-                        }}
-                        className={classNames(classes.textField, classes.dense, classes.singleSpanInput)}
-                        margin="dense"
-                        variant="filled"
-                        onChange={this.handleTextChange}
-                        InputProps={{
-                            className: classes.input,
-                        }}
-                        InputLabelProps={{
-                            className: classes.inputLabel,
-                        }}
-                    />
-                    {/* <FormControlLabel
-                        control={
-                            <Checkbox
-                                id="isAdmin-checkbox"
-                                checked={this.state.employee.isAdmin}
-                                onChange={this.handleAdminChange}
-                                value="isAdmin"
-                            />
-                        }
-                        label="Make the Employee Admin?"
-                    /> */}
-                    <FormControl component="fieldset" className={classes.radioGroup}>
-                        <FormLabel component="legend" className={classes.legend}>Access Rights</FormLabel>
-                        <RadioGroup
-                            aria-label="Access Rights"
-                            name="access_rights"
-                            className={classes.group}
-                            value={this.state.value}
-                            onChange={this.handleChange}
-                            defaultValue="employee"
-                        >
-                            <FormControlLabel value="employee" control={<Radio />} label="Employee" />
-                            <FormControlLabel value="manager" control={<Radio />} label="Manager" />
-                            <FormControlLabel value="admin" control={<Radio />} label="Admin" />
-                        </RadioGroup>
-                    </FormControl>
-
                     <Button onClick={this.submitForm} variant="contained" color="primary" className={classNames(classes.button, classes.textField)}>
-                        Register
+                        Submit
                     </Button>
                 </div>
             </Container>

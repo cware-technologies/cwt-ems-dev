@@ -14,11 +14,16 @@ import PaySlipTabs from './PaySlipTabs';
 import ITTicketTabs from './ITTicketTabs';
 import NewsAndUpdates from './NewsAndUpdates';
 import PostUpdateForm from './PostUpdateForm';
+import Profile from './Profile';
 import ProfileEditForm from './ProfileEditForm';
+import Attendance from './Attendance';
+import Notifications from './Notifications';
+import PasswordReset from './PasswordReset';
 
 const styles = theme => ({
   root: {
     display: 'flex',
+    height: '100%',
   },
 });
 
@@ -53,13 +58,17 @@ class Portal extends React.Component {
           <Route path={`${match.path}dashboard`} component={Dashboard} />
           <Route path={`${match.path}create`} component={RegisterEmployeeForm} />
           <Route path={`${match.path}leaves`} component={LeaveTabs} />
-          <Route path={`${match.path}manage_leaves`} component={AdminLeaves} />
-          <Route path={`${match.path}apply_leave`} component={LeaveForm} />
-          <Route path={`${match.path}pay_slips`} component={PaySlipTabs} />
-          <Route path={`${match.path}it_tickets`} component={ITTicketTabs} />
-          <Route path={`${match.path}news_and_updates`} component={NewsAndUpdates} />
-          <Route path={`${match.path}post_update`} component={PostUpdateForm} />
-          <Route path={`${match.path}edit_profile`} component={ProfileEditForm} />
+          <Route path={`${match.path}manage-leaves`} component={AdminLeaves} />
+          <Route path={`${match.path}apply-leave`} component={LeaveForm} />
+          <Route path={`${match.path}pay-slips`} component={PaySlipTabs} />
+          <Route path={`${match.path}it-tickets`} component={ITTicketTabs} />
+          <Route path={`${match.path}news-and-updates`} component={NewsAndUpdates} />
+          <Route path={`${match.path}post-update`} component={PostUpdateForm} />
+          <Route path={`${match.path}edit-profile`} component={ProfileEditForm} />
+          <Route path={`${match.path}my-profile`} component={Profile} />
+          <Route path={`${match.path}attendance`} component={Attendance} />
+          <Route path={`${match.path}notifications`} component={Notifications} />
+          <Route path={`${match.path}password-reset`} component={PasswordReset} />
         </Switch>
       </div>
     );

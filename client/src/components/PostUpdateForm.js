@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
 import { formStyle } from '../styles/form';
 import TextField from '@material-ui/core/TextField';
+import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import Container from './MainContainer';
 import TextEditor from './TextEditor';
@@ -36,6 +37,9 @@ class PostUpdateForm extends React.Component {
         return (
             <Container>
                 <div className={classes.formSection}>
+                    <Typography variant="h6" gutterBottom component="h6" className={ classes.heading }>
+                        Reset Password
+                    </Typography>
                     <TextField
                         id="filled-select-leave-native"
                         select

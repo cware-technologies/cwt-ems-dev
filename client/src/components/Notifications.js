@@ -19,11 +19,14 @@ import Tooltip from '@material-ui/core/Tooltip';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import { lighten } from '@material-ui/core/styles/colorManipulator';
+import Container from './MainContainer';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
 
 let counter = 0;
-function createData(name, detail, date, status) {
+function createData(sender, subject, date, status) {
     counter += 1;
-    return { id: counter, name, detail, date, status };
+    return { id: counter, sender, subject, date, status };
 }
 
 function desc(a, b, orderBy) {
@@ -51,9 +54,9 @@ function getSorting(order, orderBy) {
 }
 
 const rows = [
-    { id: 'name', numeric: false, disablePadding: true, label: 'Name' },
-    { id: 'detail', numeric: false, disablePadding: true, label: 'Detail' },
-    { id: 'date', numeric: false, disablePadding: true, label: 'Date Of Request' },
+    { id: 'sender', numeric: false, disablePadding: true, label: 'Sender' },
+    { id: 'subject', numeric: false, disablePadding: true, label: 'Subject' },
+    { id: 'date', numeric: false, disablePadding: true, label: 'Date' },
     { id: 'status', numeric: false, disablePadding: true, label: 'Status' },
 ];
 
@@ -81,6 +84,9 @@ const headStyles = theme => ({
         flexBasis: '70%',
         flexGrow: 10,
         color: 'white',
+        [theme.breakpoints.down('sm')]: {
+            display: 'none',
+        }
     },
     checkbox: {
         height: '80%',
@@ -100,21 +106,11 @@ class EnhancedTableHead extends React.Component {
     };
 
     render() {
-        const { onSelectAllClick, order, orderBy, numSelected, rowCount, classes } = this.props;
+        const { order, orderBy, classes } = this.props;
 
         return (
             <TableHead>
                 <TableRow className={classes.row}>
-                    <TableCell padding="checkbox" classes={{ root: classes.tableCellSmall }}>
-                        <Checkbox
-                            indeterminate={numSelected > 0 && numSelected < rowCount}
-                            checked={numSelected === rowCount}
-                            onChange={onSelectAllClick}
-                            classes={{
-                                root: classes.checkbox,
-                            }}
-                        />
-                    </TableCell>
                     {rows.map(
                         row => (
                             <TableCell
@@ -122,7 +118,7 @@ class EnhancedTableHead extends React.Component {
                                 align={row.numeric ? 'right' : 'left'}
                                 padding={row.disablePadding ? 'none' : 'default'}
                                 sortDirection={orderBy === row.id ? order : false}
-                                classes={{ root: row.id !== 'detail' ? classes.tableCell : classes.tableCellDetail }}
+                                classes={{ root: row.id !== 'subject' ? classes.tableCell : classes.tableCellDetail }}
                             >
                                 <Tooltip
                                     title="Sort"
@@ -199,7 +195,7 @@ let EnhancedTableToolbar = props => {
           </Typography>
                 ) : (
                         <Typography variant="h6" id="tableTitle">
-                            My Leaves
+                            Notifications
           </Typography>
                     )}
             </div>
@@ -235,6 +231,12 @@ const styles = theme => ({
         width: '100%',
         marginTop: theme.spacing.unit * 3,
     },
+    container: {
+        flexDirection: 'row',
+        margin: '0px',
+        width: '100%',
+        justifyContent: 'space-around',
+    },
     table: {
         minWidth: 300,
         
@@ -266,6 +268,9 @@ const styles = theme => ({
         alignItems: 'center',
         flexBasis: '70%',
         flexGrow: 10,
+        [theme.breakpoints.down('sm')]: {
+            display: 'none',
+        }
     },
     checkbox: {
         width: '80%',
@@ -308,24 +313,16 @@ class EnhancedTable extends React.Component {
     state = {
         order: 'asc',
         orderBy: 'name',
-        selected: [],
         data: [
-            createData('Sajeel', 'No reason, I dont feel like it', '15-02-2019', 'Approved'),
-            createData('Ehsan', 'Due to Convocation', '20-02-2019', 'Pending'),
-            createData('Maryam', 'Van wala nai aaya', '28-02-2019', 'Rejected'),
-            createData('Sajeel', 'No reason, I dont feel like it', '15-02-2019', 'Approved'),
-            createData('Ehsan', 'Due to Convocation', '20-02-2019', 'Pending'),
-            createData('Maryam', 'Van wala nai aaya', '28-02-2019', 'Rejected'),
-            createData('Sajeel', 'No reason, I dont feel like it', '15-02-2019', 'Approved'),
-            createData('Ehsan', 'Due to Convocation', '20-02-2019', 'Pending'),
-            createData('Maryam', 'Van wala nai aaya', '28-02-2019', 'Rejected'),
-            createData('Sajeel', 'No reason, I dont feel like it', '15-02-2019', 'Approved'),
-            createData('Ehsan', 'Due to Convocation', '20-02-2019', 'Pending'),
-            createData('Maryam', 'Van wala nai aaya', '28-02-2019', 'Rejected'),
+            createData('Sajeel Waien', 'Logo Update', '01-02-2019', 'read',),
+            createData('Ehsan Hassan', 'FSD Update', '02-02-2019', 'unread'),
+            createData('Mariam Amin', 'HR Documents', '03-02-2019', 'unread'),
+            createData('Suleman Ishtiaq', 'Operations Update', '04-02-2019', 'read'),
         ],
         page: 0,
         rowsPerPage: 5,
         modalOpen: false,
+        month: null,
     };
 
     handleRequestSort = (event, property) => {
@@ -339,13 +336,12 @@ class EnhancedTable extends React.Component {
         this.setState({ order, orderBy });
     };
 
-    handleSelectAllClick = event => {
-        if (event.target.checked) {
-            this.setState(state => ({ selected: state.data.map(n => n.id) }));
-            return;
-        }
-        this.setState({ selected: [] });
-    };
+    handleChangeMonth = (event) => {
+        let month = event.target.value
+        this.setState(prevState => ({
+            month,
+        }))
+    }
 
     handleModalOpen = (e) => {
         let target = e.target.id;
@@ -357,26 +353,6 @@ class EnhancedTable extends React.Component {
         this.setState({ modalOpen: false });
     };
 
-    handleClick = (event, id) => {
-        const { selected } = this.state;
-        const selectedIndex = selected.indexOf(id);
-        let newSelected = [];
-
-        if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, id);
-        } else if (selectedIndex === 0) {
-            newSelected = newSelected.concat(selected.slice(1));
-        } else if (selectedIndex === selected.length - 1) {
-            newSelected = newSelected.concat(selected.slice(0, -1));
-        } else if (selectedIndex > 0) {
-            newSelected = newSelected.concat(
-                selected.slice(0, selectedIndex),
-                selected.slice(selectedIndex + 1),
-            );
-        }
-
-        this.setState({ selected: newSelected });
-    };
 
     handleChangePage = (event, page) => {
         this.setState({ page });
@@ -386,110 +362,102 @@ class EnhancedTable extends React.Component {
         this.setState({ rowsPerPage: event.target.value });
     };
 
-    isSelected = id => this.state.selected.indexOf(id) !== -1;
-
     render() {
         const { classes } = this.props;
-        const { data, order, orderBy, selected, rowsPerPage, page } = this.state;
+        const { data, order, orderBy, rowsPerPage, page } = this.state;
         const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
 
         return (
-            <Paper className={classes.root}>
-                <EnhancedTableToolbar numSelected={selected.length} />
-                <div className={classes.tableWrapper}>
-                    <Table className={classes.table} aria-labelledby="tableTitle">
-                        <EnhancedTableHead
-                            numSelected={selected.length}
-                            order={order}
-                            orderBy={orderBy}
-                            onSelectAllClick={this.handleSelectAllClick}
-                            onRequestSort={this.handleRequestSort}
-                            rowCount={data.length}
-                        />
-                        <TableBody className={classes.tableBody}>
-                            {stableSort(data, getSorting(order, orderBy))
-                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                .map(n => {
-                                    const isSelected = this.isSelected(n.id);
-                                    return (
-                                        <TableRow
-                                            hover
-                                            role="checkbox"
-                                            aria-checked={isSelected}
-                                            tabIndex={-1}
-                                            key={n.id}
-                                            selected={isSelected}
-                                            classes={{
-                                                root: classes.row,
-                                            }}
-                                            onClick={this.handleModalOpen}
-                                        >
-                                            <TableCell classes={{ root: classes.tableCellSmall }} onClick={event => this.handleClick(event, n.id)}>
-                                                <Checkbox id="checkbox" checked={isSelected} classes={{ root: classes.checkbox, }} />
-                                            </TableCell>
-                                            <TableCell
-                                                component="th"
-                                                scope="row"
-                                                padding="none"
-                                                classes={{ root: classes.tableCell }}
+            <Container>
+                <Paper className={classes.root}>
+                    <EnhancedTableToolbar/>
+                    <div className={classes.tableWrapper}>
+                        <Table className={classes.table} aria-labelledby="tableTitle">
+                            <EnhancedTableHead
+                                order={order}
+                                orderBy={orderBy}
+                                onRequestSort={this.handleRequestSort}
+                                rowCount={data.length}
+                            />
+                            <TableBody className={classes.tableBody}>
+                                {stableSort(data, getSorting(order, orderBy))
+                                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                    .map(n => {
+                                        return (
+                                            <TableRow
+                                                hover
+                                                role="checkbox"
+                                                tabIndex={-1}
+                                                key={n.id}
+                                                classes={{
+                                                    root: classes.row,
+                                                }}
+                                                onClick={this.handleModalOpen}
                                             >
-                                                {n.name}
-                                            </TableCell>
-                                            <TableCell
-                                                align="left"
-                                                padding="dense"
-                                                classes={{ root: classes.tableCellDetail }}
-                                            >
-                                                {n.detail}
-                                            </TableCell>
-                                            <TableCell
-                                                align="left"
-                                                padding="dense"
-                                                classes={{ root: classes.tableCell }}
-                                            >
-                                                {n.date}
-                                            </TableCell>
-                                            <TableCell
-                                                align="left"
-                                                padding="dense"
-                                                classes={{ root: classes.tableCell }}
-                                                className={ n.status !== 'Pending' ? n.status === 'Rejected'?classes.error : classes.success : classes.warning }
-                                            >
-                                                {n.status}
-                                            </TableCell>
-                                        </TableRow>
-                                    );
-                                })}
-                                
-                            {emptyRows > 0 && (
-                                <TableRow style={{ height: 49 * emptyRows }}>
-                                    <TableCell colSpan={5} />
-                                </TableRow>
-                            )}
-                        </TableBody>
-                    </Table>
-                </div>
-                <TablePagination
-                    rowsPerPageOptions={[5, 10, 25]}
-                    component="div"
-                    count={data.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    backIconButtonProps={{
-                        'aria-label': 'Previous Page',
-                    }}
-                    nextIconButtonProps={{
-                        'aria-label': 'Next Page',
-                    }}
-                    onChangePage={this.handleChangePage}
-                    onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                />
+                                                <TableCell
+                                                    component="th"
+                                                    scope="row"
+                                                    padding="none"
+                                                    classes={{ root: classes.tableCell }}
+                                                >
+                                                    {n.sender}
+                                                </TableCell>
+                                                <TableCell
+                                                    align="left"
+                                                    padding="none"
+                                                    classes={{ root: classes.tableCellDetail }}
+                                                >
+                                                    {n.subject}
+                                                </TableCell>
+                                                <TableCell
+                                                    align="left"
+                                                    padding="none"
+                                                    classes={{ root: classes.tableCell }}
+                                                >
+                                                    {n.date}
+                                                </TableCell>
+                                                <TableCell
+                                                    align="left"
+                                                    padding="none"
+                                                    classes={{ root: classes.tableCell }}
+                                                    className={ n.status !== 'unread' ? classes.warning : classes.success }
+                                                >
+                                                    {n.status}
+                                                </TableCell>
+                                            </TableRow>
+                                        );
+                                    })}
+                                    
+                                {emptyRows > 0 && (
+                                    <TableRow style={{ height: 49 * emptyRows }}>
+                                        <TableCell colSpan={5} />
+                                    </TableRow>
+                                )}
+                            </TableBody>
+                        </Table>
+                    </div>
+                    <TablePagination
+                        rowsPerPageOptions={[5, 10, 25]}
+                        component="div"
+                        count={data.length}
+                        rowsPerPage={rowsPerPage}
+                        page={page}
+                        backIconButtonProps={{
+                            'aria-label': 'Previous Page',
+                        }}
+                        nextIconButtonProps={{
+                            'aria-label': 'Next Page',
+                        }}
+                        onChangePage={this.handleChangePage}
+                        onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                    />
 
-                <EnhancedInfoModal
-                    modalOpen={this.state.modalOpen}
-                    handleModalClose={this.handleModalClose}
-                />
-            </Paper>
+                    <EnhancedInfoModal
+                        modalOpen={this.state.modalOpen}
+                        handleModalClose={this.handleModalClose}
+                    />
+                </Paper>
+            </Container>
         );
     }
 }

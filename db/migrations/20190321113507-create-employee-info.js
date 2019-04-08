@@ -1,21 +1,21 @@
 'use strict';
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('EmployeeInfo', {
-      employee_id: {
-        type: Sequelize.INTEGER,
-        references: {
-          'model': 'Employees',
-          'key': 'id',  
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'SET NULL',
-      },
-      id: {
+    return queryInterface.createTable('C_EMP', {
+      row_id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER(10),
+      },
+      employee_id: {
+        type: Sequelize.INTEGER,
+        references: {
+          'model': 'c_user',
+          'key': 'row_id',  
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL',
       },
       first_name: {
         type: Sequelize.STRING,
@@ -90,6 +90,6 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('EmployeeInfo');
+    return queryInterface.dropTable('C_EMP');
   }
 };

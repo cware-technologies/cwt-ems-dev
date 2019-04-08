@@ -1,5 +1,3 @@
-import { orange } from "@material-ui/core/colors";
-
 export const formStyle = theme => ({
     formSection: {
         width: '100%',
@@ -81,13 +79,24 @@ export const formStyle = theme => ({
     legend: {
         
     },
+    formResponseText: {
+        gridColumn: 1 / -1,
+    },
     errorList: {
         backgroundColor: 'lightgray',
+        color: 'indianred',
         padding: '10px',
-        border: '2px solid red',
-        borderRadius: '10px',
+        border: '1px solid indianred',
+        borderRadius: '2px',
     },
     errorListItem: {
         marginLeft: '5px',
-    }
+    },
+    successList: {
+        backgroundColor: 'lightgray',
+        color: 'green',
+        padding: '10px',
+        border: '1px solid green',
+        borderRadius: '2px',
+    },
 });

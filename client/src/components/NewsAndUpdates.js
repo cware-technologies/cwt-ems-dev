@@ -42,6 +42,7 @@ class NewsAndUpdates extends React.Component {
                 </Typography>
                 { news.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((item, index) => {
                       return <SimpleCard 
+                        key={index}
                         title={item.title}
                         body={item.body}
                         date={item.date}
