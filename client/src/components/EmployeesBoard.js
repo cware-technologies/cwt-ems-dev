@@ -11,6 +11,7 @@ import SimpleCard from './SimpleCard';
 import Container from './MainContainer'
 import LoadingSpinner from './LoadingSpinner'
 import LoadingError from './LoadError'
+import ModalTrigger from './ModalTrigger'
 
 const styles = theme => ({
     halfNotice: {
@@ -151,6 +152,12 @@ class EmployeesBoard extends React.Component {
         }
     }
 
+    getDetails = (index) => {
+        const data = (({ ATTRIB_01, ATTRIB_10, created }) => ({ ATTRIB_01, ATTRIB_10, created }))(this.state.news[index]);
+        data.type = 'employee news'
+        return data
+    }
+
 
     render() {
         const { classes } = this.props;
@@ -170,7 +177,7 @@ class EmployeesBoard extends React.Component {
                     </Typography>
                     <div className={classes.content}>
                         <div className={classes.bubbles}>
-                            {news.map(item => <p className={classes.bubble}>{item.ATTRIB_10}</p>)}
+                            {news.map((item, index) => <ModalTrigger title={item.ATTRIB_10} data={this.getDetails(index)}/> )}
                         </div>
                         <div className={classes.actionBar}>
                             <Button>See All</Button>

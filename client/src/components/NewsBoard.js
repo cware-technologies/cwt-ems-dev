@@ -74,15 +74,23 @@ class NewsBoard extends React.Component {
         if(this.state.newsNo >= 2)
             return 0
         else
-            return this.state.newsNo ++
+            return this.state.newsNo + 1
+    }
+
+    getCurrentSlide = (index) => {
+        return index === this.state.newsNo;
+    }
+    
+    changeSlide = () => {
+        this.setState(prevState => ({
+            newsNo: this.getNextNews()
+        }))
     }
 
     startSlideshow = async() => {
         this.slideShow = setInterval(() => {
-            this.setState(prevState => ({
-                newsNo: this.getNextNews()
-            }))
-        }, 1000)
+            this.changeSlide()
+        }, 5000)
     }
 
     async componentDidMount() {
@@ -100,6 +108,10 @@ class NewsBoard extends React.Component {
         catch (err) {
             this.handleResponse(err.response)
         }
+    }
+
+    async componentWillUnmount(){
+        clearInterval(this.slideShow)
     }
 
     handleResponse = (res) => {
@@ -123,11 +135,15 @@ class NewsBoard extends React.Component {
         }
     }
 
+    getDetails = (index) => {
+        const data = (({ ATTRIB_01, ATTRIB_10, created }) => ({ ATTRIB_01, ATTRIB_10, created }))(this.state.news[index]);
+        data.type = 'news'
+        return data
+    }
+
     render() {
         const { classes } = this.props;
         const { isFetching, success, news, newsNo } = this.state;
-
-        console.log('STATE: ', this.state)
 
         if (isFetching) {
             return <Paper className={classes.news} elevation={5}><LoadingSpinner /></Paper>
@@ -146,6 +162,8 @@ class NewsBoard extends React.Component {
                         title={news[newsNo].ATTRIB_10}
                         date={news[newsNo].created}
                         img={news[newsNo].IMG_PTH}
+                        data={this.getDetails(newsNo)}
+                        current={true}
                         big={true}
                     />
                     {news.slice(0, 3).map((item, index) => {
@@ -154,7 +172,8 @@ class NewsBoard extends React.Component {
                             title={item.ATTRIB_10}
                             date={item.created}
                             img={item.IMG_PTH}
-                            
+                            data={this.getDetails(index)}
+                            current={this.getCurrentSlide(index)}
                         />
                     })}
 

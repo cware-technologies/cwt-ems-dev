@@ -1,32 +1,52 @@
 'use strict';
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('C_BU', {
+    return queryInterface.createTable('C_POSTN', {
       row_id: {
+        type: Sequelize.INTEGER(10),
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER(10)
       },
       name: {
         type: Sequelize.STRING(50),
         allowNull: false,
-        unique: true,
+      },
+      bu_id: {
+        type: Sequelize.INTEGER(10),
+        references: {
+          'model': 'c_bu',
+          'key': 'row_id',  
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL',
+      },
+      div_id: {
+        type: Sequelize.INTEGER(10),
+        references: {
+          'model': 'c_div',
+          'key': 'row_id',  
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL',
       },
       desc: {
         type: Sequelize.STRING(100),
-        defaultValue: null,
       },
-      PAR_ROW_ID: {
+      par_row_id: {
         type: Sequelize.INTEGER(11),
+        allowNull: true,
+        defaultValue: null,
         references: {
-          'model': 'c_bu',
+          'model': 'c_postn',
           'key': 'row_id',
         },
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL',
-        allowNull: true,
-        defaultValue: null,
+      },
+      created: {
+        allowNull: false,
+        type: Sequelize.DATE
       },
       ATTRIB_01: {
         type: Sequelize.STRING(200),
@@ -38,13 +58,13 @@ module.exports = {
         type: Sequelize.STRING(200),
       },
       ATTRIB_04: {
-        type: Sequelize.INTEGER(11),
+        type: Sequelize.INTEGER(10),
       },
       ATTRIB_05: {
-        type: Sequelize.INTEGER(11),
+        type: Sequelize.INTEGER(10),
       },
       ATTRIB_06: {
-        type: Sequelize.INTEGER(11),
+        type: Sequelize.INTEGER(10),
       },
       ATTRIB_07: {
         type: Sequelize.DATE,
@@ -58,13 +78,9 @@ module.exports = {
       FLG_03: {
         type: Sequelize.CHAR,
       },
-      created: {
-        allowNull: false,
-        type: Sequelize.DATE
-      },
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('C_BU');
+    return queryInterface.dropTable('C_POSTN');
   }
 };

@@ -37,6 +37,13 @@ export default (data) => {
         .attr('r', 4);
 
     d3.select('svg .names')
+        .data(root.descendants())
+        .enter()
+        .append('a')
+        .classed('link', true)
+        .attr('xlink:href', `#`)
+
+    d3.select('svg .names .link')
         .selectAll('text.name')
         .data(root.descendants())
         .enter()
@@ -56,7 +63,7 @@ export default (data) => {
         .attr('d', function (d) {
             return "M" + d.source.x + "," + d.source.y
                 + "C" + (d.source.x) + "," + (d.source.y + 50)
-                + " " + (d.target.x) + "," + (d.target.y - 80) // 50 and 150 are coordinates of inflexion, play with it to change links shape
+                + " " + (d.target.x) + "," + (d.target.y - 80) // 50 and 80 are coordinates of inflexion, play with it to change links shape
                 + " " + d.target.x + "," + d.target.y;
         })
     // .attr('y1', function(d) {return d.source.y;})

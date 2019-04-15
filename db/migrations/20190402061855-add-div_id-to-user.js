@@ -4,11 +4,17 @@ module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.addColumn(
       'C_USER',
-      'DIV_ID',
+      'div_id',
       {
         type: Sequelize.INTEGER(11),
         allowNull: true,
         defaultValue: null,
+        references: {
+          model: 'c_div',
+          key: 'row_id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL',
       }
     )
   },
@@ -16,7 +22,7 @@ module.exports = {
   down: (queryInterface, Sequelize) => {
     return queryInterface.removeColumn(
       'C_USER',
-      'DIV_ID'
+      'div_id'
     )
   }
 };

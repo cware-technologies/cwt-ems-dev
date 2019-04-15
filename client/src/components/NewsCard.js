@@ -11,6 +11,7 @@ import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
 import Typography from '@material-ui/core/Typography';
 import { relative } from 'path';
+import ModalTrigger from './ModalTrigger';
 
 const styles = theme => ({
     card: {
@@ -34,6 +35,7 @@ const styles = theme => ({
         width: '100%',
         padding: '0px',
         boxShadow: '2px 2px 5px 2px black',
+        backgroundColor: 'lightgray',
         [theme.breakpoints.down('sm')]: {
             height: '18%',
         },
@@ -93,7 +95,27 @@ const styles = theme => ({
         padding: theme.spacing.unit,
         justifySelf: 'flex-start',
     },
+    faded: {
+        position: 'relative',
+
+        '&::after': {
+            content: '""',
+            height: '100%',
+            width: '100%',
+            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+            position: 'absolute',
+            top: '0px',
+            left: '0px',
+        }
+    }
 });
+
+const after = {
+    content: '""',
+    height: '100%',
+    width: '100%',
+    background: 'rgba(0, 0, 0, 0.6)'
+}
 
 function SimpleCard(props) {
     const { classes, _className } = props;
@@ -117,7 +139,7 @@ function SimpleCard(props) {
 
     return (
         <Card className={classNames(classes.card, _className)}>
-            <CardContent className={classes.cardContent}>
+            <CardContent className={classes.cardContent} classes={!props.current && {root: classes.faded}}>
                 <CardMedia
                     className={classes.media}
                     image={props.img}
@@ -132,14 +154,10 @@ function SimpleCard(props) {
                 </CardMedia>
             </CardContent>
             <CardActions className={classes.cardActions}>
-                <Link
-                    component="button"
-                    variant="body2"
-                    color='primary'
-                    className={classes.readMore}
-                >
-                    Read More
-        </Link>
+                <ModalTrigger
+                    data={props.data}
+                    title='Read More'
+                />
                 <Typography variant="overline" component="p" align="right" color="textSecondary" className={classes.newsDate}>
                     {getDate(props.date).toDateString()}
                 </Typography>

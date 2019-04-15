@@ -308,7 +308,15 @@ class AdminList extends React.Component {
                     <ListItemText inset primary="Post An Update" />
                   </ListItem>
                 </Link>
-                <Link to={`${match.url}create`} style={{ textDecoration: 'none' }}>
+                <Link to={`${match.url}register-organization`} style={{ textDecoration: 'none' }}>
+                  <ListItem button className={classes.nested}>
+                    <ListItemIcon>
+                      <EmpAddIcon />
+                    </ListItemIcon>
+                    <ListItemText inset primary="Add Employee" />
+                  </ListItem>
+                </Link>
+                <Link to={`${match.url}register-user`} style={{ textDecoration: 'none' }}>
                   <ListItem button className={classes.nested}>
                     <ListItemIcon>
                       <EmpAddIcon />

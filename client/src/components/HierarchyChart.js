@@ -7,15 +7,24 @@ const styles = theme => ({
         fill: 'steelblue',
         stroke: 'none',
     },
-    link: {
+    edge: {
         fill: 'none',
         stroke: '#ccc',
         strokeWidth: '1px',
     },
+    link: {
+        // fill: 'none',
+        // stroke: '#ccc',
+        // strokeWidth: '1px',
+    },
     name: {
         fill: 'steelblue',
-    }
-      
+        fontSize: '20px',
+    },
+    position: {
+        fill: 'gray',
+        fontSize: '16px',
+    },
 })
 
 class HierarchyChart extends React.Component {
@@ -62,22 +71,42 @@ class HierarchyChart extends React.Component {
             .attr('r', 4);
 
         d3.select('svg .names')
+            .selectAll('a.link')
+            .data(root.descendants())
+            .enter()
+            .append('a')
+            .classed(classes.link, true)
+            .attr('xlink:href', `#`)
+            .attr('x', function (d) { return d.x + 15; })
+            .attr('y', function (d) { return d.y + 5; })
+    
+        d3.select('svg .names a')
             .selectAll('text.name')
             .data(root.descendants())
             .enter()
             .append('text')
             .text(d => { return d.data.name })
             .classed(classes.name, true)
-            .attr('x', function (d) { return d.x + 15 })
-            .attr('y', function (d) { return d.y + 5 })
+            .attr('x', function (d) { return d.x + 15; })
+            .attr('y', function (d) { return d.y + 5; })
+
+        d3.select('svg .names a')
+            .selectAll('text.position')
+            .data(root.descendants())
+            .enter()
+            .append('text')
+            .text(d => { return d.data.position })
+            .classed(classes.position, true)
+            .attr('x', function (d) { return d.x + 15; })
+            .attr('y', function (d) { return d.y + 25; })
 
         // Links
         d3.select('svg .lines')
-            .selectAll('line.link')
+            .selectAll('path.edge')
             .data(root.links())
             .enter()
             .append('path')
-            .classed(classes.link, true)
+            .classed(classes.edge, true)
             .attr('d', function (d) {
                 return "M" + d.source.x + "," + d.source.y
                     + "C" + (d.source.x) + "," + (d.source.y + 50)

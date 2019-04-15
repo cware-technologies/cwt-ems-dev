@@ -98,13 +98,15 @@ const data = [
 
 const hierarchy = {
     "name": "Ousaid Imtiaz",
+    "position": "CEO",
     "children": [
         {
             "name": "Sajeel Waien",
+            "position": "Manager",
             "children": [
                 {
                     "name": "Ehsan Ul Hassan",
-                    "value": 100
+                    "position": "Peon",
                 },
     //             {
     //                 "name": "Mariam Amin",

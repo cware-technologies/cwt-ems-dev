@@ -53,6 +53,28 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       type: DataTypes.DATE,
     },
+    bu_id: {
+      type: DataTypes.INTEGER(11),
+        allowNull: true,
+        defaultValue: null,
+        references: {
+          model: 'c_bu',
+          key: 'row_id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL',
+    },
+    div_id: {
+        type: DataTypes.INTEGER(11),
+        allowNull: true,
+        defaultValue: null,
+        references: {
+          model: 'c_div',
+          key: 'row_id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL',
+    },
     ATTRIB_01: {
       type: DataTypes.STRING(200),
     },
@@ -151,7 +173,8 @@ module.exports = (sequelize, DataTypes) => {
     createdAt: 'created',
   });
   User.associate = function(models) {
-    // associations can be defined here
+    User.belongsTo(models.C_BU, { foreignKey: 'bu_id' })
+    User.belongsTo(models.C_DIV, { foreignKey: 'div_id' })
   };
   return User;
 };

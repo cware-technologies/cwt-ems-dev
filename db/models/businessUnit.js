@@ -5,7 +5,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       autoIncrement: true,
       primaryKey: true,
-      type: DataTypes.INTEGER(10),
+      type: DataTypes.INTEGER(11),
     },
     name: {
       type: DataTypes.STRING(50),
@@ -16,10 +16,16 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING(100),
       defaultValue: null,
     },
-    par_row_id: {
-      type: DataTypes.INTEGER(11),
-      allowNull: true,
-      defaultValue: null,
+    PAR_ROW_ID: {
+        type: DataTypes.INTEGER(11),
+        references: {
+          'model': 'c_bu',
+          'key': 'row_id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL',
+        allowNull: true,
+        defaultValue: null,
     },
     ATTRIB_01: {
       type: DataTypes.STRING(200),
@@ -59,7 +65,7 @@ module.exports = (sequelize, DataTypes) => {
     createdAt: 'created',
   });
   BusinessUnit.associate = function(models) {
-    // associations can be defined here
+    BusinessUnit.belongsTo(BusinessUnit, {as: 'parent', foreignKey: 'PAR_ROW_ID'})
   };
   return BusinessUnit;
 };
