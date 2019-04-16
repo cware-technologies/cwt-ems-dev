@@ -21,6 +21,7 @@ import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/Edit';
 import ViewIcon from '@material-ui/icons/ViewList';
 import NewsIcon from '@material-ui/icons/NoteAddTwoTone';
+import OrgAddIcon from '@material-ui/icons/Business';
 import EmpAddIcon from '@material-ui/icons/PersonAdd';
 import AdminIcon from '@material-ui/icons/HowToReg';
 import EducationIcon from '@material-ui/icons/School';
@@ -308,12 +309,12 @@ class AdminList extends React.Component {
                     <ListItemText inset primary="Post An Update" />
                   </ListItem>
                 </Link>
-                <Link to={`${match.url}register-organization`} style={{ textDecoration: 'none' }}>
+                <Link to={`${match.url}organization-structure`} style={{ textDecoration: 'none' }}>
                   <ListItem button className={classes.nested}>
                     <ListItemIcon>
-                      <EmpAddIcon />
+                      <OrgAddIcon />
                     </ListItemIcon>
-                    <ListItemText inset primary="Add Employee" />
+                    <ListItemText inset primary="Organization Structure" />
                   </ListItem>
                 </Link>
                 <Link to={`${match.url}register-user`} style={{ textDecoration: 'none' }}>

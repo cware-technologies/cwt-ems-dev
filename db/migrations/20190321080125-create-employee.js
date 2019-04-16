@@ -1,64 +1,31 @@
 'use strict';
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('C_USER', {
+    return queryInterface.createTable('C_EMP', {
       row_id: {
-        type: Sequelize.INTEGER(10),
+        type: Sequelize.INTEGER(11),
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
       },
-      login: {
+      emp_num: {
         type: Sequelize.STRING(50),
         allowNull: false,
         unique: true,
-        validate: {
-          isEmail: true,
-          notEmpty: true,
-        }
-      },
-      slt_pwd: {
-        type: Sequelize.UUID,
-        defaultValue: Sequelize.UUIDV4,
-      },
-      hash_pwd: {
-        type: Sequelize.STRING(200),
-        allowNull: false,
-      },
-      // password: {
-      //   type: Sequelize.STRING,
-      //   allowNull: false,
-      //   validate: {
-      //     is:  /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^\w\d\s])(?!.*\s).{8,}/,
-      //     notEmpty: true,
-      //   }
-      // },
-      emp_id: {
-        type: Sequelize.INTEGER(11),
-        allowNull: true,
-        defaultValue: null,
-        references: {
-          'model': 'c_emp',
-          'key': 'row_id',
-        }
-      },
-      resp_id: {
-        type: Sequelize.INTEGER(11),
-        allowNull: false,
         defaultValue: Sequelize.UUIDV4,
       },
       fst_name: {
-        type: Sequelize.STRING(50),
-        allowNull: false,
+        type: Sequelize.STRING(30),
+        allowNull: true,
       },
       last_name: {
-        type: Sequelize.STRING(50),
-        allowNull: false,
+        type: Sequelize.STRING(30),
+        allowNull: true,
       },
       bu_id: {
         type: Sequelize.INTEGER(11),
-        allowNull: true,
-        defaultValue: null,
+        // allowNull: false,
+        defaultValue: 1,
         references: {
           'model': 'c_bu',
           'key' : 'row_id',
@@ -68,8 +35,8 @@ module.exports = {
       },
       div_id: {
         type: Sequelize.INTEGER(11),
-        allowNull: true,
-        defaultValue: null,
+        // allowNull: false,
+        defaultValue: 1,
         references: {
           'model': 'c_div',
           'key' : 'row_id',
@@ -77,9 +44,45 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL',
       },
-      created: {
+      postn_held_id: {
+        type: Sequelize.INTEGER(11),
+        // allowNull: false,
+        defaultValue: 1,
+        references: {
+          'model': 'c_postn',
+          'key' : 'row_id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL',
+      },
+      resp_id: {
+        type: Sequelize.INTEGER(11),
         allowNull: false,
-        type: Sequelize.DATE
+        defaultValue: Sequelize.UUIDV4,
+      },
+      pr_postn_id: {
+        type: Sequelize.INTEGER(11),
+        allowNull: true,
+        defaultValue: null,
+        references: {
+          'model': 'c_postn',
+          'key' : 'row_id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL',
+      },
+      report_to_id: {
+        type: Sequelize.INTEGER(11),
+        allowNull: true,
+        defaultValue: null,
+        references: {
+          model: 'c_emp',
+          key: 'row_id',
+        },
+      },
+      created: {
+        type: Sequelize.DATE,
+        allowNull: false,
       },
       ATTRIB_01: {
         type: Sequelize.STRING(200),
@@ -100,16 +103,16 @@ module.exports = {
         type: Sequelize.STRING(100),
       },
       ATTRIB_07: {
-        type: Sequelize.STRING(100),
+        type: Sequelize.STRING(50),
       },
       ATTRIB_08: {
-        type: Sequelize.STRING(100),
+        type: Sequelize.STRING(50),
       },
       ATTRIB_09: {
-        type: Sequelize.STRING(100),
+        type: Sequelize.STRING(50),
       },
       ATTRIB_10: {
-        type: Sequelize.STRING(100),
+        type: Sequelize.STRING(50),
       },
       ATTRIB_11: {
         type: Sequelize.INTEGER(11),
@@ -174,6 +177,6 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('C_USER');
+    return queryInterface.dropTable('C_EMP');
   }
 };

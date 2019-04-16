@@ -2,6 +2,7 @@ const models = require('../db/models'),
     Organization = models.C_BU,
     Division = models.C_DIV,
     Position = models.C_POSTN,
+    Responsibility = models.C_RESP,
     Sequelize = require('sequelize')
     
 
@@ -35,7 +36,7 @@ async function postOrganization(req, res, next){
 
     Organization.create({
         name: organization.name,
-        PAR_ROW_ID: organization.parent,
+        par_row_id: organization.parent,
     }).then(result => {
         res.status(200).json({
             status: 200,
@@ -186,6 +187,33 @@ async function postPosition(req, res, next){
     })
 }
 
+async function getResponsibilities(req, res, next){
+    try{
+        let data = await Responsibility.findAll({
+            where:{
+                bu_id: req.query.bu_id && req.query.bu_id,
+            },
+            include: [
+                {
+                    model: Organization,
+                    as: 'organization',
+                    attributes: ['row_id', 'name'],
+                },
+            ]
+        })
+
+        res.status(200).json({
+            status: 200,
+            result: data,
+        })
+    }
+    catch(err){
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
 module.exports = {
     getOrganizations,
     postOrganization,
@@ -193,4 +221,5 @@ module.exports = {
     postDivision,
     getPositions,
     postPosition,
+    getResponsibilities,
 }

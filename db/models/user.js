@@ -34,12 +34,18 @@ module.exports = (sequelize, DataTypes) => {
     //   }
     // },
     emp_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
+      type: DataTypes.INTEGER(11),
+      allowNull: true,
+      defaultValue: null,
+      references: {
+        'model': 'c_emp',
+        'key': 'row_id',
+      }
     },
     resp_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
+        type: DataTypes.INTEGER(11),
+        allowNull: false,
+        defaultValue: DataTypes.UUIDV4,
     },
     fst_name: {
       type: DataTypes.STRING(50),
@@ -91,49 +97,49 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING(200),
     },
     ATTRIB_06: {
-      type: DataTypes.STRING(200),
+      type: DataTypes.STRING(100),
     },
     ATTRIB_07: {
-      type: DataTypes.STRING(200),
+      type: DataTypes.STRING(100),
     },
     ATTRIB_08: {
-      type: DataTypes.STRING(200),
+      type: DataTypes.STRING(100),
     },
     ATTRIB_09: {
-      type: DataTypes.STRING(200),
+      type: DataTypes.STRING(100),
     },
     ATTRIB_10: {
-      type: DataTypes.STRING(200),
+      type: DataTypes.STRING(100),
     },
     ATTRIB_11: {
-      type: DataTypes.STRING(200),
+      type: DataTypes.INTEGER(11),
     },
     ATTRIB_12: {
-      type: DataTypes.STRING(200),
+      type: DataTypes.INTEGER(11),
     },
     ATTRIB_13: {
-      type: DataTypes.STRING(200),
+      type: DataTypes.INTEGER(11),
     },
     ATTRIB_14: {
-      type: DataTypes.STRING(200),
+      type: DataTypes.INTEGER(11),
     },
     ATTRIB_15: {
-      type: DataTypes.STRING(200),
+      type: DataTypes.INTEGER(11),
     },
     ATTRIB_16: {
-      type: DataTypes.STRING(200),
+      type: DataTypes.INTEGER(11),
     },
     ATTRIB_17: {
-      type: DataTypes.STRING(200),
+      type: DataTypes.INTEGER(11),
     },
     ATTRIB_18: {
-      type: DataTypes.STRING(200),
+      type: DataTypes.DATE,
     },
     ATTRIB_19: {
-      type: DataTypes.STRING(200),
+      type: DataTypes.DATE,
     },
     ATTRIB_20: {
-      type: DataTypes.STRING(200),
+      type: DataTypes.DATE,
     },
     FLG_01: {
       type: DataTypes.CHAR,
@@ -173,8 +179,9 @@ module.exports = (sequelize, DataTypes) => {
     createdAt: 'created',
   });
   User.associate = function(models) {
-    User.belongsTo(models.C_BU, { foreignKey: 'bu_id' })
-    User.belongsTo(models.C_DIV, { foreignKey: 'div_id' })
+    User.belongsTo(models.C_EMP, { as: 'employee', foreignKey: 'emp_id' })
+    User.belongsTo(models.C_BU, { as: 'organization', foreignKey: 'bu_id' })
+    User.belongsTo(models.C_DIV, { as: 'division', foreignKey: 'div_id' })
   };
   return User;
 };

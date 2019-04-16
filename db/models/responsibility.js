@@ -1,11 +1,11 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
-  const BusinessUnit = sequelize.define('C_BU', {
+  const Responsibility = sequelize.define('C_RESP', {
     row_id: {
       allowNull: false,
       autoIncrement: true,
       primaryKey: true,
-      type: DataTypes.INTEGER(11),
+      type: DataTypes.INTEGER(11)
     },
     name: {
       type: DataTypes.STRING(50),
@@ -14,18 +14,21 @@ module.exports = (sequelize, DataTypes) => {
     },
     desc: {
       type: DataTypes.STRING(100),
-      defaultValue: null,
+      allowNull: true,
     },
-    par_row_id: {
-        type: DataTypes.INTEGER(11),
-        references: {
-          'model': 'c_bu',
-          'key': 'row_id',
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'SET NULL',
-        allowNull: true,
-        defaultValue: null,
+    bu_id: {
+      type: DataTypes.INTEGER(11),
+      unique: true,
+      allowNull: false,
+      defaultValue: 0,
+      references: {
+        'model': 'c_bu',
+        'key': 'row_id',
+      }
+    },
+    created: {
+      allowNull: false,
+      type: DataTypes.DATE
     },
     ATTRIB_01: {
       type: DataTypes.STRING(200),
@@ -64,8 +67,8 @@ module.exports = (sequelize, DataTypes) => {
     updatedAt: false,
     createdAt: 'created',
   });
-  BusinessUnit.associate = function(models) {
-    BusinessUnit.belongsTo(BusinessUnit, {as: 'parent', foreignKey: 'par_row_id'})
+  Responsibility.associate = function(models) {
+    Responsibility.belongsTo( models.C_BU, { as: 'organization', foreignKey: 'bu_id' })
   };
-  return BusinessUnit;
+  return Responsibility;
 };

@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import PropTypes, { bool } from 'prop-types';
 import classNames from 'classnames';
 import { withStyles, withTheme } from '@material-ui/core/styles';
 import axios from 'axios';
@@ -40,6 +40,14 @@ let constraints = {
     }
 };
 
+let dropdowns = [
+    {name:'dropdown_1', value: 'organization'},
+    {name:'dropdown_2', value: 'division'},
+    {name:'dropdown_3', value:'position'},
+    {name:'dropdown_4', value:'responsibility'},
+    {name:'dropdown_5', value:'reportsTo'},
+]
+
 class CreateAccount extends React.Component {
     constructor(props) {
         super(props);
@@ -48,8 +56,13 @@ class CreateAccount extends React.Component {
                 email:'',
                 password: '',
                 firstName: '',
-                lastName: '',          
-                isAdmin: false,
+                lastName: '',
+                empNum:'',
+                organization: null,
+                division: null,
+                position: null,
+                responsibility: null,
+                reportsTo: null,
             },
             confirmPassword: '',
             errors: {
@@ -59,6 +72,158 @@ class CreateAccount extends React.Component {
 
             },
             showPassword: false,
+
+
+            dropdown_1: {
+                disabled:true,
+                value: null,
+                data: [],
+            },
+            dropdown_2: {
+                disabled:true,
+                value: null,
+                data: [],
+            },
+            dropdown_3: {
+                disabled:true,
+                value: null,
+                data: [],
+            },
+            dropdown_4: {
+                disabled:true,
+                value: null,
+                data: [],
+            },
+            dropdown_5: {
+                disabled:true,
+                value: null,
+                data: [],
+            },
+        }
+    }
+
+    async componentDidMount(){
+        let response
+        
+        try{
+            response = await axios({
+                method: 'get',
+                url: '/admin/org-struct/organization',
+            })
+            console.log("RESPONSE: ", response.data)
+            this.handleGetResponse(response, 'dropdown_0')
+        }
+        catch(err){
+            this.handleGetResponse(err.response, 'dropdown_0')
+        }
+    }
+
+    handleGetResponse = (res, field) => {
+        let data = res.data.result;
+        let target = this.getNextDropdown(field)
+
+        if (res.data.status >= 400) {
+            this.setState(prevState => ({
+                isFetching: false,
+                success: false,
+            }))
+        }
+
+        else if (res.data.status >= 200 && res.data.status < 300) {
+            this.setState(prevState => ({
+                [target]: {
+                    ...prevState[target],
+                    data,
+                    disabled: false,
+                },
+                isFetching: false,
+                success: true,
+            }), this.log)
+        }
+    }
+    log(){
+        console.log(this.state)
+    }
+
+    getNextDropdown = (prevDD) => {
+        let array = prevDD.split('_')
+        let DDNo = parseInt(array[1])
+        DDNo = DDNo + 1
+        array[1] = DDNo
+        let temp = array.join("_")
+        return temp
+    }
+
+    handleSelectChange = (event) => {
+        let name = event.target.id
+        let value = event.target.value
+        let endpoint = event.target.name
+        console.log("SELECT: ", name)
+        let response
+
+        this.setState(prevState => ({
+            [name] : {
+                ...prevState[name],
+                value,
+            }
+        }), () => {console.log("STATE: ",this.state);this.OrgRequest(endpoint, name)})
+    }
+
+    OrgRequest = async(endpoint, name) => {
+
+        if(this.state[name].value === null || this.state[name].value === ""){
+            console.log('NNUUUULLLLLL')
+            if(name === 'dropdown_1'){
+                this.setState(prevState => ({
+                    dropdown_2: {
+                        disabled : true,
+                        value : null,
+                        data : []
+                    },
+                    dropdown_3: {
+                        disabled : true,
+                        value : null,
+                        data : []
+                    },
+                    dropdown_4: {
+                        disabled : true,
+                        value : null,
+                        data : []
+                    },
+                    dropdown_5: {
+                        disabled : true,
+                        value : null,
+                        data : []
+                    },
+                }))
+            }
+            else if(name === 'dropdown_2'){
+                this.setState(prevState => ({
+                    dropdown_3: {
+                        disabled : true,
+                        value : null,
+                        data : []
+                    }
+                }))
+            }
+            return
+        }
+
+        let response        
+        try{
+            response = await axios({
+                method: 'get',
+                url: `${endpoint}`,
+                params: {
+                    bu_id: this.state.dropdown_1.value && this.state.dropdown_1.value,
+                    div_id: this.state.dropdown_2.value && this.state.dropdown_2.value,
+                }
+            })
+            console.log("RESPONSE: ", response.data)
+            this.handleGetResponse(response, name)
+        }
+        catch(err){
+            this.handleGetResponse(err.response, name)
         }
     }
 
@@ -141,8 +306,18 @@ class CreateAccount extends React.Component {
     }
 
     submitForm = async() => {
-        let employee = this.state.employee
         let response;
+
+        dropdowns.map(dropdown => {
+            this.setState(prevState => ({
+                employee: {
+                    ...prevState.employee,
+                    [dropdown.value]: this.state[dropdown.name].value,
+                }
+            }), ()=>console.log('SUBMIT STATE: ', this.state.employee))
+        })
+
+        let employee = this.state.employee
 
         if (this.allValid()) {
             try{
@@ -311,7 +486,7 @@ class CreateAccount extends React.Component {
                         }
                         label="Make the Employee Admin?"
                     /> */}
-                    <FormControl component="fieldset" className={classes.radioGroup}>
+                    {/* <FormControl component="fieldset" className={classes.radioGroup}>
                         <FormLabel component="legend" className={classes.legend}>Access Rights</FormLabel>
                         <RadioGroup
                             aria-label="Access Rights"
@@ -325,12 +500,224 @@ class CreateAccount extends React.Component {
                             <FormControlLabel value="manager" control={<Radio />} label="Manager" />
                             <FormControlLabel value="admin" control={<Radio />} label="Admin" />
                         </RadioGroup>
-                    </FormControl>
-
-                    <Button onClick={this.submitForm} variant="contained" color="primary" className={classNames(classes.button, classes.textField)}>
-                        Register
-                    </Button>
+                    </FormControl> */}
                 </div>
+                <div className={classes.formSection} style={{border: '1px dotted black', padding: '20px',}}>
+                    <TextField
+                        id="empNum"
+                        label="Employee ID"
+                        classes={{
+                            root: classes.inputRoot,
+                        }}
+                        className={classNames(classes.textField, classes.dense, classes.singleSpanInput)}
+                        margin="dense"
+                        variant="filled"
+                        value={this.state.employee.empNum}
+                        onChange={this.handleTextChange}
+                        InputProps={{
+                            className: classes.input,
+                        }}
+                        InputLabelProps={{
+                            className: classes.inputLabel,
+                        }}
+                        InputLabelProps={{
+                            className: classes.inputLabel,
+                        }}
+                    />
+                    <TextField
+                        id="dropdown_1"
+                        name="/admin/org-struct/division"
+                        select
+                        label={`Organization`}
+                        disabled={this.state.dropdown_1.disabled}
+                        className={classNames(classes.textField, classes.dense)}
+                        value={this.state.dropdown_1.value}
+                        onChange={this.handleSelectChange}
+                        SelectProps={{
+                            native: true,
+                            MenuProps: {
+                                className: classes.menu,
+                            },
+                        }}
+                        // helperText="Please select your currency"
+                        margin="dense"
+                        variant="filled"
+                        classes={{
+                            root: classes.inputRoot,
+                        }}
+                        InputProps={{
+                            className: classes.input,
+                        }}
+                        InputLabelProps={{
+                            className: classes.inputLabel,
+                            shrink: true,
+                        }}
+                    >
+                        <option value={null}>
+                            {''}
+                        </option>
+                        {this.state.dropdown_1.data.map(option => (
+                            <option key={option.row_id} value={option.row_id}>
+                                {option.name}
+                            </option>
+                        ))}
+                    </TextField>
+                    <TextField
+                        id="dropdown_2"
+                        name="/admin/org-struct/position"
+                        select
+                        label={`Division`}
+                        disabled={this.state.dropdown_2.disabled}
+                        className={classNames(classes.textField, classes.dense)}
+                        value={this.state.dropdown_2.value}
+                        onChange={this.handleSelectChange}
+                        SelectProps={{
+                            native: true,
+                            MenuProps: {
+                                className: classes.menu,
+                            },
+                        }}
+                        // helperText="Please select your currency"
+                        margin="dense"
+                        variant="filled"
+                        classes={{
+                            root: classes.inputRoot,
+                        }}
+                        InputProps={{
+                            className: classes.input,
+                        }}
+                        InputLabelProps={{
+                            className: classes.inputLabel,
+                            shrink: true,
+                        }}
+                    >
+                        <option value={null}>
+                            {''}
+                        </option>
+                        {this.state.dropdown_2.data.map(option => (
+                            <option key={option.row_id} value={option.row_id}>
+                                {option.name}
+                            </option>
+                        ))}
+                    </TextField>
+                    <TextField
+                        id="dropdown_3"
+                        name="/admin/org-struct/responsibility"
+                        select
+                        label={`Position`}
+                        disabled={this.state.dropdown_3.disabled}
+                        className={classNames(classes.textField, classes.dense)}
+                        value={this.state.dropdown_3.value}
+                        onChange={this.handleSelectChange}
+                        SelectProps={{
+                            native: true,
+                            MenuProps: {
+                                className: classes.menu,
+                            },
+                        }}
+                        // helperText="Please select your currency"
+                        margin="dense"
+                        variant="filled"
+                        classes={{
+                            root: classes.inputRoot,
+                        }}
+                        InputProps={{
+                            className: classes.input,
+                        }}
+                        InputLabelProps={{
+                            className: classes.inputLabel,
+                            shrink: true,
+                        }}
+                    >
+                        <option value={null}>
+                            {''}
+                        </option>
+                        {this.state.dropdown_3.data.map(option => (
+                            <option key={option.row_id} value={option.row_id}>
+                                {option.name}
+                            </option>
+                        ))}
+                    </TextField>
+                    <TextField
+                        id="dropdown_4"
+                        name="/employee/employee"
+                        select
+                        label={`Responsibility`}
+                        disabled={this.state.dropdown_4.disabled}
+                        className={classNames(classes.textField, classes.dense)}
+                        value={this.state.dropdown_4.value}
+                        onChange={this.handleSelectChange}
+                        SelectProps={{
+                            native: true,
+                            MenuProps: {
+                                className: classes.menu,
+                            },
+                        }}
+                        // helperText="Please select your currency"
+                        margin="dense"
+                        variant="filled"
+                        classes={{
+                            root: classes.inputRoot,
+                        }}
+                        InputProps={{
+                            className: classes.input,
+                        }}
+                        InputLabelProps={{
+                            className: classes.inputLabel,
+                            shrink: true,
+                        }}
+                    >
+                        <option value={null}>
+                            {''}
+                        </option>
+                        {this.state.dropdown_4.data.map(option => (
+                            <option key={option.row_id} value={option.row_id}>
+                                {option.name}
+                            </option>
+                        ))}
+                    </TextField>
+                    <TextField
+                        id="dropdown_5"
+                        name=""
+                        select
+                        label={`Reports To`}
+                        disabled={this.state.dropdown_5.disabled}
+                        className={classNames(classes.textField, classes.dense)}
+                        value={this.state.dropdown_5.value}
+                        onChange={this.handleSelectChange}
+                        SelectProps={{
+                            native: true,
+                            MenuProps: {
+                                className: classes.menu,
+                            },
+                        }}
+                        // helperText="Please select your currency"
+                        margin="dense"
+                        variant="filled"
+                        classes={{
+                            root: classes.inputRoot,
+                        }}
+                        InputProps={{
+                            className: classes.input,
+                        }}
+                        InputLabelProps={{
+                            className: classes.inputLabel,
+                            shrink: true,
+                        }}
+                    >
+                        <option value={null}>
+                            {''}
+                        </option>
+                        {this.state.dropdown_5.data.map(option => (
+                            <option key={option.row_id} value={option.row_id}>
+                                {`${option.fst_name} ${option.last_name}`}
+                            </option>
+                        ))}
+                    </TextField>
+                </div>
+                <Button onClick={this.submitForm} variant="contained" color="primary" className={classNames(classes.button, classes.textField)}>
+                    Register
+                </Button>
             </Container>
         )
     }

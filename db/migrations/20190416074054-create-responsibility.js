@@ -1,12 +1,12 @@
 'use strict';
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('C_BU', {
+    return queryInterface.createTable('C_RESP', {
       row_id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER(10)
+        type: Sequelize.INTEGER(11)
       },
       name: {
         type: Sequelize.STRING(50),
@@ -15,18 +15,20 @@ module.exports = {
       },
       desc: {
         type: Sequelize.STRING(100),
-        defaultValue: null,
+        allowNull: true,
       },
-      PAR_ROW_ID: {
+      bu_id: {
         type: Sequelize.INTEGER(11),
+        allowNull: false,
+        defaultValue: 0,
         references: {
           'model': 'c_bu',
           'key': 'row_id',
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'SET NULL',
-        allowNull: true,
-        defaultValue: null,
+        }
+      },
+      created: {
+        allowNull: false,
+        type: Sequelize.DATE
       },
       ATTRIB_01: {
         type: Sequelize.STRING(200),
@@ -58,13 +60,9 @@ module.exports = {
       FLG_03: {
         type: Sequelize.CHAR,
       },
-      created: {
-        allowNull: false,
-        type: Sequelize.DATE
-      },
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('C_BU');
+    return queryInterface.dropTable('C_RESP');
   }
 };

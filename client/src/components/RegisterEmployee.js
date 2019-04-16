@@ -44,7 +44,7 @@ const styles1 = theme => ({
     },
 })
 
-class RegisterOrganization extends React.Component {
+class RegisterEmployee extends React.Component {
     state = {
         activeStep: 0,
         organization: null,
@@ -83,7 +83,7 @@ class RegisterOrganization extends React.Component {
           case 0:
             return (
                 <EnhancedTable
-                    title='organization'
+                    title='user'
                     endpoint='/admin/org-struct/organization'
                     headers={[
                         {title:'Name', value:'name',},
@@ -218,7 +218,7 @@ class RegisterOrganization extends React.Component {
     }
 }
 
-export default withStyles(styles1)(RegisterOrganization);
+export default withStyles(styles1)(RegisterEmployee);
 
 const styles = theme => ({
     root: {
@@ -260,12 +260,28 @@ class SimpleTable extends React.Component {
             organization: null,
             division: null,
         },
+        dropdown1: {
+            value: null,
+            data: [],
+        },
+        dropdown2: {
+            value: null,
+            data: [],
+        },
+        dropdown3: {
+            value: null,
+            data: [],
+        },
         data: [],
         isFetching: false,
         success: null,
     }
 
     async componentDidMount(){
+        this.getRequest()
+    }
+
+    getRequest = () => {
         let response
 
         try{
@@ -297,7 +313,10 @@ class SimpleTable extends React.Component {
 
         else if (res.data.status >= 200 && res.data.status < 300) {
             this.setState(prevState => ({
-                data: res.data.result,
+                dropdown1: {
+                    ...prevState.dropdown1,
+                    data: res.data.result,
+                },
                 isFetching: false,
                 success: true,
             }))

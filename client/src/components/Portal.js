@@ -62,7 +62,7 @@ class Portal extends React.Component {
           <Switch>
             <Route path={`${match.path}dashboard`} component={Dashboard} />
             <Route path={`${match.path}register-user`} component={RegisterEmployeeForm} />
-            <Route path={`${match.path}register-organization`} component={RegisterOrganization} />
+            <Route path={`${match.path}organization-structure`} component={RegisterOrganization} />
             <Route path={`${match.path}leaves`} component={LeaveTabs} />
             <Route path={`${match.path}manage-leaves`} component={AdminLeaves} />
             <Route path={`${match.path}apply-leave`} component={LeaveForm} />

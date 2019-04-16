@@ -2,7 +2,9 @@ const passport = require('passport'),
     localStrategy = require('passport-local').Strategy,
     JWTStrategy = require('passport-jwt').Strategy,
     ExtractJWT = require('passport-jwt').ExtractJwt,
+    Sequelize = require('sequelize'),
     models = require('../db/models'),
+    Employee = models.C_EMP,
     User = models.C_USER,
     bcrypt = require('bcryptjs'),
     debug = require('debug')('passport'),
@@ -36,17 +38,29 @@ passport.use(
                         let user = req.body
                         bcrypt.hash(password, BCRYPT_SALT_ROUNDS).then(hashedPassword => {
                             console.log(username, hashedPassword)
-                            User.create({
-                                login: username,
-                                hash_pwd: hashedPassword,
-                                emp_id: 1,
-                                resp_id: 1,
+                            console.log(user)
+                            Employee.create({
+                                emp_num: user.empNum,
                                 fst_name: user.firstName,
                                 last_name: user.lastName,
-                            }).then(user => {
-                                debug("User Created");
-                                return done(null, user)
-                            })
+                                bu_id: user.organization,
+                                div_id: user.division,
+                                postn_held_id: user.position,
+                                resp_id: user.responsibility,
+                                report_to_id: user.reportsTo,
+                            }).then(emp => {
+                                User.create({
+                                    login: username,
+                                    hash_pwd: hashedPassword,
+                                    emp_id: emp.row_id,
+                                    resp_id: user.responsibility,
+                                    fst_name: user.firstName,
+                                    last_name: user.lastName,
+                                }).then(user => {
+                                    debug("User Created");
+                                    return done(null, user)
+                                })
+                            })   
                         })
                     }
                 })
