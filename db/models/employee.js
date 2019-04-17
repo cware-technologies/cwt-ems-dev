@@ -80,96 +80,96 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       type: DataTypes.DATE
     },
-    // ATTRIB_01: {
-    //   type: DataTypes.STRING(200),
-    // },
-    // ATTRIB_02: {
-    //   type: DataTypes.STRING(200),
-    // },
-    // ATTRIB_03: {
-    //   type: DataTypes.STRING(200),
-    // },
-    // ATTRIB_04: {
-    //   type: DataTypes.STRING(200),
-    // },
-    // ATTRIB_05: {
-    //   type: DataTypes.STRING(200),
-    // },
-    // ATTRIB_06: {
-    //   type: DataTypes.STRING(100),
-    // },
-    // ATTRIB_07: {
-    //   type: DataTypes.STRING(50),
-    // },
-    // ATTRIB_08: {
-    //   type: DataTypes.STRING(50),
-    // },
-    // ATTRIB_09: {
-    //   type: DataTypes.STRING(50),
-    // },
-    // ATTRIB_10: {
-    //   type: DataTypes.STRING(50),
-    // },
-    // ATTRIB_11: {
-    //   type: DataTypes.INTEGER(11),
-    // },
-    // ATTRIB_12: {
-    //   type: DataTypes.INTEGER(11),
-    // },
-    // ATTRIB_13: {
-    //   type: DataTypes.INTEGER(11),
-    // },
-    // ATTRIB_14: {
-    //   type: DataTypes.INTEGER(11),
-    // },
-    // ATTRIB_15: {
-    //   type: DataTypes.INTEGER(11),
-    // },
-    // ATTRIB_16: {
-    //   type: DataTypes.INTEGER(11),
-    // },
-    // ATTRIB_17: {
-    //   type: DataTypes.INTEGER(11),
-    // },
-    // ATTRIB_18: {
-    //   type: DataTypes.DATE,
-    // },
-    // ATTRIB_19: {
-    //   type: DataTypes.DATE,
-    // },
-    // ATTRIB_20: {
-    //   type: DataTypes.DATE,
-    // },
-    // FLG_01: {
-    //   type: DataTypes.CHAR,
-    // },
-    // FLG_02: {
-    //   type: DataTypes.CHAR,
-    // },
-    // FLG_03: {
-    //   type: DataTypes.CHAR,
-    // },
-    // FLG_04: {
-    //   type: DataTypes.CHAR,
-    // },
-    // FLG_05: {
-    //   type: DataTypes.CHAR,
-    // },
-    // FLG_06: {
-    //   type: DataTypes.CHAR,
-    // },
-    // FLG_07: {
-    //   type: DataTypes.CHAR,
-    // },
-    // FLG_08: {
-    //   type: DataTypes.CHAR,
-    // },
-    // FLG_09: {
-    //   type: DataTypes.CHAR,
-    // },
-    // FLG_10: {
-    //   type: DataTypes.CHAR,
-    // },
+    ATTRIB_01: {
+      type: DataTypes.STRING(200),
+    },
+    ATTRIB_02: {
+      type: DataTypes.STRING(200),
+    },
+    ATTRIB_03: {
+      type: DataTypes.STRING(200),
+    },
+    ATTRIB_04: {
+      type: DataTypes.STRING(200),
+    },
+    ATTRIB_05: {
+      type: DataTypes.STRING(200),
+    },
+    ATTRIB_06: {
+      type: DataTypes.STRING(100),
+    },
+    ATTRIB_07: {
+      type: DataTypes.STRING(50),
+    },
+    ATTRIB_08: {
+      type: DataTypes.STRING(50),
+    },
+    ATTRIB_09: {
+      type: DataTypes.STRING(50),
+    },
+    ATTRIB_10: {
+      type: DataTypes.STRING(50),
+    },
+    ATTRIB_11: {
+      type: DataTypes.INTEGER(11),
+    },
+    ATTRIB_12: {
+      type: DataTypes.INTEGER(11),
+    },
+    ATTRIB_13: {
+      type: DataTypes.INTEGER(11),
+    },
+    ATTRIB_14: {
+      type: DataTypes.INTEGER(11),
+    },
+    ATTRIB_15: {
+      type: DataTypes.INTEGER(11),
+    },
+    ATTRIB_16: {
+      type: DataTypes.INTEGER(11),
+    },
+    ATTRIB_17: {
+      type: DataTypes.INTEGER(11),
+    },
+    ATTRIB_18: {
+      type: DataTypes.DATE,
+    },
+    ATTRIB_19: {
+      type: DataTypes.DATE,
+    },
+    ATTRIB_20: {
+      type: DataTypes.DATE,
+    },
+    FLG_01: {
+      type: DataTypes.CHAR,
+    },
+    FLG_02: {
+      type: DataTypes.CHAR,
+    },
+    FLG_03: {
+      type: DataTypes.CHAR,
+    },
+    FLG_04: {
+      type: DataTypes.CHAR,
+    },
+    FLG_05: {
+      type: DataTypes.CHAR,
+    },
+    FLG_06: {
+      type: DataTypes.CHAR,
+    },
+    FLG_07: {
+      type: DataTypes.CHAR,
+    },
+    FLG_08: {
+      type: DataTypes.CHAR,
+    },
+    FLG_09: {
+      type: DataTypes.CHAR,
+    },
+    FLG_10: {
+      type: DataTypes.CHAR,
+    },
   },
   {
     timestamp: true,

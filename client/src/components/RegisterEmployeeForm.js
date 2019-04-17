@@ -305,19 +305,24 @@ class CreateAccount extends React.Component {
         }
     }
 
+    setStateBeforeSubmit = async() => {
+        return new Promise((reject, resolve) => {
+            dropdowns.map(dropdown => {
+                this.setState(prevState => ({
+                    employee: {
+                        ...prevState.employee,
+                        [dropdown.value]: this.state[dropdown.name].value,
+                    }
+                }), () => resolve())
+            })
+        })   
+    }
+
     submitForm = async() => {
         let response;
-
-        dropdowns.map(dropdown => {
-            this.setState(prevState => ({
-                employee: {
-                    ...prevState.employee,
-                    [dropdown.value]: this.state[dropdown.name].value,
-                }
-            }), ()=>console.log('SUBMIT STATE: ', this.state.employee))
-        })
-
         let employee = this.state.employee
+
+        await this.setStateBeforeSubmit()
 
         if (this.allValid()) {
             try{
