@@ -2,8 +2,8 @@ import React, { Suspense, lazy } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
-import { Route, Switch } from 'react-router-dom';
-const AppBar = lazy(() => import( './AppBar'));
+import { Route, Switch, Redirect } from 'react-router-dom';
+const AppBar = lazy(() => import('./AppBar'));
 const Drawer = lazy(() => import('./Drawer'));
 const Dashboard = lazy(() => import('./Dashboard'));
 const RegisterEmployeeForm = lazy(() => import('./RegisterEmployeeForm'));
@@ -20,6 +20,12 @@ const Attendance = lazy(() => import('./Attendance'));
 const Notifications = lazy(() => import('./Notifications'));
 const PasswordReset = lazy(() => import('./PasswordReset'));
 const RegisterOrganization = lazy(() => import('./RegisterOrganization'));
+const AddResponsibility = lazy(() => import('./AddResponsibility'))
+const HRDocsUpload = lazy(() => import('./HRDocsUpload'))
+const InductionChecklist = lazy(() => import('./InductionChecklist'));
+const EmployeeInductionExit = lazy(() => import('./EmployeeInductionExit'));
+const EntitlementsManager = lazy(() => import('./EntitlementsManager'));
+const AttachEntitlement = lazy(() => import('./AttachEntitlement'));
 
 const styles = theme => ({
   root: {
@@ -75,6 +81,13 @@ class Portal extends React.Component {
             <Route path={`${match.path}attendance`} component={Attendance} />
             <Route path={`${match.path}notifications`} component={Notifications} />
             <Route path={`${match.path}password-reset`} component={PasswordReset} />
+            <Route path={`${match.path}access-rights`} component={AddResponsibility} />
+            <Route path={`${match.path}hr-documents`} component={HRDocsUpload} />
+            <Route path={`${match.path}induction-list-admin`} component={InductionChecklist} />
+            <Route path={`${match.path}employee-induction-exit`} component={EmployeeInductionExit} />
+            <Route path={`${match.path}entitlements-manager`} component={EntitlementsManager} />
+            <Route path={`${match.path}attach-entitlements`} component={AttachEntitlement} />
+            <Redirect from='/' to='/portal/' />
           </Switch>
         </Suspense>
       </div>

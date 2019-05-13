@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
+import { connect } from 'react-redux'
+import { authActions } from '../actions';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import FormControl from '@material-ui/core/FormControl';
@@ -85,16 +87,18 @@ class SignIn extends React.Component {
     event.preventDefault()
     let user = this.state.user
 
-    let res = axios({
-      method: 'post',
-      url: '/auth/signin',
-      data: user,
-      headers: {
-        'content-type': 'application/json'
-      }
-    })
-    .then(this.handleResponse)
-    .catch(err => this.handleResponse(err.response))
+    this.props.login(user.email, user.password);
+
+    // let res = axios({
+    //   method: 'post',
+    //   url: '/auth/signin',
+    //   data: user,
+    //   headers: {
+    //     'content-type': 'application/json'
+    //   }
+    // })
+    // .then(this.handleResponse)
+    // .catch(err => this.handleResponse(err.response))
   }
 
   handleResponse = (res) => {
@@ -178,4 +182,9 @@ SignIn.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(SignIn);
+const mapStateToProps = () => {
+  return {}
+}
+
+SignIn = withStyles(styles)(SignIn);
+export default connect(mapStateToProps, { ...authActions })(SignIn)

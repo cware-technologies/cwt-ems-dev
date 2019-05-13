@@ -8,7 +8,7 @@ export const formStyle = theme => ({
         gridAutoFlow: 'row',
         columnGap: '10px',
         rowGap: '10px',
-        marginBottom: '50px',
+        marginTop: '50px',
         [theme.breakpoints.down('sm')]: {
             gridTemplateColumns: '1fr',
         },

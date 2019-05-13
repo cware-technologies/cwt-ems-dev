@@ -229,6 +229,9 @@ const styles = theme => ({
     table: {
         minWidth: 700,
     },
+    tableBodyRoot: {
+        height: 200,
+    },
     heading: {
         fontSize: theme.typography.pxToRem(15),
         fontWeight: theme.typography.fontWeightRegular,
@@ -409,7 +412,7 @@ class SimpleTable extends React.Component {
                             )}
                         </TableRow>
                     </TableHead>
-                    <TableBody>
+                    <TableBody classes={{root: classes.tableBodyRoot}}>
                         {data.map(row => {
                             const isSelected = this.isSelected(row.row_id);
                             // this.getParents()             

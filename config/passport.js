@@ -54,6 +54,7 @@ passport.use(
                                     hash_pwd: hashedPassword,
                                     emp_id: emp.row_id,
                                     resp_id: user.responsibility,
+                                    bu_id: user.organization,
                                     fst_name: user.firstName,
                                     last_name: user.lastName,
                                 }).then(user => {
@@ -104,6 +105,8 @@ passport.use(
                             req.jwtPayload = {
                                 id: user.row_id,
                                 username: user.login,
+                                responsibility: user.resp_id,
+                                organization: user.bu_id,
                             }
 
                             return done(null, user);

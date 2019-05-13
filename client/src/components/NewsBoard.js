@@ -157,15 +157,17 @@ class NewsBoard extends React.Component {
                     <Typography variant="h6" gutterBottom component="h2" className={classes.heading}>
                         News And Updates
                     </Typography>
-                    <NewsCard
-                        _className={classes.billboard}
-                        title={news[newsNo].ATTRIB_10}
-                        date={news[newsNo].created}
-                        img={news[newsNo].IMG_PTH}
-                        data={this.getDetails(newsNo)}
-                        current={true}
-                        big={true}
-                    />
+                    {news.length > 0 && 
+                        <NewsCard
+                            _className={classes.billboard}
+                            title={news[newsNo].ATTRIB_10}
+                            date={news[newsNo].created}
+                            img={news[newsNo].IMG_PTH}
+                            data={this.getDetails(newsNo)}
+                            current={true}
+                            big={true}
+                        />
+                    }
                     {news.slice(0, 3).map((item, index) => {
                         return <NewsCard
                             key={item.row_id}

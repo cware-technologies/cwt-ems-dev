@@ -155,9 +155,14 @@ function SimpleCard(props) {
             </CardContent>
             <CardActions className={classes.cardActions}>
                 <ModalTrigger
-                    data={props.data}
                     title='Read More'
-                />
+                >
+                    <React.Fragment>
+                        <Typography variant='title' align='center' color='textSecondary'>{props.data.ATTRIB_10}</Typography>
+                        <Typography variant='body1' align='center' color='textPrimary'>{props.data.ATTRIB_01}</Typography>
+                        <Typography variant="overline" component="p" align="right" color="textSecondary">{getDate(props.data.created).toDateString()}</Typography>
+                    </React.Fragment>
+                </ModalTrigger>
                 <Typography variant="overline" component="p" align="right" color="textSecondary" className={classes.newsDate}>
                     {getDate(props.date).toDateString()}
                 </Typography>

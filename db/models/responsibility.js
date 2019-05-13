@@ -10,7 +10,6 @@ module.exports = (sequelize, DataTypes) => {
     name: {
       type: DataTypes.STRING(50),
       allowNull: false,
-      unique: true,
     },
     desc: {
       type: DataTypes.STRING(100),
@@ -18,7 +17,6 @@ module.exports = (sequelize, DataTypes) => {
     },
     bu_id: {
       type: DataTypes.INTEGER(11),
-      unique: true,
       allowNull: false,
       defaultValue: 0,
       references: {
@@ -69,6 +67,7 @@ module.exports = (sequelize, DataTypes) => {
   });
   Responsibility.associate = function(models) {
     Responsibility.belongsTo( models.C_BU, { as: 'organization', foreignKey: 'bu_id' })
+    Responsibility.belongsToMany( models.C_VIEW, { as: 'view', through: models.C_RESP_VIEW, foreignKey: 'resp_id' } )
   };
   return Responsibility;
 };

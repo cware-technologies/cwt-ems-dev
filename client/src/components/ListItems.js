@@ -1,7 +1,10 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles'
 import PropTypes from 'prop-types';
+import compose from 'recompose/compose'
+import { connect } from 'react-redux'
 import { Link, withRouter } from 'react-router-dom';
+import { getViews } from '../reducers/authReducer'
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import Divider from '@material-ui/core/Divider';
@@ -31,6 +34,7 @@ import ITTicketIcon from '@material-ui/icons/ConfirmationNumber';
 import DocumentIcon from '@material-ui/icons/Description';
 import CertificateIcon from '@material-ui/icons/Book';
 import ProfileIcon from '@material-ui/icons/Face';
+import ResponsibilityIcon from '@material-ui/icons/VerifiedUser';
 
 const styles = theme => ({
   '@global': {
@@ -75,7 +79,7 @@ const styles = theme => ({
 });
 
 class MainList extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props);
 
     this.state = {
@@ -85,7 +89,7 @@ class MainList extends React.Component {
       openManager: false,
       openLeave: false,
     };
-  
+
   }
 
   handleClick = (e) => {
@@ -95,10 +99,24 @@ class MainList extends React.Component {
 
   render() {
     let { classes, match } = this.props;
-
+    console.log(this.props.views)
     return (
       <React.Fragment>
-        <Link to={`${match.url}dashboard`} style={{ textDecoration: 'none' }}>
+        {
+          this.props.views.map(view => {
+            return(
+              <Link to={`${match.url}${view.ATTRIB_01}`} style={{ textDecoration: 'none' }}>
+                <ListItem button>
+                  <ListItemIcon>
+                    {/* <DashboardIcon /> */}
+                  </ListItemIcon>
+                  <ListItemText classes={{ root: classes.listItemText }} primary={view.name} />
+                </ListItem>
+              </Link>
+            )
+          })
+        }
+        {/* <Link to={`${match.url}dashboard`} style={{ textDecoration: 'none' }}>
           <ListItem button>
             <ListItemIcon>
               <DashboardIcon />
@@ -253,7 +271,7 @@ class MainList extends React.Component {
               </ListItem>
             </Link>
           </List>
-        </Collapse>
+        </Collapse> */}
       </React.Fragment>
     );
   }
@@ -264,26 +282,26 @@ MainList.propTypes = {
 };
 
 class AdminList extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props);
 
     this.state = {
       openManager: false,
     };
-  
+
   }
 
   handleClick = (e) => {
     let target = e.currentTarget.id;
-    this.setState(state => ({ [target]: !state[target] }),()=>console.log(this.state));
+    this.setState(state => ({ [target]: !state[target] }), () => console.log(this.state));
   };
 
-  render(){
+  render() {
     let { classes, match } = this.props;
 
     return (
       <React.Fragment>
-        <Divider classes={{ root: classes.divider }} />
+        {/* <Divider classes={{ root: classes.divider }} />
           <ListSubheader component='div' classes={{ root: classes.listSubheader }}>
             <ListItem>
               <ListItemIcon>
@@ -325,6 +343,14 @@ class AdminList extends React.Component {
                     <ListItemText inset primary="Add Employee" />
                   </ListItem>
                 </Link>
+                <Link to={`${match.url}access-rights`} style={{ textDecoration: 'none' }}>
+                  <ListItem button className={classes.nested}>
+                    <ListItemIcon>
+                      <ResponsibilityIcon />
+                    </ListItemIcon>
+                    <ListItemText inset primary="Manage Responsibilities" />
+                  </ListItem>
+                </Link>
                 <Link to={`${match.url}manage-leaves`} style={{ textDecoration: 'none' }}>
                   <ListItem button className={classes.nested}>
                     <ListItemIcon>
@@ -336,11 +362,22 @@ class AdminList extends React.Component {
                   </ListItem>
                 </Link>
               </List>
-            </Collapse>
+            </Collapse> */}
       </React.Fragment>
     );
   }
 }
 
-export const MainListItems = withRouter(withStyles(styles)(MainList));
+const mapStateToProps = (state) => {
+  return {
+    views: getViews(state),
+  }
+}
+
+export const MainListItems = compose(
+  withStyles(styles),
+  connect(mapStateToProps, {})
+)(withRouter(MainList))
+
+
 export const AdminListItems = withRouter(withStyles(styles)(AdminList));

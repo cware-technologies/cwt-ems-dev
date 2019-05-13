@@ -11,7 +11,7 @@ const styles = theme => ({
   content: {
     flexGrow: 1,
     padding: theme.spacing.unit * 3,
-    paddingTop: theme.spacing.unit * 8,
+    paddingTop: theme.spacing.unit * 12,
     margin: '0px 5%',
     display: 'flex',
     flexDirection: 'column',

@@ -21,6 +21,12 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING(30),
       allowNull: true,
     },
+    full_name: {
+      type: DataTypes.VIRTUAL,
+      get () {
+        return this.getDataValue('fst_name') + ' ' + this.getDataValue('last_name')
+      }
+    },
     bu_id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,

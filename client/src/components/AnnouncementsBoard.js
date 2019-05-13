@@ -12,6 +12,7 @@ import Container from './MainContainer'
 import LoadingSpinner from './LoadingSpinner'
 import LoadingError from './LoadError'
 import ModalTrigger from './ModalTrigger'
+import { getDate } from '../helpers/utils'
 
 const styles = theme => ({
     halfNotice: {
@@ -161,7 +162,15 @@ class Announcements extends React.Component {
                     </Typography>
                     <div className={classes.content}>
                         <div className={classes.bubbles}>
-                            {news.map((item, index) => <ModalTrigger title={item.ATTRIB_10} data={this.getDetails(index)}/> )}
+                            {news.map((item, index) => 
+                                <ModalTrigger title={item.ATTRIB_10}>
+                                    <React.Fragment>
+                                        <Typography variant='title' align='center' color='textSecondary'>{item.ATTRIB_10}</Typography>
+                                        <Typography variant='body1' align='center' color='textPrimary'>{item.ATTRIB_01}</Typography>
+                                        <Typography variant="overline" component="p" align="right" color="textSecondary">{getDate(item.created).toDateString()}</Typography>
+                                    </React.Fragment>
+                                </ModalTrigger>
+                            )}
                         </div>
                         <div className={classes.actionBar}>
                             <Button>See All</Button>

@@ -21,7 +21,7 @@ const styles = theme => ({
     },
 })
 
-const Modal = ({ modalOpen, handleModalClose, data, classes }) => {
+const Modal = ({ modalOpen, handleModalClose, data, classes, children }) => {
 
     const getDate = (datetime) => {
         var t, result = null;
@@ -35,24 +35,6 @@ const Modal = ({ modalOpen, handleModalClose, data, classes }) => {
 
         return result
     }
-    
-    const parseData = () => {
-        let keys = Object.keys(data);
-        if(data.type === 'news' || data.type === 'announcements' || data.type === 'employee news'){
-            var i = keys.indexOf('ATTRIB_01');
-            keys[i] = 'body';
-            i = keys.indexOf('ATTRIB_10');
-            keys[i] = 'title';
-            let [type, ...others] = keys
-            return (
-                <React.Fragment>
-                    <Typography variant='title' align='center' color='textSecondary'>{data.ATTRIB_10}</Typography>
-                    <Typography variant='body1' align='center' color='textPrimary'>{data.ATTRIB_01}</Typography>
-                    <Typography variant="overline" component="p" align="right" color="textSecondary">{getDate(data.created).toDateString()}</Typography>
-                </React.Fragment>
-            )
-        }
-    }
 
     return (
         <MUIModal
@@ -62,9 +44,7 @@ const Modal = ({ modalOpen, handleModalClose, data, classes }) => {
             aria-describedby="simple-modal-description"
         >
             <div className={classNames(classes.modal, classes.paper)}>
-                {
-                    parseData()
-                }
+                { children }
             </div>
         </MUIModal>  
     )

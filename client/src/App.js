@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import { Provider } from 'react-redux'
+import { PersistGate } from 'redux-persist/integration/react'
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
 import './App.css';
 import SignIn from './components/SignIn';
 import Portal from './components/Portal';
-import blue from '@material-ui/core/colors/blue';
+import { store, persistor } from './helpers/reduxStore'
 import { addAuthHeaderAsBearerToken } from './helpers/axiosConfig';
 
 const theme = createMuiTheme(
@@ -67,19 +69,23 @@ addAuthHeaderAsBearerToken()
 class App extends Component {
 	render() {
 		let { match } = this.props
-
+		
 		return (
 			<MuiThemeProvider theme={theme}>
-				<Router>
-					<React.Fragment>
-						<CssBaseline />
-						<div className="App">
-							<Route path='/signin' component={SignIn} />
-							<Route strict path='/portal/' component={Portal} />
-							{/* <Redirect exact from='/' to='/portal/' /> */}
-						</div>
-					</React.Fragment>
-				</Router>
+				<Provider store={store}>
+					<PersistGate loading={null} persistor={persistor}>
+						<Router>
+							<React.Fragment>
+								<CssBaseline />
+								<div className="App">
+									<Route path='/signin' component={SignIn} />
+									<Route strict path='/portal/' component={Portal} />
+									{/* <Redirect exact from='/' to='/portal/' /> */}
+								</div>
+							</React.Fragment>
+						</Router>
+					</PersistGate>
+				</Provider>
 			</MuiThemeProvider>
 		);
 	}

@@ -1,3 +1,4 @@
 a {
-    background-color: rgba(0, 0, 0, alpha)
+    background-color: rgba(0, 0, 0, alpha);
+    flex-direction: row-reverse
 }

@@ -37,7 +37,34 @@ let constraints = {
     },
     confirmPassword: {
         equality: "password",
-    }
+    },
+    dropdown_1: {
+        presence: {
+            allowEmpty: false,
+            message: "Is Required"
+        },
+    },
+    dropdown_2: {
+        presence: {
+            allowEmpty: false,
+            message: "Is Required"
+        },
+    },
+    dropdown_3: {
+        presence: {
+            allowEmpty: false,
+            message: "Is Required"
+        },
+    },
+    dropdown_4: {
+        presence: {
+            allowEmpty: false,
+            message: "Is Required"
+        },
+    },
+    dropdown_5: {
+
+    },
 };
 
 let dropdowns = [
@@ -156,12 +183,20 @@ class CreateAccount extends React.Component {
 
     handleSelectChange = (event) => {
         let name = event.target.id
+        let state = dropdowns.find((dropdown) => {
+            if(dropdown.name === name)
+                return dropdown.value
+        }).value
         let value = event.target.value
         let endpoint = event.target.name
         console.log("SELECT: ", name)
         let response
 
         this.setState(prevState => ({
+            employee: {
+                ...prevState.employee,
+                [state]: value,
+            },
             [name] : {
                 ...prevState[name],
                 value,
@@ -266,8 +301,8 @@ class CreateAccount extends React.Component {
         let value = event.target.value;
         let val_errors;
         let confirmPasswordVal;
-
-        
+        console.log("Target: ", target)
+        console.log("Value: ", value)
         val_errors = validate.single(value, constraints[target]);
 
         if (this.state.employee.password !== this.state.confirmPassword)
@@ -305,24 +340,22 @@ class CreateAccount extends React.Component {
         }
     }
 
-    setStateBeforeSubmit = async() => {
-        return new Promise((reject, resolve) => {
-            dropdowns.map(dropdown => {
-                this.setState(prevState => ({
-                    employee: {
-                        ...prevState.employee,
-                        [dropdown.value]: this.state[dropdown.name].value,
-                    }
-                }), () => resolve())
-            })
-        })   
-    }
+    // setStateBeforeSubmit = () => {
+    //     return new Promise((reject, resolve) => {
+    //         dropdowns.map(dropdown => {
+    //             this.setState(prevState => ({
+    //                 employee: {
+    //                     ...prevState.employee,
+    //                     [dropdown.value]: this.state[dropdown.name].value,
+    //                 }
+    //             }), resolve)
+    //         })
+    //     })   
+    // }
 
     submitForm = async() => {
         let response;
         let employee = this.state.employee
-
-        await this.setStateBeforeSubmit()
 
         if (this.allValid()) {
             try{
@@ -534,10 +567,12 @@ class CreateAccount extends React.Component {
                         name="/admin/org-struct/division"
                         select
                         label={`Organization`}
+                        helperText={errors.dropdown_1 && <ul className={classes.errorList}> {errors.dropdown_1.map((error)=>{ return <li className={classes.errorListItem}>{error}</li>})}</ul>}
                         disabled={this.state.dropdown_1.disabled}
                         className={classNames(classes.textField, classes.dense)}
                         value={this.state.dropdown_1.value}
                         onChange={this.handleSelectChange}
+                        onBlur={this.validate}
                         SelectProps={{
                             native: true,
                             MenuProps: {
@@ -572,10 +607,12 @@ class CreateAccount extends React.Component {
                         name="/admin/org-struct/position"
                         select
                         label={`Division`}
+                        helperText={errors.dropdown_2 && <ul className={classes.errorList}> {errors.dropdown_2.map((error)=>{ return <li className={classes.errorListItem}>{error}</li>})}</ul>}
                         disabled={this.state.dropdown_2.disabled}
                         className={classNames(classes.textField, classes.dense)}
                         value={this.state.dropdown_2.value}
                         onChange={this.handleSelectChange}
+                        onBlur={this.validate}
                         SelectProps={{
                             native: true,
                             MenuProps: {
@@ -610,10 +647,12 @@ class CreateAccount extends React.Component {
                         name="/admin/org-struct/responsibility"
                         select
                         label={`Position`}
+                        helperText={errors.dropdown_3 && <ul className={classes.errorList}> {errors.dropdown_3.map((error)=>{ return <li className={classes.errorListItem}>{error}</li>})}</ul>}
                         disabled={this.state.dropdown_3.disabled}
                         className={classNames(classes.textField, classes.dense)}
                         value={this.state.dropdown_3.value}
                         onChange={this.handleSelectChange}
+                        onBlur={this.validate}
                         SelectProps={{
                             native: true,
                             MenuProps: {
@@ -648,10 +687,12 @@ class CreateAccount extends React.Component {
                         name="/employee/employee"
                         select
                         label={`Responsibility`}
+                        helperText={errors.dropdown_4 && <ul className={classes.errorList}> {errors.dropdown_4.map((error)=>{ return <li className={classes.errorListItem}>{error}</li>})}</ul>}
                         disabled={this.state.dropdown_4.disabled}
                         className={classNames(classes.textField, classes.dense)}
                         value={this.state.dropdown_4.value}
                         onChange={this.handleSelectChange}
+                        onBlur={this.validate}
                         SelectProps={{
                             native: true,
                             MenuProps: {
@@ -686,10 +727,12 @@ class CreateAccount extends React.Component {
                         name=""
                         select
                         label={`Reports To`}
+                        helperText={errors.dropdown_5 && <ul className={classes.errorList}> {errors.dropdown_5.map((error)=>{ return <li className={classes.errorListItem}>{error}</li>})}</ul>}
                         disabled={this.state.dropdown_5.disabled}
                         className={classNames(classes.textField, classes.dense)}
                         value={this.state.dropdown_5.value}
                         onChange={this.handleSelectChange}
+                        onBlur={this.validate}
                         SelectProps={{
                             native: true,
                             MenuProps: {
