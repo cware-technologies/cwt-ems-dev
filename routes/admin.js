@@ -58,4 +58,7 @@ router.post('/leave-types', adminController.postLeaveTypeLOVS)
 router.put('/leave-types', adminController.updateLeaveTypeLOVS)
 router.delete('/leave-types', adminController.deleteLeaveTypeLOVS)
 
+router.get('/employee/details', adminController.searchEmployeeDetails)
+router.post('/employee/details', adminController.upsertEmployeeDetails)
+
 module.exports = router

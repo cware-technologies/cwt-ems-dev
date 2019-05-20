@@ -13,11 +13,16 @@ const styles = theme => ({
     padding: theme.spacing.unit * 3,
     paddingTop: theme.spacing.unit * 12,
     margin: '0px 5%',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
+    display: 'grid',
+        gridTemplateColumns: '1fr',
+        gridTemplateRows: 'auto',
+        gridAutoRows: 'auto',
+        gridAutoFlow: 'row',
+        columnGap: '10px',
+        rowGap: '10px',
     [theme.breakpoints.down('sm')]: {
       margin: '0px',
+      justifyContent: 'space-between',
     }
   },
 });

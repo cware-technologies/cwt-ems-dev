@@ -184,11 +184,11 @@ module.exports = (sequelize, DataTypes) => {
     createdAt: 'created',
   });
   Employee.associate = function(models) {
-    Employee.belongsTo( Employee, { as: 'super-ordinate', foreignKey: 'report_to_id' })
+    Employee.belongsTo( Employee, { as: 'manager', foreignKey: 'report_to_id' })
     Employee.belongsTo( models.C_BU, { as: 'organization', foreignKey: 'bu_id' })
     Employee.belongsTo( models.C_DIV, { as: 'division', foreignKey: 'div_id' })
-    Employee.belongsTo( models.C_POSTN, { as: 'position-held', foreignKey: 'postn_held_id' })
-    Employee.belongsTo( models.C_POSTN, { as: 'primary-access-position', foreignKey: 'pr_postn_id' })
+    Employee.belongsTo( models.C_POSTN, { as: 'position_held', foreignKey: 'postn_held_id' })
+    Employee.belongsTo( models.C_POSTN, { as: 'primary_access_position', foreignKey: 'pr_postn_id' })
   };
   return Employee;
 };

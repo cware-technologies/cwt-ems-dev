@@ -758,6 +758,66 @@ async function applyForEntitlement(req, res, next){
     }
 }
 
+async function searchEmployeeDetails(req, res, next){
+    let employee = req.query
+    console.log("APPLICATION: ", employee)
+
+    try{
+        let data = await ProfileAttribute.findAll({
+            where: {
+                emp_id: employee.employee,
+                [Op.or]: [
+                    {type: 'official_details'},
+                    {type: 'payroll_details'},
+                    {type: 'assets_details'},
+                    {type: 'insurance_details'},
+                ]
+            }
+        })
+
+        res.status(200).json({
+            status: 200,
+            result: data,
+        })
+    }
+    catch(err){
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function upsertEmployeeDetail(record){
+    return new Promise(async (resolve, reject) => {
+        try{
+            let data = await ProfileAttribute.upsert(record, { returning: true, })
+            console.log(data)
+            resolve(data)
+        }
+        catch(err){
+            reject(err)
+        }
+    })    
+}
+
+async function upsertEmployeeDetails(req, res, next){
+    let Details = req.body
+    console.log("Record: ", Details)
+
+    Promise.all(Details.records.map(record => upsertEmployeeDetail(record)))
+    .then(results => 
+        res.status(200).json({
+            status: 200,
+            result: results,
+        })
+    )
+    .catch(err => {
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    })
+}
+
 module.exports = {
     getOrganizations,
     postOrganization,
@@ -789,4 +849,6 @@ module.exports = {
     updateLeaveTypeLOVS,
     deleteLeaveTypeLOVS,
     applyForEntitlement,
+    searchEmployeeDetails,
+    upsertEmployeeDetails,
 }

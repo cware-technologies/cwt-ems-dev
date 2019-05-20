@@ -137,8 +137,25 @@ module.exports = (sequelize, DataTypes) => {
     updatedAt: false,
     createdAt: 'created',
   });
+
   ProfileAttributes.associate = function(models) {
     ProfileAttributes.belongsTo(ProfileAttributes, {as: 'employee', foreignKey: 'emp_id'})
   };
+
+  ProfileAttributes.findCreateUpdate = function (findWhereMap, newValuesMap) {
+    return this.findOrCreate({
+      where: findWhereMap, 
+      defaults: findWhereMap
+    })
+    .spread(function(newObj, created) {
+      // set:
+      for(var key in newValuesMap) {
+        newObj[key] = newValuesMap[key];
+      }
+  
+      return newObj.save();
+    });
+  }
+
   return ProfileAttributes;
 };

@@ -26,6 +26,8 @@ const InductionChecklist = lazy(() => import('./InductionChecklist'));
 const EmployeeInductionExit = lazy(() => import('./EmployeeInductionExit'));
 const EntitlementsManager = lazy(() => import('./EntitlementsManager'));
 const AttachEntitlement = lazy(() => import('./AttachEntitlement'));
+const EmployeeAttendanceList = lazy(() => import('./EmployeeAttendanceList'));
+const EmployeeDetailsSearch = lazy(() => import('./EmployeeDetailsSearch'));
 
 const styles = theme => ({
   root: {
@@ -87,6 +89,8 @@ class Portal extends React.Component {
             <Route path={`${match.path}employee-induction-exit`} component={EmployeeInductionExit} />
             <Route path={`${match.path}entitlements-manager`} component={EntitlementsManager} />
             <Route path={`${match.path}attach-entitlements`} component={AttachEntitlement} />
+            <Route path={`${match.path}attendance-list`} component={EmployeeAttendanceList} />
+            <Route path={`${match.path}employee-details`} component={EmployeeDetailsSearch} />
             <Redirect from='/' to='/portal/' />
           </Switch>
         </Suspense>

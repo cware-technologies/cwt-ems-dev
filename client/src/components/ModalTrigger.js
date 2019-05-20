@@ -7,7 +7,7 @@ import { Button } from '@material-ui/core';
 const styles = theme => ({
     readMore: {
         position: 'relative',
-        padding: theme.spacing.unit,
+        //padding: theme.spacing.unit,
         justifySelf: 'flex-start',
         display: 'block',
     },

@@ -5,6 +5,7 @@ import HierarchyChart from './HierarchyChart'
 import ProfilePic from '../assets/profile-pic.jpg'
 import { Typography } from '@material-ui/core';
 import generateChart from '../helpers/generateChart';
+import EmployeeBadge from './EmployeeBadge';
 
 const styles = theme => ({
     container: {
@@ -14,43 +15,13 @@ const styles = theme => ({
         gridTemplateAreas: '"header" "info" "chain"',
         rowGap: '20px',
     },
-    header: {
-        gridArea: 'header',
-        // height: '300px',
-        backgroundColor: theme.palette.secondary.light,
-        display: 'flex',
-    },
-    imgContainer: {
-        height: '100%',
-        width: 'auto',
-        float: 'left',
-        margin: theme.spacing.unit,
-    },
-    profilePic: {
-        height: '100%',
-        width: 'auto',
-        border: `3px solid ${theme.palette.secondary.dark}`,
-        borderRadius: '50%',
-        [theme.breakpoints.down('sm')]: {
-            height: '120px',
-            width: '120px',
-        }
-    },
-    titleContainer: {
-        display: 'flex',
-        flexDirection: 'column',
-        alignSelf: 'center',
-    },
-    title: {
-        float: 'right',
-        margin: theme.spacing.unit / 1.5,
-    },
     infoContainer: {
         gridArea: 'info',
         display: 'grid',
         gridTemplateColumns: '1fr 3fr',
+        gridTemplateRows: 'auto',
         gridAutoRows: '50px',
-        gridAutoFlow: 'rows',
+        gridAutoFlow: 'row',
     },
     infoAttribute: {
         backgroundColor: theme.palette.secondary.dark,
@@ -142,15 +113,7 @@ class Profile extends React.Component {
 
         return (
             <Container _className={classes.container}>
-                <div className={classes.header}>
-                    <div className={classes.imgContainer}>
-                        <img src={ProfilePic} className={classes.profilePic}></img>
-                    </div>
-                    <div className={classes.titleContainer}>
-                        <Typography variant="subtitle1" component="h5" className={classes.title}>Jon Snow</Typography>
-                        <Typography variant="subtitle2" component="h6" color='secondary' className={classes.title}>Lord Commander Nights Watch</Typography>
-                    </div>
-                </div>
+                <EmployeeBadge/>
                 <div className={classes.infoContainer}>
                     {data.map(item => {
                         return (
