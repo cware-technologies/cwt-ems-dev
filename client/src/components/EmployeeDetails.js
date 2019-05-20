@@ -58,10 +58,13 @@ class EmployeeDetails extends React.PureComponent{
 
     async componentDidUpdate(prevProps, prevState){
         console.log("OBJECT: ", this.props.object)
-        console.log(this.props.object.row_id, "      ", prevProps.object.row_id)
-        let emp_id = this.props.object.row_id
-        
-        if(this.props.object !== null && emp_id !== prevProps.object.row_id){
+        // console.log(this.props.object.row_id, "      ", prevProps.object.row_id)
+        let emp_id = this.props.object && this.props.object.row_id
+
+        if(prevProps.object === null){
+            this.getEmployeeDetails()
+        }
+        else if(this.props.object !== null && emp_id !== prevProps.object.row_id){
             this.getEmployeeDetails()
         }
     }
@@ -135,44 +138,46 @@ class EmployeeDetails extends React.PureComponent{
     }
 
     render(){
-        let { classes } = this.props
+        let { classes, object } = this.props
         let { data } = this.state
 
         return(
-            <div className={classes.container}>
-                <EmployeeDetailSection
-                    headerTitle="Official Details"
-                    detailType='official_details'
-                    rows={officialRows}
-                    schema={officialSchema}
-                    data={data.filter(row => row.type === 'official_details')}
-                    handleSubmit={this.handleSubmit}
-                />
-                <EmployeeDetailSection
-                    headerTitle="PayRoll Details"
-                    detailType='payroll_details'
-                    rows={payrollRows}
-                    schema={payrollSchema}
-                    data={data.filter(row => row.type === 'payroll_details')}
-                    handleSubmit={this.handleSubmit}
-                />
-                <EmployeeDetailSection
-                    headerTitle="Assets Details"
-                    detailType='assets_details'
-                    rows={assetsRows}
-                    schema={assetsSchema}                    
-                    data={data.filter(row => row.type === 'assets_details')}
-                    handleSubmit={this.handleSubmit}
-                />
-                <EmployeeDetailSection
-                    headerTitle="Insurance Details"
-                    detailType='insurance_details'
-                    rows={insuranceRows}
-                    schema={insuranceSchema}                    
-                    data={data.filter(row => row.type === 'insurance_details')}
-                    handleSubmit={this.handleSubmit}
-                />
-            </div>
+            object &&
+                <div className={classes.container}>
+                    <EmployeeDetailSection
+                        headerTitle="Official Details"
+                        detailType='official_details'
+                        rows={officialRows}
+                        schema={officialSchema}
+                        data={data.filter(row => row.type === 'official_details')}
+                        handleSubmit={this.handleSubmit}
+                    />
+                    <EmployeeDetailSection
+                        headerTitle="PayRoll Details"
+                        detailType='payroll_details'
+                        rows={payrollRows}
+                        schema={payrollSchema}
+                        data={data.filter(row => row.type === 'payroll_details')}
+                        handleSubmit={this.handleSubmit}
+                    />
+                    <EmployeeDetailSection
+                        headerTitle="Assets Details"
+                        detailType='assets_details'
+                        rows={assetsRows}
+                        schema={assetsSchema}                    
+                        data={data.filter(row => row.type === 'assets_details')}
+                        handleSubmit={this.handleSubmit}
+                    />
+                    <EmployeeDetailSection
+                        headerTitle="Insurance Details"
+                        detailType='insurance_details'
+                        rows={insuranceRows}
+                        schema={insuranceSchema}                    
+                        data={data.filter(row => row.type === 'insurance_details')}
+                        handleSubmit={this.handleSubmit}
+                    />
+                </div>
+            
         )
     }
 }

@@ -94,17 +94,12 @@ class EmployeeDetailsSearch extends React.Component {
                     suggestions={suggestions}
                     isLoading={isFetching}
                 />
-
-                { selected &&
-                    <React.Fragment>
-                        <EmployeeBadge
-                            data={selected}
-                        />
-                        <EmployeeDetails
-                            object={selected}
-                        />
-                    </React.Fragment>
-                }
+                <EmployeeBadge
+                    data={selected}
+                />
+                <EmployeeDetails
+                    object={selected}
+                />
             </Container>
         )
     }
