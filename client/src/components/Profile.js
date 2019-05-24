@@ -1,11 +1,18 @@
 import React from 'react';
+import axios from 'axios';
 import { withStyles } from '@material-ui/core/styles'
+import { connect } from 'react-redux'
+import compose from 'recompose/compose'
+import { getUser } from '../reducers/authReducer';
 import Container from './MainContainer'
 import HierarchyChart from './HierarchyChart'
 import ProfilePic from '../assets/profile-pic.jpg'
 import { Typography } from '@material-ui/core';
 import generateChart from '../helpers/generateChart';
 import EmployeeBadge from './EmployeeBadge';
+import ProfileDetails from './ProfileDetails';
+import AttributesManager from './AttributesManager';
+import EmployeeDetailSection from './EmployeeDetailSection'
 
 const styles = theme => ({
     container: {
@@ -44,7 +51,64 @@ const styles = theme => ({
     }
 })
 
-const data = [
+const personalRows = [
+    { label: 'ATTRIB_01', title: 'CNIC', id: 'ATTRIB_01', type: 'text'},
+    { label: 'ATTRIB_18', title: 'Date Of Birth', id: 'ATTRIB_18', type: 'date'},
+    { label: 'created', title: 'Date Of Joining', id: 'created', type: 'date', disabled: true },
+]
+
+const personalSchema = [
+
+]
+
+const certificationsRows = [
+    { id: 'name', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Type' },
+    { id: 'ATTRIB_01', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Title' },
+    { id: 'ATTRIB_02', numeric: false, disablePadding: true, lengthRatio:'Title', label: 'Institute/Organization'},
+    { id: 'ATTRIB_18', date: true, disablePadding: true, lengthRatio:'Title', label: 'From'},
+    { id: 'ATTRIB_19', date: true, disablePadding: true, lengthRatio:'Title', label: 'To'},
+]
+
+const certificationsFields = [
+    { id: 'name', type:'select', selectOptions: [
+        {value:'Matriculation', name:'Matriculation'},
+        {value:'Intermediate', name:'Intermediate'},
+        {value:'Associate', name:'Associate'},
+        {value:'Bachelors', name:'Bachelors'},
+        {value:'Masters', name:'Masters'},
+        {value:'Doctorate', name:'Doctorate'},
+    ], label: 'Type' },
+    { id: 'ATTRIB_01', type: 'text', label: 'Title' },
+    { id: 'ATTRIB_02', type: 'text', label: 'Institute/Organization'},
+    { id: 'ATTRIB_18', type: 'date', label: 'From'},
+    { id: 'ATTRIB_19', type: 'date', label: 'To'},
+]
+
+const skillsRows = [
+    { id: 'name', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Skill' },
+    { id: 'ATTRIB_11', numeric: false, disablePadding: true, lengthRatio:'Title', label: 'Proficiency'},
+    { id: 'ATTRIB_03', disablePadding: true, lengthRatio:'Detail', label: 'Description'},
+]
+
+const skillsFields = [
+    { id: 'name', type: 'text', label: 'Skill' },
+    { id: 'ATTRIB_11', type: 'number', label: 'Proficiency'},
+    { id: 'ATTRIB_03', type: 'text', label: 'Description'},
+]
+
+const profAttributesRows = [
+    { id: 'name', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Professional Attribute' },
+    { id: 'ATTRIB_11', numeric: false, disablePadding: true, lengthRatio:'Title', label: 'Proficiency'},
+    { id: 'ATTRIB_03', disablePadding: true, lengthRatio:'Detail', label: 'Description'},
+]
+
+const profAttributesFields = [
+    { id: 'name', type: 'text', label: 'Professional Attribute' },
+    { id: 'ATTRIB_11', type: 'number', label: 'Proficiency'},
+    { id: 'ATTRIB_03', type: 'text', label: 'Description'},
+]
+
+const fields = [
     {
         attribute: 'Department',
         value: 'Nights Watch',
@@ -99,6 +163,7 @@ const hierarchy = {
 class Profile extends React.Component {
     state = {
         chainLoaded: false,
+        data: []
     }
 
     componentDidMount() {
@@ -106,16 +171,85 @@ class Profile extends React.Component {
         // this.setState(prevState => ({
         //     chainLoaded: true,
         // }))
+        this.getData()
+    }
+
+    getData = async () => {
+
+        axios.all([this.getUserData(), this.getHierarchy()])
+            .then(axios.spread((user, hierarchy) => {
+                console.log(user, hierarchy)
+                this.setState(prevState => ({
+                    data: user.data.result,
+                    hierarchy: hierarchy.data.result,
+                }))
+            }));
+        
+    }
+
+    getHierarchy = () => {
+        return axios({
+            method: 'get',
+            url: '/public/employee/hierarchy',
+            params: {
+                employee: 2,
+            },
+        })
+    }
+
+    getUserData = () => {
+        return axios({
+            method: 'get',
+            url: '/private/employee',
+            params: {
+                employee: this.props.user_id,
+            },
+        })
+    }
+
+    handleSubmit = async (values, { setSubmitting }, detailType) => {
+        let response
+
+        try{
+            response = await axios({
+                method: 'put',
+                url: '/private/employee/personal-details',
+                data: {
+                    details: values,
+                },
+            })
+
+            setSubmitting(false);
+            this.setState(prevState => ({
+                data: values,
+            }))
+
+        }
+        catch(err){
+        }
     }
 
     render() {
-        let { classes } = this.props
+        let { classes, user_id } = this.props
+        let { data } = this.state
 
         return (
             <Container _className={classes.container}>
-                <EmployeeBadge/>
-                <div className={classes.infoContainer}>
-                    {data.map(item => {
+                <EmployeeBadge
+                    data={data}
+                />
+                <EmployeeDetailSection
+                    headerTitle="Personal Details"
+                    detailType='personal_details'
+                    rows={personalRows}
+                    schema={personalSchema}
+                    data={data}
+                    handleSubmit={this.handleSubmit}
+                    defaultExpanded
+                    expanded
+                />
+                {/* <div className={classes.infoContainer}>
+                    {fields.map(item => {
                         return (
                             <React.Fragment>
                                 <Typography variant="body2" component="h5" color='secondary' className={classes.infoAttribute}>{item.attribute}</Typography>
@@ -123,7 +257,7 @@ class Profile extends React.Component {
                             </React.Fragment>
                         )
                     })}
-                </div>
+                </div> */}
                 <div className={classes.chainContainer}>
                     <Typography className={classes.chainHeader} variant='headline' component='h1' color='secondary'>
                         Reporting Chain
@@ -132,9 +266,39 @@ class Profile extends React.Component {
                         data={hierarchy}
                     />
                 </div>
+                <ProfileDetails
+                    object={user_id}
+                />
+                <AttributesManager
+                    headerTitle={'Certifications'}
+                    rows={certificationsRows}
+                    fields={certificationsFields}
+                    endpoint='/private/employee/details/certifications'
+                />
+                <AttributesManager
+                    headerTitle={'Skills'}
+                    rows={skillsRows}
+                    fields={skillsFields}
+                    endpoint='/private/employee/details/skills'
+                />
+                <AttributesManager
+                    headerTitle={'Professional Attributes'}
+                    rows={profAttributesRows}
+                    fields={profAttributesFields}
+                    endpoint='/private/employee/details/professionalAttributes'
+                />
             </Container>
         );
     }
 }
 
-export default withStyles(styles)(Profile);
+const mapStateToProps = (state) => {
+    return {
+        user_id: getUser(state)
+    }
+}
+
+export default compose(
+    withStyles(styles),
+    connect(mapStateToProps, {}),
+)(Profile)

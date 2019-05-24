@@ -58,7 +58,7 @@ class Profile extends React.Component {
                         </div>
                         <div className={classes.titleContainer}>
                             <Typography variant="subtitle1" component="h5" className={classes.title}>{data.full_name}</Typography>
-                            <Typography variant="subtitle2" component="h6" color='secondary' className={classes.title}>{data.position_held.name}</Typography>
+                            <Typography variant="subtitle2" component="h6" color='secondary' className={classes.title}>{data.position_held && data.position_held.name}</Typography>
                         </div>
                     </div>
                 }

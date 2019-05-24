@@ -7,6 +7,8 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ModalTrigger from './ModalTrigger'
+import { getDate } from '../helpers/utils'
+import { getDateFormValue } from '../helpers/utils'
 
 const styles = theme => ({
     container: {
@@ -52,13 +54,14 @@ const getFormElement = (row, values) => {
         return (
             <React.Fragment>
                 <label style={{display: 'block', marginTop: '10px'}} htmlFor={row.label}>
-                    { row.label }
+                    { row.title }
                 </label>
                 <Field
                     type="text"
                     name={row.label}
-                    placeholder={row.label}
+                    placeholder={row.title}
                     value={values[row.label]}
+                    disabled={row.disabled}
                 />
                 <ErrorMessage name={row.label} />
             </React.Fragment>
@@ -68,12 +71,14 @@ const getFormElement = (row, values) => {
         return (
             <React.Fragment>
                 <label style={{display: 'block', marginTop: '10px'}} htmlFor={row.label}>
-                    { row.label }
+                    { row.title }
                 </label>
                 <Field
                     name={row.label}
                     component="select"
-                    placeholder={row.label}>
+                    placeholder={row.title}
+                    value={values[row.label]}
+                    disabled={row.disabled}
                 >
                     {
                         row.selectOptions.map(option =>
@@ -81,6 +86,41 @@ const getFormElement = (row, values) => {
                         )
                     }   
                 </Field>
+                <ErrorMessage name={row.label} />
+            </React.Fragment>
+        )
+    }
+    else if (row.type === 'textarea') {
+        return (
+            <React.Fragment>
+                <label style={{display: 'block', marginTop: '10px'}} htmlFor={row.label}>
+                    { row.title }
+                </label>
+                <Field
+                    name={row.label}
+                    component="textarea"
+                    rows="2"
+                    placeholder={row.title}
+                    value={values[row.label]}
+                    disabled={row.disabled}
+                />
+                <ErrorMessage name={row.label} />
+            </React.Fragment>
+        )
+    }
+    else if (row.type === 'date') {
+        return (
+            <React.Fragment>
+                <label style={{display: 'block', marginTop: '10px'}} htmlFor={row.label}>
+                    { row.title }
+                </label>
+                <Field
+                    name={row.label}
+                    type='date'
+                    placeholder={row.title}
+                    value={getDateFormValue(values[row.label])}
+                    disabled={row.disabled}
+                />
                 <ErrorMessage name={row.label} />
             </React.Fragment>
         )
@@ -93,21 +133,24 @@ class EmployeeDetailSection extends React.Component {
     getInitialValues = () => {
         let {data} = this.props
         let initialValues = {}
-    
+        
+        if(!Array.isArray(data)){
+            return data
+        }
+
         this.props.rows.forEach(row => {
             let value = data.filter(element => element.name === row.label )[0]
             initialValues[row.label] = value && value.ATTRIB_01
         });
-        console.log("INITIAL: ", initialValues)
         return initialValues
     }
 
     render() {
-        let { data, rows, classes, headerTitle, detailType } = this.props
-        console.log('DATA: ', data)
+        let { data, rows, classes, headerTitle, detailType, expanded, defaultExpanded } = this.props
+        
         return (
-            <ExpansionPanel>
-                <ExpansionPanelSummary classes={{ content: classes.division }} expandIcon={<ExpandMoreIcon />}>
+            <ExpansionPanel expanded={expanded} defaultExpanded={defaultExpanded} >
+                <ExpansionPanelSummary classes={{ content: classes.division }} expandIcon={expanded || <ExpandMoreIcon />}>
                     <Typography variant="h6" gutterBottom component="h2" className={classes.headerTitle}>
                         {headerTitle}
                     </Typography>
@@ -131,7 +174,7 @@ class EmployeeDetailSection extends React.Component {
                                             disabled={formProps.isSubmitting}
                                             style={{ display: 'block', marginTop: '10px' }}
                                         >
-                                            Submit Form
+                                            Save
                                        </button>
                                     </Form>
                                 )
@@ -143,15 +186,15 @@ class EmployeeDetailSection extends React.Component {
                 <ExpansionPanelDetails>
                     <div className={classes.infoContainer}>
                         {rows.map(row => {
-                            let value = data.filter(item => {
-                                console.log(item.name, " ;:; ", row.label)
+                            let value = Array.isArray(data) ? data.filter(item => {
                                 return item.name === row.label
-                            })[0]
-                            console.log("VALUE: ", value)
+                            })[0] : data
+                            console.log(value)
+                            console.log(row.id)
                             return (
                                 <React.Fragment>
-                                    <Typography variant="body2" component="h5" color='default' className={classes.infoAttribute}>{row.label}</Typography>
-                                    <Typography variant="body2" component="h6" color='secondary' className={classes.infoValue}>{value && value.ATTRIB_01}</Typography>
+                                    <Typography variant="body2" component="h5" color='default' className={classes.infoAttribute}>{row.title}</Typography>
+                                    <Typography variant="body2" component="h6" color='secondary' className={classes.infoValue}>{value ? row.type === 'date' && value[row.id] ? getDate(value[row.id]).toDateString() : value[row.id] : ""}</Typography>
                                 </React.Fragment>
                             )
                         })}

@@ -52,4 +52,5 @@ export default combineReducers({
 })
 
 export const getViews = (state) => state.authReducer.views
+export const getUser = (state) => state.authReducer.authentication.user.user_id
 export const getUserOrganization = (state) => state.authReducer.authentication.user.organization

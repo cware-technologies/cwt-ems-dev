@@ -16,6 +16,7 @@ async function signin(req, res, next) {
         token,
         responsibility: req.jwtPayload.responsibility,
         organization: req.jwtPayload.organization,
+        user_id: req.jwtPayload.id,
         redirectURL: '/portal/'
     });
 }

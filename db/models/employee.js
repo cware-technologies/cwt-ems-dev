@@ -1,4 +1,7 @@
 'use strict';
+const Sequelize = require('sequelize');
+require('sequelize-hierarchy')(Sequelize);
+
 module.exports = (sequelize, DataTypes) => {
   const Employee = sequelize.define('C_EMP', {
     row_id: {
@@ -77,6 +80,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER(11),
       allowNull: true,
       defaultValue: null,
+      // hierarchy: true,
       references: {
         model: 'c_emp',
         key: 'row_id',
@@ -182,7 +186,15 @@ module.exports = (sequelize, DataTypes) => {
     freezeTableName: true,
     updatedAt: false,
     createdAt: 'created',
+    // hierarchy: {
+    //   // as: 'manager',
+    //   // foreignKey: 'report_to_id',
+    //   // camelThrough: true,
+    // }
   });
+
+  // Employee.isHierarchy({ through: employeeAncestors })
+  
   Employee.associate = function(models) {
     Employee.belongsTo( Employee, { as: 'manager', foreignKey: 'report_to_id' })
     Employee.belongsTo( models.C_BU, { as: 'organization', foreignKey: 'bu_id' })

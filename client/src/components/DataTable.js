@@ -24,6 +24,7 @@ import { lighten } from '@material-ui/core/styles/colorManipulator';
 import Container from './MainContainer';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import { getDate } from '../helpers/utils'
 
 function desc(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -55,6 +56,7 @@ const headStyles = theme => ({
         flexGrow: 5,
         paddingLeft: '5px',
         display: 'flex',
+        color: 'white',
         alignItems: 'center',
     },
     tableCellSmall: {
@@ -62,6 +64,7 @@ const headStyles = theme => ({
         flexGrow: 1,
         padding: 0,
         display: 'flex',
+        color: 'white',
         justifyContent: 'center',
     },
     tableCellDetail: {
@@ -389,7 +392,7 @@ class EnhancedDataTable extends React.Component {
                                                                 padding="none"
                                                                 classes={{ root: classes[`tableCell${row.lengthRatio}`] }}
                                                             >
-                                                                {data[row.id]}
+                                                                { !row.date ? data[row.id] : getDate(data[row.id]).toDateString() }
                                                             </TableCell>
                                                         )
                                                     })

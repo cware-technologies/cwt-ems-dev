@@ -1,3 +1,5 @@
+'use strict';
+
 const Op = require('sequelize').Op,
     models = require('../db/models'),
     Employee = models.C_EMP,
@@ -46,6 +48,71 @@ async function searchEmployee(req, res, next){
     }
 }
 
+async function expandHierarchy(root){
+    function expand(root){
+        root && root.getManager().then(manager => {
+            if(!manager){
+                console.log("NULLL")
+                // console.log("CHAIN: ", reportingChain)
+                return
+            }
+            
+            else{
+                console.log(manager.get({plain: true}).full_name)
+                reportingChain.push(manager.get({plain: true}))
+                return expand(manager)
+                console.log("BACK")
+            }
+        })
+    }
+
+    let reportingChain = []
+    // console.log(root)
+    try{
+        await expand(root)
+
+        console.log("CHAIN: ", reportingChain)
+        return reportingChain
+    }
+    catch(err){
+
+    }
+    
+    
+    
+    
+
+    
+}
+
+async function getEmployeeHierarchy(req, res, next){
+    // const data = await Employee.findOne({
+    //     where: { row_id: req.query.employee },
+    //     include: {
+    //       model: Employee,
+    //       as: 'manager',
+    //       hierarchy: true
+    //     }
+    //   });
+    try{
+        const data = await Employee.findOne({
+            where: {
+                row_id: req.query.employee,
+            }
+        });
+    
+        let hierarchy = await expandHierarchy(data)
+    
+        res.json({
+            data: hierarchy,
+        })
+    }
+    catch(err){
+
+    }
+}
+
 module.exports = {
     searchEmployee,
+    getEmployeeHierarchy,
 }

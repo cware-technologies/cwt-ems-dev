@@ -3,6 +3,7 @@ const homepageController = require('./homepage');
 const adminController = require('./admin')
 const employeeController = require('./employee')
 const publicController = require('./public')
+const privateController = require('./private')
 
 module.exports = {
     authController,
@@ -10,4 +11,5 @@ module.exports = {
     adminController,
     employeeController,
     publicController,
+    privateController,
 }

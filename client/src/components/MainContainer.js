@@ -25,14 +25,20 @@ const styles = theme => ({
       justifyContent: 'space-between',
     }
   },
+  contained: {
+    borderRadius: '5px',
+    boxShadow: '0px 0px 10px -5px',
+    padding: 10,
+    margin: 0,
+  },
 });
 
 class Dashboard extends React.Component {
   render() {
-    const { classes, children } = this.props;
+    const { classes, children, contained } = this.props;
 
     return (
-      <main className={classNames(classes.content, this.props._className)}>
+      <main className={contained ? classNames(classes.content, classes.contained) : classNames(classes.content, this.props._className, contained && classes.contained)}>
         {children}
       </main>
     );

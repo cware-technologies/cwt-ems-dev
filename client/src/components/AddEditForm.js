@@ -5,6 +5,7 @@ import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
 import classNames from 'classnames'
+import { getDateFormValue } from '../helpers/utils'
 
 class AddEditForm extends React.Component {
     state = {
@@ -16,72 +17,129 @@ class AddEditForm extends React.Component {
 
         switch (field.type) {
             case 'text':
-            return (
-                <TextField
-                    // error={errors.email}
-                    // helperText={errors.email && <ul className={classes.errorList}> {errors.email.map((error)=>{ return <li className={classes.errorListItem}>{error}</li>})}</ul>}
-                    id={field.id}
-                    label={field.label}
-                    value={object[field.id]}
-                    disabled={field.readOnly}
-                    defaultValue={field.defaultValue}
-                    onChange={(e) => handleChange(e, this.props.headerTitle)}
-                    // onBlur={this.validate}
-                    classes={{
-                        root: classes.inputRoot,
-                    }}
-                    // className={classNames(classes.textField, classes.dense)}
-                    margin="dense"
-                    variant="filled"
-                    InputProps={{
-                        className: classes.input,
-                    }}
-                    InputLabelProps={{
-                        className: classes.inputLabel,
-                    }}
-                />
-            )
+                return (
+                    <TextField
+                        // error={errors.email}
+                        // helperText={errors.email && <ul className={classes.errorList}> {errors.email.map((error)=>{ return <li className={classes.errorListItem}>{error}</li>})}</ul>}
+                        id={field.id}
+                        label={field.label}
+                        value={object[field.id]}
+                        disabled={field.readOnly}
+                        defaultValue={field.defaultValue}
+                        onChange={(e) => handleChange(e, this.props.headerTitle)}
+                        // onBlur={this.validate}
+                        classes={{
+                            root: classes.inputRoot,
+                        }}
+                        // className={classNames(classes.textField, classes.dense)}
+                        margin="dense"
+                        variant="filled"
+                        InputProps={{
+                            className: classes.input,
+                        }}
+                        InputLabelProps={{
+                            className: classes.inputLabel,
+                        }}
+                    />
+                )
             case 'select':
-            return (
-                <TextField
-                    id={field.id}
-                    select
-                    label={field.label}
-                    className={classNames(classes.textField, classes.dense)}
-                    value={field.defaultValue ? field.defaultValue : object[field.id]}
-                    disabled={field.readOnly}
-                    defaultValue={field.defaultValue}
-                    onChange={(e) => handleChange(e, this.props.headerTitle)}
-                    SelectProps={{
-                        native: true,
-                        MenuProps: {
-                            className: classes.menu,
-                        },
-                    }}
-                    // helperText="Please select your currency"
-                    margin="dense"
-                    variant="filled"
-                    classes={{
-                        root: classes.inputRoot,
-                    }}
-                    InputProps={{
-                        className: classes.input,
-                    }}
-                    InputLabelProps={{
-                        className: classes.inputLabel,
-                        shrink: true,
-                    }}
-                >
-                    <option value={null}>
-                        {''}
-                    </option>
-                    {field.selectOptions && field.selectOptions.map((option, index) => (
-                        <option key={index} value={option.value}>
-                            {option.name}
+                return (
+                    <TextField
+                        id={field.id}
+                        select
+                        label={field.label}
+                        className={classNames(classes.textField, classes.dense)}
+                        value={field.defaultValue ? field.defaultValue : object[field.id]}
+                        disabled={field.readOnly}
+                        defaultValue={field.defaultValue}
+                        onChange={(e) => handleChange(e, this.props.headerTitle)}
+                        SelectProps={{
+                            native: true,
+                            MenuProps: {
+                                className: classes.menu,
+                            },
+                        }}
+                        // helperText="Please select your currency"
+                        margin="dense"
+                        variant="filled"
+                        classes={{
+                            root: classes.inputRoot,
+                        }}
+                        InputProps={{
+                            className: classes.input,
+                        }}
+                        InputLabelProps={{
+                            className: classes.inputLabel,
+                            shrink: true,
+                        }}
+                    >
+                        <option value={null}>
+                            {''}
                         </option>
-                    ))}
-                </TextField>
-            )
+                        {field.selectOptions && field.selectOptions.map((option, index) => (
+                            <option key={index} value={option.value}>
+                                {option.name}
+                            </option>
+                        ))}
+                    </TextField>
+                )
+            case 'date':
+                return(
+                    <TextField
+                        id={field.id}
+                        type='date'
+                        label={field.label}
+                        className={classNames(classes.textField, classes.dense)}
+                        value={this.props.editMode ? getDateFormValue(object[field.id]) : object[field.id]}
+                        disabled={field.readOnly}
+                        defaultValue={field.defaultValue}
+                        onChange={(e) => handleChange(e, this.props.headerTitle)}
+                        // helperText="Please select your currency"
+                        margin="dense"
+                        variant="filled"
+                        classes={{
+                            root: classes.inputRoot,
+                        }}
+                        InputProps={{
+                            className: classes.input,
+                        }}
+                        InputLabelProps={{
+                            className: classes.inputLabel,
+                            shrink: true,
+                        }}
+                    />
+                )
+            case 'number':
+                    return(
+                        <TextField
+                            id={field.id}
+                            type='number'
+                            label={field.label}
+                            className={classNames(classes.textField, classes.dense)}
+                            value={field.defaultValue ? field.defaultValue : object[field.id]}
+                            disabled={field.readOnly}
+                            defaultValue={field.defaultValue}
+                            onChange={(e) => handleChange(e, this.props.headerTitle)}
+                            // helperText="Please select your currency"
+                            margin="dense"
+                            variant="filled"
+                            classes={{
+                                root: classes.inputRoot,
+                            }}
+                            InputProps={{
+                                className: classes.input,
+                                inputProps: {
+                                    min: "1",
+                                    max: "5",
+                                    step: "1",
+                                }
+                            }}
+                            InputLabelProps={{
+                                className: classes.inputLabel,
+                                shrink: true,
+                            }}
+                        />
+                    )
             default:
                 return 'Unknown step';
         }
@@ -91,6 +149,9 @@ class AddEditForm extends React.Component {
         let { fields, object, classes, editMode, headerTitle, handleSubmit } = this.props
 
         let Title = editMode ? `Edit ${headerTitle}` : `Add ${headerTitle}`
+
+        getDateFormValue(object['ATTRIB_18'])
+
         return (
             <React.Fragment>
                 <Typography variant='title' color='textPrimary'>{Title}</Typography>

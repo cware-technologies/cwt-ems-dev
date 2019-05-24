@@ -35,5 +35,16 @@ export const getDate = (datetime) => {
 
   return result
 }
-  
-  export default combineStyles;
+
+export const getDateFormValue = (datetime) => {
+  if(!datetime){
+    return
+  }
+
+  if(datetime.length >= 24 && datetime.includes('T') && datetime.includes('Z')){
+    let t = datetime.slice(0, -5).split(/[T]/);
+    return t[0]
+  }
+
+  return
+}

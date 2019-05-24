@@ -14,14 +14,10 @@ const styles = theme => ({
 })
 
 class ModalTrigger extends React.Component {
-    constructor(props){
-        super(props)
-        this.state = {
-            modalOpen: false,
-        }
-        console.log("DATAAAAA: ", this.props.data)
+    state = {
+        modalOpen: false,
     }
-
+    
     handleModalOpen = (e) => {
         this.setState({ modalOpen: true });
     };
