@@ -93,10 +93,11 @@ class EntitlementsManager extends React.Component{
                 data: this.state.formData,
             })
 
-            this.setState(prevState => ({
-                data: newData,
-            }))
-            console.log("UPDATE RESPONSE: ", response)
+            if (response.data.status >= 200 && response.data.status < 300){
+                this.setState(prevState => ({
+                    data: newData,
+                }))
+            }
         }
         catch(err){
             
@@ -118,13 +119,15 @@ class EntitlementsManager extends React.Component{
                 },
                 data: data,
             })
-
-            this.setState(prevState => ({
-                data: [
-                    ...prevState.data,
-                    response.data.data
-                ]
-            }))
+               
+            if (response.data.status >= 200 && response.data.status < 300){            
+                this.setState(prevState => ({    
+                    data: [
+                        ...prevState.data,
+                        response.data.data
+                    ]
+                }))
+            }
         }
         catch(err){
 

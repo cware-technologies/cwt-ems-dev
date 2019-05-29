@@ -189,7 +189,7 @@ class EmployeeDetailSection extends React.Component {
                             let value = Array.isArray(data) ? data.filter(item => {
                                 return item.name === row.label
                             })[0] : data
-                            console.log(value)
+                            console.log("VALUE RENDER: ", value)
                             console.log(row.id)
                             return (
                                 <React.Fragment>

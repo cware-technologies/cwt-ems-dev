@@ -735,6 +735,29 @@ async function deleteLeaveTypeLOVS(req, res, next){
     }
 }
 
+async function getEmployeeEntitlements(req, res, next){
+    let employee = req.query
+
+    try{
+        let data = await ProfileAttribute.findAll({
+            where: {
+                emp_id: employee.employee,
+                type: 'leave_type',
+            },
+        })
+
+        res.status(200).json({
+            status: 200,
+            result: data,
+        })
+    }
+    catch(err){
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
 async function applyForEntitlement(req, res, next){
     let application = req.body
     console.log("APPLICATION: ", application)
@@ -848,6 +871,7 @@ module.exports = {
     postLeaveTypeLOVS,
     updateLeaveTypeLOVS,
     deleteLeaveTypeLOVS,
+    getEmployeeEntitlements,
     applyForEntitlement,
     searchEmployeeDetails,
     upsertEmployeeDetails,

@@ -43,8 +43,41 @@ const login = (username, password) => async (dispatch) => {
     }
 }
 
+const logout = () => {
+    authServices.logout();
+    window.location.href = `/signin`
+    return {
+        type: authConstants.LOGOUT,
+    };
+    
+}
+
+const verifyUser = (user) => async (dispatch) => {
+    const request = (user) => ({ type: authConstants.VERIFY_REQUEST, user });
+    const success = (user) => ({ type: authConstants.VERIFY_SUCCESS, user });
+    const failure = (err) => ({ type: authConstants.VERIFY_FAILURE, err });
+
+    dispatch(request({ user }));
+
+    try {
+        let response = await authServices.verifyUser(user);
+        dispatch(success(user));
+        
+        dispatch(alertActions.success("User Verified"));
+        // window.location.href = `${user.redirectURL}`;
+    }
+    catch (err) {
+        dispatch(failure(err));
+        dispatch(alertActions.error(err));
+        dispatch(logout())
+        // window.location.href = `${err.response.data.redirectURL}`;
+    }
+}
+
 
 export const authActions = {
     login,
+    logout,
     getViews,
+    verifyUser,
 };

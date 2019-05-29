@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes, { bool } from 'prop-types';
 import classNames from 'classnames';
+import debounce from 'lodash.debounce'
 import { withStyles, withTheme } from '@material-ui/core/styles';
 import axios from 'axios';
 import TextField from '@material-ui/core/TextField';
@@ -22,18 +23,29 @@ import { formStyle } from '../styles/form';
 // import  from 'simple-react-';
 import validate from 'validate.js';
 
+Object.filter = (obj, predicate) => 
+    Object.keys(obj)
+          .filter( key => predicate(obj[key]) )
+          .reduce( (res, key) => (res[key] = obj[key], res), {} );
+
 let constraints = {
     email: {
-      presence: true,
-      email: true,
+        presence: {
+            allowEmpty: false,
+            message: "Is Required"
+        },
+    //   email: true,
     },
     password: {
-      presence: true,
-      format: /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^\w\d\s])(?!.*\s).{8,}/,
-      length: {
-        minimum: 8,
-        message: "must be at least 8 characters"
-      }
+        presence: {
+            allowEmpty: false,
+            message: "Is Required"
+        },
+    //   format: /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^\w\d\s])(?!.*\s).{8,}/,
+    //   length: {
+    //     minimum: 8,
+    //     message: "must be at least 8 characters"
+    //   }
     },
     confirmPassword: {
         equality: "password",
@@ -41,26 +53,26 @@ let constraints = {
     dropdown_1: {
         presence: {
             allowEmpty: false,
-            message: "Is Required"
+            message: "is Required"
         },
     },
     dropdown_2: {
         presence: {
             allowEmpty: false,
-            message: "Is Required"
+            message: "is Required"
         },
     },
     dropdown_3: {
-        presence: {
-            allowEmpty: false,
-            message: "Is Required"
-        },
+        // presence: {
+        //     allowEmpty: false,
+        //     message: "Is Required"
+        // },
     },
     dropdown_4: {
-        presence: {
-            allowEmpty: false,
-            message: "Is Required"
-        },
+        // presence: {
+        //     allowEmpty: false,
+        //     message: "Is Required"
+        // },
     },
     dropdown_5: {
 
@@ -127,6 +139,8 @@ class CreateAccount extends React.Component {
                 data: [],
             },
         }
+
+        this.debouncedSelectChange = debounce(this.handleSelectChange, 500);
     }
 
     async componentDidMount(){
@@ -190,7 +204,7 @@ class CreateAccount extends React.Component {
         let value = event.target.value
         let endpoint = event.target.name
         console.log("SELECT: ", name)
-        let response
+        this.validate(event)
 
         this.setState(prevState => ({
             employee: {
@@ -265,6 +279,7 @@ class CreateAccount extends React.Component {
     handleTextChange = (event) => {
         let target = event.target.id;
         let value = event.target.value;
+        this.validate(event)
         this.setState(prevState => ({
             employee: {
                 ...prevState.employee,
@@ -296,7 +311,7 @@ class CreateAccount extends React.Component {
         }))
     }
 
-    validate = async(event) => {
+    validate = (event) => {
         let target = event.target.id;
         let value = event.target.value;
         let val_errors;
@@ -311,6 +326,8 @@ class CreateAccount extends React.Component {
             confirmPasswordVal = undefined
         
         console.log(val_errors);
+        let errors = Object.filter({...val_errors, confirmPasswordVal}, property => property !== undefined)
+        console.log("ERRORSSSS: ", errors)
         this.setState(prevState => ({
             errors: {
                 ...prevState.errors,
@@ -320,9 +337,28 @@ class CreateAccount extends React.Component {
         }), console.log(this.state.errors));
     }
 
-    allValid = () => {
+    validateAll = async () => {
+        let confirmPasswordVal;
+        let val_errors = await validate(this.state.employee, constraints)
+
+        if (this.state.employee.password !== this.state.confirmPassword)
+            confirmPasswordVal = ["Not the same as the password"]
+
+        val_errors.confirmPassword = confirmPasswordVal
+
+        let errors = Object.filter({...val_errors, confirmPasswordVal}, property => property !== undefined)
+        this.setState(prevState => ({
+            errors: {
+                ...prevState.errors,
+                ...errors,
+            },
+        }), () => console.log(this.state.errors));
+    }
+
+    allValid = async() => {
         console.log("IN ALL VALID")
-        if(validate(this.state.employee, constraints) === undefined){
+        await this.validateAll(this.state.employee, constraints)
+        if(Object.keys(this.state.errors).length === 0 && this.state.errors.constructor === Object){
             console.log("NO ERRORS")
             return true
         }
@@ -357,7 +393,7 @@ class CreateAccount extends React.Component {
         let response;
         let employee = this.state.employee
 
-        if (this.allValid()) {
+        if (await this.allValid()) {
             try{
                 response = await axios({
                     method: 'post',
@@ -434,10 +470,11 @@ class CreateAccount extends React.Component {
                         variant="filled"
                         InputProps={{
                             className: classes.input,
-                            endAdornment: <InputAdornment position="end">
+                            endAdornment: <InputAdornment tabIndex={-1} position="end">
                                             <IconButton
                                                 aria-label="Toggle password visibility"
                                                 onClick={this.handleClickShowPassword}
+                                                tabIndex={-1}
                                             >
                                                 {this.state.showPassword ? <Visibility /> : <VisibilityOff />}
                                             </IconButton>
@@ -463,10 +500,11 @@ class CreateAccount extends React.Component {
                         variant="filled"
                         InputProps={{
                             className: classes.input,
-                            endAdornment: <InputAdornment position="end">
+                            endAdornment: <InputAdornment tabIndex={-1} position="end">
                                             <IconButton
                                                 aria-label="Toggle password visibility"
                                                 onClick={this.handleClickShowPassword}
+                                                tabIndex={-1}
                                             >
                                                 {this.state.showPassword ? <Visibility /> : <VisibilityOff />}
                                             </IconButton>

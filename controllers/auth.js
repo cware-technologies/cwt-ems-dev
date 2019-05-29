@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken'),
+    ExtractJWT = require('passport-jwt').ExtractJwt,
     { secret } = require('../config/jwtSecret.json'),
     models = require('../db/models'),
     ResponsibilityViews = models.C_RESP_VIEW,
@@ -9,7 +10,7 @@ const jwt = require('jsonwebtoken'),
 async function signin(req, res, next) {
     // let views = await getResponsibilityViews(req, res, next)
 
-    const token = jwt.sign(req.jwtPayload, secret)
+    const token = jwt.sign(req.jwtPayload, secret, { expiresIn: '1d' })
     res.status(200).json({
         status: 200,
         message: 'Authentication Successful',
@@ -25,6 +26,30 @@ function register(req, res, next) {
     res.status(200).json({
         status: 200,
         message: 'User Created Successfully',
+    });
+}
+
+function verifyToken(req, res, next){
+    let jwtSecret = secret
+    let token = ExtractJWT.fromAuthHeaderAsBearerToken()(req)
+
+    jwt.verify(token, jwtSecret, function(err, decoded) {
+        if(err){
+            res.status(200).json({
+                status: 404,
+                redirectURL: "/signin"
+            })
+            // err.status = 400
+            // err.redirectURL = "/signin"
+            // next(err)
+        }
+        else(
+            res.status(200).json({
+                status: 200,
+                message: "User Verified Successfuly",
+                redirectURL: "/portal/dashboard",
+            })
+        )
     });
 }
 
@@ -66,4 +91,5 @@ module.exports = {
     signin,
     register,
     getResponsibilityViews,
+    verifyToken,
 }

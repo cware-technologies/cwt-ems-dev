@@ -2,7 +2,7 @@
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.addConstraint('C_LST_VAL', ['type', 'val'], {
+    return queryInterface.addConstraint('C_LST_VAL', ['type', 'val', 'bu_id'], {
       type: 'unique',
       name: 'type-value-composite-unique-constraint-c_lst_val'
     })

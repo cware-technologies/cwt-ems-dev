@@ -356,7 +356,7 @@ class PostUpdateForm extends React.Component {
                             className: classes.inputLabel,
                         }}
                     />
-                    <TextEditor />
+                    {/* <TextEditor /> */}
                     <Button onClick={this.handleSubmit} variant="contained" color="primary" className={classNames(classes.button, classes.textField)}>
                         Post
                     </Button>

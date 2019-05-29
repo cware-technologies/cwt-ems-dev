@@ -11,6 +11,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       defaultValue: 1,
+      references: {
+        'model': 'c_bu',
+        'key': 'row_id',
+      }
     },
     stat_cd: {
       type: DataTypes.STRING(30),

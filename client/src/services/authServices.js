@@ -20,6 +20,23 @@ function login(username, password) {
     .catch(err => handleLoginResponse(err.response))
 }
 
+function logout() {
+    return localStorage.removeItem('loggedInUser');
+}
+
+function verifyUser(user) {
+
+    return axios({
+        method: 'get',
+        url: '/auth/verifyUser',
+        headers: {
+            'content-type': 'application/json'
+        }
+    })
+    .then(handleViewsResponse)
+    .catch(err => handleViewsResponse(err))
+}
+
 async function getViews(responsibility){
     return axios({
         method: 'get',
@@ -50,9 +67,8 @@ function handleLoginResponse(res){
 }
 
 function handleViewsResponse(res){
+    console.log("VERIFY RESPONSE: ", res)
     let error = res.data.message;
-
-    console.log("VIEWS RESPONSE: ", res)
 
     if (res.data.status >= 400) {
         throw error
@@ -67,4 +83,6 @@ function handleViewsResponse(res){
 export const authServices = {
     login,
     getViews,
+    verifyUser,
+    logout,
 }

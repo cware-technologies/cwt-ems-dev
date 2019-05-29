@@ -33,6 +33,8 @@ router.post('/register', passport.authenticate('register', { failWithError: true
     authController.register
 );
 
+router.get('/verifyUser', authController.verifyToken)
+
 router.get('/resp-views', authController.getResponsibilityViews)
 
 module.exports = router;

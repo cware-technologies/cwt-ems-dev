@@ -44,8 +44,11 @@ module.exports = {
       },
       resp_id: {
         type: Sequelize.INTEGER(11),
-        allowNull: false,
-        defaultValue: Sequelize.UUIDV4,
+        allowNull: true,
+        references: {
+          'model': 'c_resp',
+          'key': 'row_id'
+        }
       },
       fst_name: {
         type: Sequelize.STRING(50),

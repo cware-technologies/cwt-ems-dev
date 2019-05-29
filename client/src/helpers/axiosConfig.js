@@ -6,7 +6,7 @@ export const addAuthHeaderAsBearerToken = () => {
     let token = getAuthToken();
     if(token){
         axios.interceptors.request.use(function (config) {
-            config.headers.Authorization = `Bearer ${token.token}`;
+            config.headers.Authorization = `bearer ${token.token}`;
             return config;
           }, function (error) {
             return

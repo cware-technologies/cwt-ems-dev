@@ -11,9 +11,9 @@ const styles = theme => ({
 })
 
 const officialRows = [
-    { label: 'Department', id: 'dept', type: 'text'},
-    { label: 'Location', id: '', type: 'text'},
-    { label: 'Manager', id: 'manager.name', type: 'text'},
+    { label: 'Department',  title: 'Department', id: 'ATTRIB_01', type: 'text'},
+    { label: 'Location', title: 'Location', id: 'ATTRIB_01', type: 'text'},
+    { label: 'Manager', title: 'Manager', id: 'ATTRIB_01', type: 'text'},
 ]
 
 const officialSchema = yup.object().shape({
@@ -21,11 +21,11 @@ const officialSchema = yup.object().shape({
 });
 
 const payrollRows = [
-    { label: 'Basic Salary', id: '', type: 'text'},
-    { label: 'Travelling Allowance', id: '', type: 'text'},
-    { label: 'Rental Allowance', id: '', type: 'text'},
-    { label: 'Bank Account', id: '', type: 'text'},
-    { label: 'Bank Name', id: '', type: 'text'},
+    { label: 'Basic Salary', title: 'Basic Salary', id: 'ATTRIB_01', type: 'text'},
+    { label: 'Travelling Allowance', title: 'Travelling Allowance', id: 'ATTRIB_01', type: 'text'},
+    { label: 'Rental Allowance', title: 'Rental Allowance', id: 'ATTRIB_01', type: 'text'},
+    { label: 'Bank Account', title: 'Bank Account', id: 'ATTRIB_01', type: 'text'},
+    { label: 'Bank Name', title: 'Bank Name', id: 'ATTRIB_01', type: 'text'},
 ]
 
 const payrollSchema = yup.object().shape({
@@ -33,8 +33,8 @@ const payrollSchema = yup.object().shape({
 });
 
 const assetsRows = [
-    { label: 'Vehicle', id: 'vehicle', type: 'text'},
-    { label: 'Laptop', id: 'laptop', type: 'text'},
+    { label: 'Vehicle', title: 'Vehicle', id: 'ATTRIB_01', type: 'text'},
+    { label: 'Laptop', title: 'Laptop', id: 'ATTRIB_01', type: 'text'},
 ]
 
 const assetsSchema = yup.object().shape({
@@ -42,8 +42,8 @@ const assetsSchema = yup.object().shape({
 });
 
 const insuranceRows = [
-    { label: 'Life Insurance', id: 'life_insurance', type: 'text'},
-    { label: 'Health Insurance', id: 'health_insurance', type: 'text'},
+    { label: 'Life Insurance', title: 'Life Insurance', id: 'ATTRIB_01', type: 'text'},
+    { label: 'Health Insurance', title: 'Health Insurance', id: 'ATTRIB_01', type: 'text'},
 ]
 
 const insuranceSchema = yup.object().shape({

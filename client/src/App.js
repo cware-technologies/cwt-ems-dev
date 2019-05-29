@@ -2,8 +2,11 @@ import React, { Component } from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { Provider } from 'react-redux'
 import { PersistGate } from 'redux-persist/integration/react'
+import { connect } from 'react-redux'
+import { getLoggedIn, getUserInfo } from './reducers/authReducer';
+import { authActions } from './actions'
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
 import './App.css';
 import SignIn from './components/SignIn';
 import Portal from './components/Portal';
@@ -67,28 +70,46 @@ const theme = createMuiTheme(
 addAuthHeaderAsBearerToken()
 
 class App extends Component {
+
+	componentDidMount(){
+		this.verifyLoggedInUser()
+	  }
+	
+	  verifyLoggedInUser(){
+		console.log("LOGGED IN: ", this.props.loggedIn)
+		if(this.props.loggedIn){
+		  console.log(this.props.user)
+		  this.props.verifyUser(this.props.user)
+		}
+	  }
+
 	render() {
-		let { match } = this.props
+		let { match, loggedIn } = this.props
 		
 		return (
 			<MuiThemeProvider theme={theme}>
-				<Provider store={store}>
-					<PersistGate loading={null} persistor={persistor}>
-						<Router>
-							<React.Fragment>
-								<CssBaseline />
-								<div className="App">
-									<Route path='/signin' component={SignIn} />
-									<Route strict path='/portal/' component={Portal} />
-									{/* <Redirect exact from='/' to='/portal/' /> */}
-								</div>
-							</React.Fragment>
-						</Router>
-					</PersistGate>
-				</Provider>
+				<Router>
+					<React.Fragment>
+						<CssBaseline />
+						<div className="App">
+							<Switch>
+								<Route path='/signin' component={SignIn} />
+								<Route strict path='/portal/' component={Portal} />
+								{ loggedIn ? <Redirect exact from='/' to='/portal/dashboard' /> : <Redirect exact from='/' to='/signin' /> }
+							</Switch>
+						</div>
+					</React.Fragment>
+				</Router>
 			</MuiThemeProvider>
 		);
 	}
 }
 
-export default App;
+const mapStateToProps = (state) => {
+	return{
+	  loggedIn: getLoggedIn(state),
+	  user: getUserInfo(state)
+	}
+}
+
+export default connect(mapStateToProps, {...authActions})(App);

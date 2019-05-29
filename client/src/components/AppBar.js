@@ -1,7 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import compose from 'recompose/compose'
+import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import { Link, withRouter } from 'react-router-dom';
+import { authActions } from '../actions'
 import classNames from 'classnames';
 import AppBarMUI from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -151,7 +154,7 @@ class AppBar extends React.Component {
                         <Link to={`${match.url}password-reset`} style={{ textDecoration: 'none' }}>
                             <MenuItem onClick={this.handleClose}>Reset Password</MenuItem>
                         </Link>
-                        <MenuItem onClick={this.handleClose}>Sign Out</MenuItem>
+                        <MenuItem onClick={this.props.logout}>Sign Out</MenuItem>
                     </Menu>
                 </Toolbar>
             </AppBarMUI>
@@ -165,4 +168,7 @@ AppBar.propTypes = {
     drawerOpen: PropTypes.bool.isRequired,
 };
 
-export default withRouter(withStyles(styles)(AppBar));
+export default compose(
+    withStyles(styles),
+    connect(() => {}, {...authActions})
+)(withRouter(AppBar));

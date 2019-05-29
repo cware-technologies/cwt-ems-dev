@@ -9,6 +9,10 @@ module.exports = {
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.removeConstraint('C_EMP_XM', 'emp_id-type-name-composite-unique-constraint-c_emp_xm', {})
+    return Promise.all([
+      queryInterface.removeConstraint('C_EMP_XM', 'c_emp_xm_ibfk_1'),
+    ]).then((pk1) =>
+      queryInterface.removeConstraint('C_EMP_XM', 'emp_id-type-name-composite-unique-constraint-c_emp_xm', {})
+    )
   }
 };

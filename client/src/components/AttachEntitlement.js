@@ -193,7 +193,7 @@ class EmployeeInduction extends React.Component {
             [entity]: primary,
             organization: organization !== null ? organization : prevState.organization,
             // [labelField]: label,
-        }), /* () => this.getChecklist() */)
+        }), () => this.getChecklist() )
     }
 
     getChecklist = async() => {
@@ -202,12 +202,12 @@ class EmployeeInduction extends React.Component {
         try{
             let response = await axios({
                 method: 'get',
-                url: '/admin/induction-exit',
+                url: '/admin/employee/entitlements',
                 params: {
                     employee: this.state.users,
                 }
             })
-
+            console.log("RESRESRES: ", response)
             this.setState(prevState => ({
                 checklistData: response.data.result,
             }))

@@ -1,8 +1,8 @@
 import React, { Suspense, lazy } from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
-import { Route, Switch, Redirect } from 'react-router-dom';
+import { Route, Switch, Redirect } from 'react-router-dom'
+import LoadingSpinner from './LoadingSpinner';
 const AppBar = lazy(() => import('./AppBar'));
 const Drawer = lazy(() => import('./Drawer'));
 const Dashboard = lazy(() => import('./Dashboard'));
@@ -54,19 +54,19 @@ class Portal extends React.Component {
 
     return (
       <div className={classes.root}>
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<LoadingSpinner/>}>
           <AppBar
             handleDrawerOpen={this.handleDrawerOpen}
             drawerOpen={this.state.drawerOpen}
           />
         </Suspense>
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<LoadingSpinner/>}>
           <Drawer
             handleDrawerClose={this.handleDrawerClose}
             isOpen={this.state.drawerOpen}
           />
         </Suspense>
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<LoadingSpinner/>}>
           <Switch>
             <Route path={`${match.path}dashboard`} component={Dashboard} />
             <Route path={`${match.path}register-user`} component={RegisterEmployeeForm} />
@@ -91,7 +91,7 @@ class Portal extends React.Component {
             <Route path={`${match.path}attach-entitlements`} component={AttachEntitlement} />
             <Route path={`${match.path}attendance-list`} component={EmployeeAttendanceList} />
             <Route path={`${match.path}employee-details`} component={EmployeeDetailsSearch} />
-            <Redirect from='/' to='/portal/' />
+            <Redirect from='/' to='/portal/dashboard' />
           </Switch>
         </Suspense>
       </div>
@@ -102,5 +102,7 @@ class Portal extends React.Component {
 Portal.propTypes = {
   classes: PropTypes.object.isRequired,
 };
+
+
 
 export default withStyles(styles)(Portal);
