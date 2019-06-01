@@ -7,9 +7,11 @@ import SelectableTable from './SelectableTable'
 import Container from './MainContainer';
 import Search from './Search';
 import Checklist from './Checklist'
+import DataTable from './DataTable'
 import AddEditForm from './AddEditForm'
 import { getUserOrganization } from '../reducers/authReducer';
 import ModalTrigger from './ModalTrigger'
+import AutoSuggest from './AutoSuggest';
 
 const style = theme => ({
     actionPanel: {
@@ -18,10 +20,9 @@ const style = theme => ({
     },
 })
 
-const checklistRows = [
-    { id: 'val', numeric: false, disablePadding: true, label: 'Document', },
-    { id: 'type', numeric: false, disablePadding: true, label: 'Type', },
-    { id: 'status', numeric: false, disablePadding: true, checkbox: true, label: 'Submitted', },
+const entitlementRows = [
+    { id: 'val', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Entitlement' },
+    { id: 'ATTRIB_11', numeric: true, disablePadding: false, lengthRatio:'Small', label: 'No Of Days' },
 ]
 
 const applicationFormFields = [
@@ -36,8 +37,10 @@ class EmployeeInduction extends React.Component {
         leaveTypes: [
             { id: 'application', type: 'select', label: 'Entitlement', selectOptions: [] },
         ],
+        leaveData: [],
         applicationFormData: {},
         query: '',
+        isFetching: false,
     }
 
     componentDidMount(){
@@ -61,7 +64,7 @@ class EmployeeInduction extends React.Component {
             })
 
             console.log("LEAVE TYPE RESPONSE: ", response)
-            let values = response.data.data.map(row => (({type, val}) => ({ value: val, name: val }))(row))
+            let values = response.data.data.map(row => (({row_id, val}) => ({ value: row_id, name: val }))(row))
 
             console.log("VALUES: ", values)
 
@@ -76,6 +79,7 @@ class EmployeeInduction extends React.Component {
 
             this.setState(prevState => ({
                 leaveTypes: newData,
+                leaveData: response.data.data,
             }))
             console.log("LEAVE TYPE RESPONSE: ", response)
         }
@@ -84,22 +88,25 @@ class EmployeeInduction extends React.Component {
         }
     }
 
-    onSearch = async (e) => {
-        console.log("DSDAKDIOIQDJOIWDJOQIWJDOi")
-        e.preventDefault()
+    onSearch = async () => {
         let response
+
+        this.setState(prevState => ({
+            isFetching: true,
+        }))
 
         try {
             response = await axios({
                 method: 'get',
                 url: '/public/search/employee',
                 params: {
-                    query: this.state.employeeFormData.query
+                    query: this.state.query
                 }
             })
 
             this.setState(prevState => ({
                 usersData: response.data.result,
+                isFetching: false,
             }))
 
             console.log("RESPONSE: ", response)
@@ -107,6 +114,18 @@ class EmployeeInduction extends React.Component {
         catch (err) {
 
         }
+    }
+
+    onChange = (event, { newValue }) => {
+        this.setState({
+            query: newValue
+        });
+    };
+
+    clearSuggestions = () => {
+        this.setState({
+            usersData: []
+        });
     }
 
     setUser = () => {
@@ -147,43 +166,13 @@ class EmployeeInduction extends React.Component {
         }))
     }
 
-    // handleCheckboxChange = (event, id, idx) => {
-    //     let target = event.target.id
-    //     let value = event.target.checked
-    //     let data = this.state.data
-    //     let flag = target === 'readOnly' ? 'FLG_01' : 'FLG_02'
+    selectEmployee = (selected) => {
+        console.log(selected)
 
-        
-    //     let index = 0
-    //     for(index; index < data.length; index++) {
-    //         if(data[index].row_id === id) 
-    //             break;
-    //     }
-            
-
-    //     // let selection = data.filter(row => row.row_id === id)
-    //     // console.log("SELECTION: ", selection)
-    //     // let index = selection[0] && selection[0].row_id
-
-    //     data[index] = {
-    //         ...data[index],
-    //         C_RESP_VIEW: {
-    //             ...data[index].C_RESP_VIEW,
-    //             [flag]: value,
-    //         }
-    //     }
-
-    //     this.setState(prevState => ({
-    //         data: data,
-    //         updates: {
-    //             ...prevState.updates,
-    //             [idx]: {
-    //                 ...prevState.updates[idx],
-    //                 [flag]: value,
-    //             }
-    //         }
-    //     }), () => console.log("UPDATE STATE: ", this.state))
-    // }
+        this.setState(prevState => ({
+            users: selected.row_id,
+        }), () => this.getChecklist())
+    }
 
     selectEntity = (entity, primary, organization) => {
         let labelField = `${entity}Label`
@@ -208,8 +197,9 @@ class EmployeeInduction extends React.Component {
                 }
             })
             console.log("RESRESRES: ", response)
+            let newData = response.data.result.map(row => row.function)
             this.setState(prevState => ({
-                checklistData: response.data.result,
+                checklistData: newData,
             }))
         }catch(err){
 
@@ -233,9 +223,39 @@ class EmployeeInduction extends React.Component {
         }
     }
 
+    handleDelete = async(id) => {
+        let response
+        let newData = this.state.checklistData.filter(row => {
+            return row.row_id !== id
+        })
+
+        try{
+            response = await axios({
+                method: 'delete',
+                url: '/admin//employee/entitlements',
+                headers: {
+                    'content-type': 'application/json',
+                },
+                data: {
+                    row_id: id,
+                },
+            })
+
+            this.setState(prevState => ({
+                checklistData: newData,
+            }))
+
+            console.log("DELETE RESPONSE: ", response)
+        }
+        catch(err){
+
+        }
+    }
+
     handleApplicationSubmit = async (e) => {
         e.preventDefault()
         let response
+        // let leaveType = this.state.leaveData.filter(row => row.name)
 
         if (this.state.users && this.state.applicationFormData.application) {
             try {
@@ -244,8 +264,9 @@ class EmployeeInduction extends React.Component {
                     url: '/admin/application/leave-type',
                     data: {
                         organization: this.props.organization,
-                        name: this.state.applicationFormData.application,
-                        employee: this.state.users
+                        name: this.state.applicationFormData.application.toString(),
+                        leave: this.state.applicationFormData.application,
+                        employee: this.state.users,
                     }
                 })
                 console.log("RESPONSE: ", response)
@@ -268,16 +289,19 @@ class EmployeeInduction extends React.Component {
 
     render() {
         let { classes } = this.props
-        let { checklistData, usersData, leaveTypes, query, applicationFormData } = this.state
+        let { checklistData, usersData, leaveTypes, query, applicationFormData, isFetching } = this.state
 
         return (
             <Container>
                 <div className={classes.actionPanel}>
-                    <Search
-                        title='employee'
-                        submitHandler={this.onSearch}
-                        changeHandler={this.handleChange}
+                    <AutoSuggest
                         value={query}
+                        apiCall={this.onSearch}
+                        onChange={this.onChange}
+                        onClear={this.clearSuggestions}
+                        onSelect={this.selectEmployee}
+                        suggestions={usersData}
+                        isLoading={isFetching}
                     />
                     <ModalTrigger
                         title="Attach"
@@ -293,22 +317,15 @@ class EmployeeInduction extends React.Component {
                         />
                     </ModalTrigger>
                 </div>
-                <SelectableTable
-                    title='users'
-                    updateState={this.setUser}
-                    data={usersData}
-                    headers={[
-                        { title: 'ID', value: 'emp_num', type: 'text' },
-                        { title: 'Name', value: 'full_name', type: 'text' },
-                    ]}
-                    handleChange={this.handleChange}
-                    selectEntity={this.selectEntity}
-                />
-
-                <Checklist
+                
+                <DataTable
+                    headerTitle="Employee Entitlements"
+                    rows={entitlementRows}
+                    endpoint='admin/employee/entitlements'
                     data={checklistData}
-                    handleToggle={this.handleCheckboxChange}
-                    updateHandler={this.handleUpdate}
+                    actions
+                    disableEdit
+                    handleDelete={this.handleDelete}
                 />
             </Container>
         )

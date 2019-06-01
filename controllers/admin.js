@@ -667,7 +667,7 @@ async function getLeaveTypeLOVS(req, res, next){
             where: {
                 bu_id: entity.organization,
                 type: 'leave_type',
-            }
+            },
         })
         res.status(200).json({
             status: 200,
@@ -744,11 +744,36 @@ async function getEmployeeEntitlements(req, res, next){
                 emp_id: employee.employee,
                 type: 'leave_type',
             },
+            include: [
+                {
+                    model: ListOfValues,
+                    as: 'function',
+                    attributes: ['val', 'ATTRIB_11'],
+                }
+            ]
         })
 
         res.status(200).json({
             status: 200,
             result: data,
+        })
+    }
+    catch(err){
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function deleteEmployeeEntitlements(req, res, next){
+    let entity = req.body
+
+    try{
+        let data = await ProfileAttribute.destroy({ where: {row_id: entity.row_id }})
+
+        res.status(200).json({
+            status: 200,
+            data,
         })
     }
     catch(err){
@@ -767,6 +792,7 @@ async function applyForEntitlement(req, res, next){
             type: 'leave_type',
             name: application.name,
             emp_id: application.employee,
+            ATTRIB_11: application.leave,
         })
 
         res.status(200).json({
@@ -872,6 +898,7 @@ module.exports = {
     updateLeaveTypeLOVS,
     deleteLeaveTypeLOVS,
     getEmployeeEntitlements,
+    deleteEmployeeEntitlements,
     applyForEntitlement,
     searchEmployeeDetails,
     upsertEmployeeDetails,

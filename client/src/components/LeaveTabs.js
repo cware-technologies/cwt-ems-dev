@@ -15,6 +15,7 @@ import HistoryIcon from '@material-ui/icons/History'
 import TabContainer from './TabContainer';
 import LeavesList from './LeavesList';
 import Container from './MainContainer';
+import DataTable from './DataTable'
 
 const styles = theme => ({
     root: {
@@ -23,21 +24,11 @@ const styles = theme => ({
         // alignContent: 'center',
         // justifyContent: 'center',
         width: '100%',
-        maxWidth: 800,
-    },
-    content: {
-        flexGrow: 1,
-        width: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        alignContent: 'center',
-        alignItems: 'center',
-        padding: theme.spacing.unit * 3,
-        boxSizing: 'border-box',
+        
     },
     appBarSpacer: theme.mixins.toolbar,
     tabs: {
-        backgroundColor: theme.palette.primary.dark,
+        backgroundColor: theme.palette.secondary.light,
         color: 'white',
     },
     tabLabel: {
@@ -65,19 +56,19 @@ class LeaveTabs extends React.Component {
                         value={this.state.value}
                         onChange={this.handleChange}
                         variant="fullWidth"
-                        indicatorColor="secondary"
-                        textColor="secondary"
+                        indicatorColor="primary"
+                        textColor="primary"
                         classes={{
                             root: classes.tabs,
                         }}
                     >
                         <Tab icon={<AllIcon />} label="All" classes={{ labelIcon: classes.tabLabel, }} />
-                        <Tab icon={<PendingIcon />} label="Pending" classes={{ labelIcon: classes.tabLabel, }} />
+                        {/* <Tab icon={<PendingIcon />} label="Pending" classes={{ labelIcon: classes.tabLabel, }} /> */}
                         <Tab icon={<HistoryIcon />} label="Availed" classes={{ labelIcon: classes.tabLabel, }} />
-                        <Tab icon={<DoubleTickIcon />} label="Approved" classes={{ labelIcon: classes.tabLabel, }} />
+                        {/* <Tab icon={<DoubleTickIcon />} label="Approved" classes={{ labelIcon: classes.tabLabel, }} /> */}
                     </Tabs>
                     <TabContainer>
-                        {value === 0 && <LeavesList />}
+                        {value === 0 && <DataTable />}
                         {value === 1 && <div>Item Two</div>}
                         {value === 2 && <div>Item Three</div>}
                         {value === 3 && <div>Item Four</div>}

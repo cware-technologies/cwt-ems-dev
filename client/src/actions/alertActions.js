@@ -7,7 +7,7 @@ const success = (message) => ({
 
 const error = (error) => ({
     type: alertConstants.ERROR,
-    message: error.message,
+    message: error,
 });
 
 const clear = () => ({

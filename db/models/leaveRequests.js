@@ -1,25 +1,41 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
-  const ProfileAttributes = sequelize.define('C_EMP_XM', {
+  const LeaveRequest = sequelize.define('C_LV_REQ', {
     row_id: {
       allowNull: false,
       autoIncrement: true,
       primaryKey: true,
-      type: DataTypes.INTEGER(11)
-    },
-    name: {
-      type: DataTypes.STRING(50)
-    },
-    type: {
-      type: DataTypes.STRING(50)
+      type: DataTypes.INTEGER
     },
     emp_id: {
       type: DataTypes.INTEGER(11),
-      allowNull: false,
       references: {
         'model': 'c_emp',
-        'key' : 'row_id',
-      }
+        'key': 'row_id',
+      },
+    },
+    strt_dt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+    },
+    end_dt: {
+      type: DataTypes.DATE,
+      allowNull: false,    
+    },
+    stat_cd: {
+      type: DataTypes.STRING(30),
+      allowNull: false,
+      defaultValue: 'pending',
+    },
+    bu_id: {
+      type: DataTypes.INTEGER(11),
+      references: {
+        'model': 'c_bu',
+        'key': 'row_id',
+      },
+    },
+    type_cd: {
+      type: DataTypes.STRING(30)
     },
     created: {
       allowNull: false,
@@ -38,7 +54,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING(200),
     },
     ATTRIB_05: {
-      type: DataTypes.STRING(200),
+      type: DataTypes.STRING(100),
     },
     ATTRIB_06: {
       type: DataTypes.STRING(100),
@@ -57,14 +73,6 @@ module.exports = (sequelize, DataTypes) => {
     },
     ATTRIB_11: {
       type: DataTypes.INTEGER(11),
-      references: {
-        'model': 'c_lst_val',
-        'key': 'row_id',
-      },
-      onUpdate: 'CASCADE',
-      onDelete: 'CASCADE',
-      allowNull: true,
-      defaultValue: null,
     },
     ATTRIB_12: {
       type: DataTypes.INTEGER(11),
@@ -92,21 +100,6 @@ module.exports = (sequelize, DataTypes) => {
     },
     ATTRIB_20: {
       type: DataTypes.DATE,
-    },
-    ATTRIB_21: {
-      type: DataTypes.STRING(50),
-    },
-    ATTRIB_22: {
-      type: DataTypes.STRING(50),
-    },
-    ATTRIB_23: {
-      type: DataTypes.STRING(50),
-    },
-    ATTRIB_24: {
-      type: DataTypes.STRING(50),
-    },
-    ATTRIB_25: {
-      type: DataTypes.STRING(50),
     },
     FLG_01: {
       type: DataTypes.BOOLEAN,
@@ -145,26 +138,9 @@ module.exports = (sequelize, DataTypes) => {
     updatedAt: false,
     createdAt: 'created',
   });
-
-  ProfileAttributes.associate = function(models) {
-    ProfileAttributes.belongsTo(models.C_EMP, {as: 'employee', foreignKey: 'emp_id'})
-    ProfileAttributes.belongsTo(models.C_LST_VAL, {as: 'function', foreignKey: 'ATTRIB_11'})
+  LeaveRequest.associate = function(models) {
+    LeaveRequest.belongsTo( models.C_EMP, { as: 'requestor', foreignKey: 'emp_id' })
+    LeaveRequest.belongsTo( models.C_BU, { as: 'organization', foreignKey: 'bu_id' })
   };
-
-  ProfileAttributes.findCreateUpdate = function (findWhereMap, newValuesMap) {
-    return this.findOrCreate({
-      where: findWhereMap, 
-      defaults: findWhereMap
-    })
-    .spread(function(newObj, created) {
-      // set:
-      for(var key in newValuesMap) {
-        newObj[key] = newValuesMap[key];
-      }
-  
-      return newObj.save();
-    });
-  }
-
-  return ProfileAttributes;
+  return LeaveRequest;
 };

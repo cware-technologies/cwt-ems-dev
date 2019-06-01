@@ -346,7 +346,7 @@ class EnhancedDataTable extends React.Component {
     }
 
     render() {
-        const { classes, rows, data, headerTitle, editMode, handleDelete } = this.props;
+        const { classes, rows, data, headerTitle, editMode, handleDelete, disableEdit } = this.props;
         const { /* data, */ order, orderBy, rowsPerPage, page } = this.state;
         const { setEditMode, unsetEditMode } = this;
         const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
@@ -417,7 +417,7 @@ class EnhancedDataTable extends React.Component {
                                                                     </IconButton>
                                                                 </Tooltip> :
                                                                 <Tooltip title="Edit">
-                                                                <IconButton aria-label="Edit" onClick={() => setEditMode(data)}>
+                                                                <IconButton aria-label="Edit" disabled={disableEdit} onClick={() => setEditMode(data)}>
                                                                     <EditIcon />
                                                                 </IconButton>
                                                             </Tooltip>

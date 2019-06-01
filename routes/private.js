@@ -24,5 +24,10 @@ router.post('/employee/details/professionalAttributes', privateController.addEmp
 router.delete('/employee/details/professionalAttributes', privateController.deleteEmployeeProfessionalAttribute)
 router.put('/employee/details/professionalAttributes', privateController.updateEmployeeProfessionalAttribute)
 
+router.get('/employee/leaves', privateController.getLeaves)
+router.post('/employee/leaves', privateController.addEmployeeProfessionalAttribute)
+router.delete('/employee/leaves', privateController.deleteEmployeeProfessionalAttribute)
+router.put('/employee/leaves', privateController.updateEmployeeProfessionalAttribute)
+
 
 module.exports = router

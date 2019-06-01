@@ -10,13 +10,14 @@ import AddEditForm from './AddEditForm'
 import ModalTrigger from './ModalTrigger';
 
 const viewRows = [
-    { id: 'val', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Value' },
-    { id: 'type', numeric: false, disablePadding: true, lengthRatio:'Title', label: 'Type'}
+    { id: 'val', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Name' },
+    { id: 'ATTRIB_11', numeric: true, disablePadding: false, lengthRatio:'Small', label: 'No Of Days' },
 ]
 
 const formFields = [
     { id: 'val', type:'text', label: 'Name' },
     { id: 'type', type:'select', label: 'Type', selectOptions: [{value: 'leave_type', name: 'Leave Type'}], defaultValue: 'leave_type', readOnly: true, },
+    { id: 'ATTRIB_11', type:'number', label: 'No Of Days', inputProps: { min: '1', max: '50', step: '1' } },
 ]
 
 class EntitlementsManager extends React.Component{

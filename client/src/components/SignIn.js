@@ -118,7 +118,7 @@ class SignIn extends React.Component {
   }
 
   render(){
-    const { classes } = this.props;
+    const { classes, alert } = this.props;
     const { user, error } = this.state;
 
     return (
@@ -131,6 +131,7 @@ class SignIn extends React.Component {
             Sign in
           </Typography>
           <form className={classes.form}>
+            {alert.message && <FormHelperText error>{ alert.message }</FormHelperText> }
             <FormHelperText error>{error && <ul className={classes.errorList}><li className={classes.errorListItem}>{error}</li></ul>}</FormHelperText>
             <FormControl margin="normal" required fullWidth>
               <InputLabel htmlFor="email">Email Address</InputLabel>
@@ -182,8 +183,11 @@ SignIn.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = () => {
-  return {}
+const mapStateToProps = (state) => {
+  let alert = state.alertReducer
+  return {
+    alert,
+  }
 }
 
 SignIn = withStyles(styles)(SignIn);

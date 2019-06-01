@@ -10,6 +10,7 @@ const loggerMiddleware = createLogger();
 const persistConfig = {
     key: 'root',
     storage,
+    blacklist: ['alertReducer']
 }
 const persistedReducer = persistReducer(persistConfig, rootReducer)
 

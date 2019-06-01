@@ -5,7 +5,8 @@ const Op = require('sequelize').Op,
 models = require('../db/models'),
 Employee = models.C_EMP,
 Position = models.C_POSTN,
-ProfileAttribute = models.C_EMP_XM
+ProfileAttribute = models.C_EMP_XM,
+LeaveRequest = models.C_LV_REQ
 
 async function getEmployee(req, res, next){
     let employee = req.query
@@ -382,6 +383,32 @@ async function updateEmployeeProfessionalAttribute(req, res, next){
     }
 }
 
+async function getLeaves(req, res, next){
+    let params = req.query
+
+    try{
+        let data = await LeaveRequest.findAll({
+            where: {
+                emp_id: params.employee,
+            }
+        })
+
+        res.status(200).json({
+            status: 200,
+            data,
+        })
+    }
+    catch(err){
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function applyForLeave(req, res, next){
+
+}
+
 module.exports = {
     getEmployee,
     updateEmployeePersonalDetails,
@@ -400,4 +427,6 @@ module.exports = {
     addEmployeeProfessionalAttribute,
     deleteEmployeeProfessionalAttribute,
     updateEmployeeProfessionalAttribute,
+    getLeaves,
+    applyForLeave,
 }

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { Route, Switch, Redirect } from 'react-router-dom'
 import LoadingSpinner from './LoadingSpinner';
+import LeaveManager from './LeaveManager';
 const AppBar = lazy(() => import('./AppBar'));
 const Drawer = lazy(() => import('./Drawer'));
 const Dashboard = lazy(() => import('./Dashboard'));
@@ -71,7 +72,7 @@ class Portal extends React.Component {
             <Route path={`${match.path}dashboard`} component={Dashboard} />
             <Route path={`${match.path}register-user`} component={RegisterEmployeeForm} />
             <Route path={`${match.path}organization-structure`} component={RegisterOrganization} />
-            <Route path={`${match.path}leaves`} component={LeaveTabs} />
+            <Route path={`${match.path}leaves`} component={LeaveManager} />
             <Route path={`${match.path}manage-leaves`} component={AdminLeaves} />
             <Route path={`${match.path}apply-leave`} component={LeaveForm} />
             <Route path={`${match.path}pay-slips`} component={PaySlipTabs} />

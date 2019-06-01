@@ -6,6 +6,19 @@ import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
 import classNames from 'classnames'
 import { getDateFormValue } from '../helpers/utils'
+import { get } from 'http';
+
+const getNumberFieldValue = (value, inputProps) => {
+    if(parseInt(value) > parseInt(inputProps.max)){
+        return inputProps.max
+    }
+    else if(parseInt(value) < parseInt(inputProps.min)){
+        return inputProps.min
+    }
+    else{
+        return value
+    }
+}
 
 class AddEditForm extends React.Component {
     state = {
@@ -116,7 +129,7 @@ class AddEditForm extends React.Component {
                             type='number'
                             label={field.label}
                             className={classNames(classes.textField, classes.dense)}
-                            value={field.defaultValue ? field.defaultValue : object[field.id]}
+                            value={getNumberFieldValue(object[field.id], field.inputProps)}
                             disabled={field.readOnly}
                             defaultValue={field.defaultValue}
                             onChange={(e) => handleChange(e, this.props.headerTitle)}
@@ -128,11 +141,7 @@ class AddEditForm extends React.Component {
                             }}
                             InputProps={{
                                 className: classes.input,
-                                inputProps: {
-                                    min: "1",
-                                    max: "5",
-                                    step: "1",
-                                }
+                                inputProps: field.inputProps
                             }}
                             InputLabelProps={{
                                 className: classes.inputLabel,

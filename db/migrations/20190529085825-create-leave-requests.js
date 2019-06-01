@@ -1,26 +1,42 @@
 'use strict';
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('C_EMP_XM', {
+    return queryInterface.createTable('C_LV_REQ', {
       row_id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER(11)
-      },
-      name: {
-        type: Sequelize.STRING(50)
-      },
-      type: {
-        type: Sequelize.STRING(50)
+        type: Sequelize.INTEGER
       },
       emp_id: {
         type: Sequelize.INTEGER(11),
-        allowNull: false,
         references: {
           'model': 'c_emp',
-          'key' : 'row_id',
-        }
+          'key': 'row_id',
+        },
+      },
+      strt_dt: {
+        type: Sequelize.DATE,
+        allowNull: false,
+      },
+      end_dt: {
+        type: Sequelize.DATE,
+        allowNull: false,    
+      },
+      stat_cd: {
+        type: Sequelize.STRING(30),
+        allowNull: false,
+        defaultValue: 'pending',
+      },
+      bu_id: {
+        type: Sequelize.INTEGER(11),
+        references: {
+          'model': 'c_bu',
+          'key': 'row_id',
+        },
+      },
+      type_cd: {
+        type: Sequelize.STRING(30)
       },
       created: {
         allowNull: false,
@@ -39,7 +55,7 @@ module.exports = {
         type: Sequelize.STRING(200),
       },
       ATTRIB_05: {
-        type: Sequelize.STRING(200),
+        type: Sequelize.STRING(100),
       },
       ATTRIB_06: {
         type: Sequelize.STRING(100),
@@ -58,14 +74,6 @@ module.exports = {
       },
       ATTRIB_11: {
         type: Sequelize.INTEGER(11),
-        references: {
-          'model': 'c_lst_val',
-          'key': 'row_id',
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE',
-        allowNull: true,
-        defaultValue: null,
       },
       ATTRIB_12: {
         type: Sequelize.INTEGER(11),
@@ -93,21 +101,6 @@ module.exports = {
       },
       ATTRIB_20: {
         type: Sequelize.DATE,
-      },
-      ATTRIB_21: {
-        type: Sequelize.STRING(50),
-      },
-      ATTRIB_22: {
-        type: Sequelize.STRING(50),
-      },
-      ATTRIB_23: {
-        type: Sequelize.STRING(50),
-      },
-      ATTRIB_24: {
-        type: Sequelize.STRING(50),
-      },
-      ATTRIB_25: {
-        type: Sequelize.STRING(50),
       },
       FLG_01: {
         type: Sequelize.BOOLEAN,
@@ -142,6 +135,6 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('C_EMP_XM');
+    return queryInterface.dropTable('C_LV_REQ');
   }
 };
