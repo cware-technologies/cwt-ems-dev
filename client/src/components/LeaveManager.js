@@ -43,8 +43,8 @@ const styles = theme => ({
 const leaveRows = [
     // { id: 'name', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Name' },
     { id: 'ATTRIB_01', numeric: false, disablePadding: true, lengthRatio: 'Detail', label: 'Detail' },
-    { id: 'strt_dt', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Start Date' },
-    { id: 'end_dt', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'End Date' },
+    { id: 'strt_dt', date: true, numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Start Date' },
+    { id: 'end_dt', date: true, numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'End Date' },
     { id: 'type_cd', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Type' },
     { id: 'stat_cd', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Status' },
 ]
