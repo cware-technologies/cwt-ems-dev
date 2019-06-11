@@ -10,14 +10,50 @@ const styles = theme => ({
         left: `50%`,
         transform: `translate(-50%, -50%)`,
     },
-    
+    modalStyle: {
+        overflow: 'scroll',
+    },
     paper: {
-        position: 'absolute',
-        width: theme.spacing.unit * 50,
+        position: 'relative',
+        width: '80vw',
+        maxHeight: '100vh',
         backgroundColor: theme.palette.background.paper,
         boxShadow: theme.shadows[5],
         padding: theme.spacing.unit * 4,
         outline: 'none',
+        overflow: 'scroll',
+        [theme.breakpoints.down('sm')]: {
+            width: '100%',
+        },
+    },
+    closeButton: {
+        position: 'absolute',
+        right: 10,
+        height: 50,
+        width: 50,
+        opacity: '0.3',
+        zIndex: 5,
+        '&:hover': {
+            opacity: 1,
+        },
+        '&:after': {
+            position: 'absolute',
+            left: '15px',
+            content: '" "',
+            height: '33px',
+            width: '2px',
+            backgroundColor: '#333',
+            transform: 'rotate(45deg)',
+        },
+        '&:before': {
+            position: 'absolute',
+            left: '15px',
+            content: '" "',
+            height: '33px',
+            width: '2px',
+            backgroundColor: '#333',
+            transform: 'rotate(-45deg)',
+        },
     },
 })
 
@@ -42,8 +78,10 @@ const Modal = ({ modalOpen, handleModalClose, data, classes, children }) => {
             onClose={handleModalClose}
             aria-labelledby="simple-modal-title"
             aria-describedby="simple-modal-description"
+            className={classes.modalStyle}
         >
             <div className={classNames(classes.modal, classes.paper)}>
+                <div className={classes.closeButton} onClick={handleModalClose}></div>
                 { children }
             </div>
         </MUIModal>  

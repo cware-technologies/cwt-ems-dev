@@ -24,18 +24,18 @@ module.exports = {
       },
       bu_id: {
         type: Sequelize.INTEGER(11),
-        // allowNull: false,
+        allowNull: false,
         defaultValue: 1,
         references: {
           'model': 'c_bu',
           'key' : 'row_id',
         },
         onUpdate: 'CASCADE',
-        onDelete: 'SET NULL',
+        onDelete: 'CASCADE',
       },
       div_id: {
         type: Sequelize.INTEGER(11),
-        // allowNull: false,
+        allowNull: true,
         defaultValue: 1,
         references: {
           'model': 'c_div',
@@ -46,7 +46,7 @@ module.exports = {
       },
       postn_held_id: {
         type: Sequelize.INTEGER(11),
-        // allowNull: false,
+        allowNull: true,
         defaultValue: 1,
         references: {
           'model': 'c_postn',
@@ -57,7 +57,7 @@ module.exports = {
       },
       resp_id: {
         type: Sequelize.INTEGER(11),
-        allowNull: false,
+        allowNull: true,
         defaultValue: Sequelize.UUIDV4,
       },
       pr_postn_id: {

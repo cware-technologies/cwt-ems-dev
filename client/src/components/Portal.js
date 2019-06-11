@@ -1,9 +1,14 @@
 import React, { Suspense, lazy } from 'react';
 import PropTypes from 'prop-types';
+import compose from 'recompose/compose'
+import { connect } from 'react-redux';
+import { getAlert } from '../reducers/alertReducer';
 import { withStyles } from '@material-ui/core/styles';
 import { Route, Switch, Redirect } from 'react-router-dom'
 import LoadingSpinner from './LoadingSpinner';
 import LeaveManager from './LeaveManager';
+import AlertSnackbars from './AlertSnackbars'
+
 const AppBar = lazy(() => import('./AppBar'));
 const Drawer = lazy(() => import('./Drawer'));
 const Dashboard = lazy(() => import('./Dashboard'));
@@ -29,6 +34,7 @@ const EntitlementsManager = lazy(() => import('./EntitlementsManager'));
 const AttachEntitlement = lazy(() => import('./AttachEntitlement'));
 const EmployeeAttendanceList = lazy(() => import('./EmployeeAttendanceList'));
 const EmployeeDetailsSearch = lazy(() => import('./EmployeeDetailsSearch'));
+const EditEmployee = lazy(() => import('./EditEmployee2'));
 
 const styles = theme => ({
   root: {
@@ -39,8 +45,23 @@ const styles = theme => ({
 
 class Portal extends React.Component {
   state = {
-    drawerOpen: false,
+    drawerOpen: true,
+    alertOpen: false,
+    alert: {
+      type: null,
+      message: '',
+      changed: null,
+    }
   };
+
+  static getDerivedStateFromProps(nextProps, prevState){
+    if(nextProps.alert.changed !== prevState.alert.changed){
+      return {
+        alertOpen: true,
+        alert: nextProps.alert,
+      }
+    }
+  }
 
   handleDrawerOpen = () => {
     this.setState({ drawerOpen: true });
@@ -50,11 +71,25 @@ class Portal extends React.Component {
     this.setState({ drawerOpen: false });
   };
 
+  handleAlertOpen = (status) => {
+    this.setState(prevProps => ({
+      alertOpen: status,
+    }))
+  }
+
   render() {
-    const { classes, match } = this.props;
+    const { classes, match, alert } = this.props;
+    const { alertOpen } = this.state
+    console.log("RE-RENDERRRRRRRRRRRRRRRRRRRRRRRR!!!: ", alert)
 
     return (
       <div className={classes.root}>
+        <AlertSnackbars
+          open={alertOpen}
+          setOpen={this.handleAlertOpen}
+          type={alert.type && alert.type}
+          message={alert.message && alert.message}
+        />
         <Suspense fallback={<LoadingSpinner/>}>
           <AppBar
             handleDrawerOpen={this.handleDrawerOpen}
@@ -92,6 +127,7 @@ class Portal extends React.Component {
             <Route path={`${match.path}attach-entitlements`} component={AttachEntitlement} />
             <Route path={`${match.path}attendance-list`} component={EmployeeAttendanceList} />
             <Route path={`${match.path}employee-details`} component={EmployeeDetailsSearch} />
+            <Route path={`${match.path}edit-employee`} component={EditEmployee} />
             <Redirect from='/' to='/portal/dashboard' />
           </Switch>
         </Suspense>
@@ -104,6 +140,13 @@ Portal.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
+const mapStateToProps = (state) => {
+  return {
+    alert: getAlert(state),
+  }
+}
 
-
-export default withStyles(styles)(Portal);
+export default compose(
+  withStyles(styles),
+  connect(mapStateToProps, {})
+)(Portal);

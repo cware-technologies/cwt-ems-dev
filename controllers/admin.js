@@ -1,4 +1,6 @@
 const models = require('../db/models'),
+    User = models.C_USER,
+    Employee = models.C_EMP,
     Organization = models.C_BU,
     Division = models.C_DIV,
     Position = models.C_POSTN,
@@ -10,6 +12,8 @@ const models = require('../db/models'),
     ListOfValues = models.C_LST_VAL,
     ProfileAttribute = models.C_EMP_XM,
     Sequelize = require('sequelize'),
+    sequelize = require('../db/models').sequelize,
+    Op = Sequelize.Op,
     fs = require('fs')
     
 
@@ -22,10 +26,8 @@ async function getOrganizations(req, res, next){
                     attributes: ['row_id','name'],
                 }]
             }
-        ).map(el => el.get({ plain: true }))
-
-        console.log(data)
-
+        )
+        
         res.status(200).json({
             status: 200,
             result: data,
@@ -735,6 +737,61 @@ async function deleteLeaveTypeLOVS(req, res, next){
     }
 }
 
+async function getEmployees(req, res, next){
+    let employee = req.query
+
+    try{
+        let data = await User.findAll({
+            where: {
+                bu_id: {
+                    [Op.not]: 1,
+                }
+            },
+            attributes: ['login'],
+            include: [
+                {
+                    model: Employee,
+                    as: 'employee',
+                }
+            ]
+        }).map(el => {
+            let element = el.get({plain: true})
+            element = {...element, ...element.employee}
+            delete element.employee
+            return element
+        })
+
+        res.status(200).json({
+            status: 200,
+            data,
+        })
+    }
+    catch(err){
+
+    }
+}
+
+async function updateEmployee(req, res, next){
+    let employee = (({emp_num, fst_name, last_name, bu_id, div_id, resp_id, postn_held_id, report_to_id, pr_postn_id}) => ({emp_num, fst_name, last_name, bu_id, div_id, resp_id, postn_held_id, report_to_id, pr_postn_id}))(req.body)
+    let user = (({login, fst_name, last_name, bu_id, div_id, resp_id}) => ({login, fst_name, last_name, bu_id, div_id, resp_id}))(req.body)
+    console.log("UPDAAAATTTTTEEE!!!")
+    return sequelize.transaction(t => {
+        return Employee.update(employee, { where: { row_id: req.body.row_id }}, { transaction: t })
+        .then(emp => {
+            return User.update(user, { where: { login: req.body.login }}, { transaction: t });
+        });
+    }).then(result => {
+        res.status(200).json({
+            status: 200,
+            data: result,
+        })
+    }).catch(err => {
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    });
+}
+
 async function getEmployeeEntitlements(req, res, next){
     let employee = req.query
 
@@ -902,4 +959,6 @@ module.exports = {
     applyForEntitlement,
     searchEmployeeDetails,
     upsertEmployeeDetails,
+    getEmployees,
+    updateEmployee,
 }

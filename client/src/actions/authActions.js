@@ -33,9 +33,17 @@ const login = (username, password) => async (dispatch) => {
     try {
         let user = await authServices.login(username, password);
         dispatch(success(user));
-        let views = await getViews(user.responsibility)(dispatch)
-        dispatch(alertActions.success("Login Successful"));
-        window.location.href = `${user.redirectURL}`;
+
+        try{
+            let views = await getViews(user.responsibility)(dispatch)
+            dispatch(alertActions.success("Login Successful"));
+            window.location.href = `${user.redirectURL}`;
+        }
+        catch(err){
+            dispatch(failure(err));
+            dispatch(alertActions.error(err));
+            dispatch(logout())
+        }
     }
     catch (err) {
         dispatch(failure(err));

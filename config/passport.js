@@ -3,6 +3,7 @@ const passport = require('passport'),
     JWTStrategy = require('passport-jwt').Strategy,
     ExtractJWT = require('passport-jwt').ExtractJwt,
     Sequelize = require('sequelize'),
+    sequelize = require('../db/models').sequelize,
     models = require('../db/models'),
     Employee = models.C_EMP,
     User = models.C_USER,
@@ -16,8 +17,8 @@ passport.use(
     'register',
     new localStrategy(
         {
-            usernameField: 'email',
-            passwordField: 'password',
+            usernameField: 'login',
+            passwordField: 'hash_pwd',
             passReqToCallback: true,
             session: false,
         },
@@ -39,29 +40,58 @@ passport.use(
                         bcrypt.hash(password, BCRYPT_SALT_ROUNDS).then(hashedPassword => {
                             console.log(username, hashedPassword)
                             console.log(user)
-                            Employee.create({
-                                emp_num: user.empNum,
-                                fst_name: user.firstName,
-                                last_name: user.lastName,
-                                bu_id: user.organization,
-                                div_id: user.division,
-                                postn_held_id: user.position,
-                                resp_id: user.responsibility,
-                                report_to_id: user.reportsTo,
-                            }).then(emp => {
-                                User.create({
-                                    login: username,
-                                    hash_pwd: hashedPassword,
-                                    emp_id: emp.row_id,
-                                    resp_id: user.responsibility,
-                                    bu_id: user.organization,
-                                    fst_name: user.firstName,
-                                    last_name: user.lastName,
-                                }).then(user => {
-                                    debug("User Created");
-                                    return done(null, user)
-                                })
-                            })   
+
+                            return sequelize.transaction(t => {
+                                return Employee.create({
+                                    emp_num: user.emp_num,
+                                    fst_name: user.fst_name,
+                                    last_name: user.last_name,
+                                    bu_id: user.bu_id,
+                                    div_id: user.div_id,
+                                    postn_held_id: user.postn_held_id,
+                                    resp_id: user.resp_id,
+                                    report_to_id: user.report_to_id,
+                                }, { transaction: t }).then(emp => {
+                                    return User.create({
+                                        login: username,
+                                        hash_pwd: hashedPassword,
+                                        emp_id: emp.row_id,
+                                        resp_id: user.resp_id,
+                                        bu_id: user.bu_id,
+                                        fst_name: user.fst_name,
+                                        last_name: user.last_name,
+                                    }, { transaction: t });
+                                });
+                            }).then(result => {
+                                debug("User Created");
+                                return done(null, result)
+                            }).catch(err => {
+                                done(err);
+                            });
+
+                            // Employee.create({
+                            //     emp_num: user.emp_num,
+                            //     fst_name: user.fst_name,
+                            //     last_name: user.last_name,
+                            //     bu_id: user.bu_id,
+                            //     div_id: user.div_id,
+                            //     postn_held_id: user.postn_held_id,
+                            //     resp_id: user.resp_id,
+                            //     report_to_id: user.report_to_id,
+                            // }).then(emp => {
+                            //     User.create({
+                            //         login: username,
+                            //         hash_pwd: hashedPassword,
+                            //         emp_id: emp.row_id,
+                            //         resp_id: user.resp_id,
+                            //         bu_id: user.bu_id,
+                            //         fst_name: user.fst_name,
+                            //         last_name: user.last_name,
+                            //     }).then(user => {
+                            //         debug("User Created");
+                            //         return done(null, user)
+                            //     })
+                            // })
                         })
                     }
                 })

@@ -42,7 +42,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     div_id: {
       type: DataTypes.INTEGER(11),
-      allowNull: false,
+      allowNull: true,
       references: {
         'model': 'c_div',
         'key' : 'row_id',
@@ -52,7 +52,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     postn_held_id: {
       type: DataTypes.INTEGER(11),
-      allowNull: false,
+      allowNull: true,
       references: {
         'model': 'c_postn',
         'key' : 'row_id',
@@ -62,8 +62,8 @@ module.exports = (sequelize, DataTypes) => {
     },
     resp_id: {
       type: DataTypes.INTEGER(11),
-      allowNull: false,
-      defaultValue: DataTypes.UUIDV4,
+      allowNull: true,
+      defaultValue: null,
     },
     pr_postn_id: {
       type: DataTypes.INTEGER(11),

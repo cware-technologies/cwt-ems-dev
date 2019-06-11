@@ -10,6 +10,7 @@ const styles = theme => ({
         //padding: theme.spacing.unit,
         justifySelf: 'flex-start',
         display: 'block',
+        height: 40,
     },
 })
 
@@ -23,7 +24,7 @@ class ModalTrigger extends React.Component {
     };
     
     handleModalClose = () => {
-        this.setState({ modalOpen: false });
+        this.setState({ modalOpen: false }, () => this.props.onClose && this.props.onClose());
     };
 
     render(){

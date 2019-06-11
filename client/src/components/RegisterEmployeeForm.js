@@ -29,14 +29,14 @@ Object.filter = (obj, predicate) =>
           .reduce( (res, key) => (res[key] = obj[key], res), {} );
 
 let constraints = {
-    email: {
+    login: {
         presence: {
             allowEmpty: false,
             message: "Is Required"
         },
     //   email: true,
     },
-    password: {
+    hash_pwd: {
         presence: {
             allowEmpty: false,
             message: "Is Required"
@@ -50,41 +50,59 @@ let constraints = {
     confirmPassword: {
         equality: "password",
     },
-    dropdown_1: {
+    fst_name: {
+        presence: {
+            allowEmpty: false,
+            message: "Is Required"
+        },
+    },
+    last_name: {
+        presence: {
+            allowEmpty: false,
+            message: "Is Required"
+        },
+    },
+    emp_num: {
+        presence: {
+            allowEmpty: false,
+            message: "Is Required"
+        },
+    },
+    bu_id: {
         presence: {
             allowEmpty: false,
             message: "is Required"
         },
     },
-    dropdown_2: {
-        presence: {
-            allowEmpty: false,
-            message: "is Required"
-        },
-    },
-    dropdown_3: {
+    div_id: {
         // presence: {
         //     allowEmpty: false,
-        //     message: "Is Required"
+        //     message: "is Required"
         // },
     },
-    dropdown_4: {
-        // presence: {
-        //     allowEmpty: false,
-        //     message: "Is Required"
-        // },
-    },
-    dropdown_5: {
+    // postn_held_id: {
+    //     // presence: {
+    //     //     allowEmpty: false,
+    //     //     message: "Is Required"
+    //     // },
+    // },
+    // resp_id: {
+    //     // presence: {
+    //     //     allowEmpty: false,
+    //     //     message: "Is Required"
+    //     // },
+    // },
+    // report_to_id: {
 
-    },
+    // },
 };
 
 let dropdowns = [
-    {name:'dropdown_1', value: 'organization'},
-    {name:'dropdown_2', value: 'division'},
-    {name:'dropdown_3', value:'position'},
-    {name:'dropdown_4', value:'responsibility'},
-    {name:'dropdown_5', value:'reportsTo'},
+    {name:'dropdown_1', value: 'bu_id'},
+    {name:'dropdown_2', value: 'div_id'},
+    {name:'dropdown_3', value:'postn_held_id'},
+    // {name:'dropdown_4', value:'resp_id'},
+    // {name:'dropdown_5', value:'report_to_id'},
 ]
 
 class CreateAccount extends React.Component {
@@ -92,7 +110,7 @@ class CreateAccount extends React.Component {
         super(props);
         this.state = {
             employee: {
-                email:'',
+                login:'',
                 password: '',
                 firstName: '',
                 lastName: '',
@@ -123,21 +141,21 @@ class CreateAccount extends React.Component {
                 value: null,
                 data: [],
             },
-            dropdown_3: {
-                disabled:true,
-                value: null,
-                data: [],
-            },
-            dropdown_4: {
-                disabled:true,
-                value: null,
-                data: [],
-            },
-            dropdown_5: {
-                disabled:true,
-                value: null,
-                data: [],
-            },
+            // dropdown_3: {
+            //     disabled:true,
+            //     value: null,
+            //     data: [],
+            // },
+            // dropdown_4: {
+            //     disabled:true,
+            //     value: null,
+            //     data: [],
+            // },
+            // dropdown_5: {
+            //     disabled:true,
+            //     value: null,
+            //     data: [],
+            // },
         }
 
         this.debouncedSelectChange = debounce(this.handleSelectChange, 500);
@@ -195,27 +213,36 @@ class CreateAccount extends React.Component {
         return temp
     }
 
+    handleOrganizationChange = () => {
+
+    }
+
     handleSelectChange = (event) => {
         let name = event.target.id
+        console.log("NAME: ", name)
         let state = dropdowns.find((dropdown) => {
+            console.log(dropdown, "     ", name)
             if(dropdown.name === name)
                 return dropdown.value
         }).value
         let value = event.target.value
         let endpoint = event.target.name
         console.log("SELECT: ", name)
+        // event.target.id = state
         this.validate(event)
 
         this.setState(prevState => ({
-            employee: {
-                ...prevState.employee,
-                [state]: value,
-            },
             [name] : {
                 ...prevState[name],
                 value,
             }
-        }), () => {console.log("STATE: ",this.state);this.OrgRequest(endpoint, name)})
+        }), () => {
+            return this.props.changeHandler(state, value)
+            .then(res => this.OrgRequest(endpoint, name))
+            .catch(err => { return })
+            }
+        )
+
     }
 
     OrgRequest = async(endpoint, name) => {
@@ -280,12 +307,7 @@ class CreateAccount extends React.Component {
         let target = event.target.id;
         let value = event.target.value;
         this.validate(event)
-        this.setState(prevState => ({
-            employee: {
-                ...prevState.employee,
-                [target]: value,
-            }
-        }))
+        this.props.changeHandler(target, value)
     }
 
     handleConfirmPassChange = (event) => {
@@ -302,15 +324,6 @@ class CreateAccount extends React.Component {
         }));
     };
 
-    handleAdminChange = () => {
-        this.setState(prevState => ({
-            employee: {
-                ...prevState.employee,
-                isAdmin: !prevState.employee.isAdmin,
-            }
-        }))
-    }
-
     validate = (event) => {
         let target = event.target.id;
         let value = event.target.value;
@@ -320,13 +333,13 @@ class CreateAccount extends React.Component {
         console.log("Value: ", value)
         val_errors = validate.single(value, constraints[target]);
 
-        if (this.state.employee.password !== this.state.confirmPassword)
+        if (this.props.employee.hash_pwd !== this.state.confirmPassword)
             confirmPasswordVal = ["Not the same as the password"]
         else
             confirmPasswordVal = undefined
         
         console.log(val_errors);
-        let errors = Object.filter({...val_errors, confirmPasswordVal}, property => property !== undefined)
+        let errors = val_errors || confirmPasswordVal ? Object.filter({...val_errors, confirmPasswordVal}, property => property !== undefined) : {}
         console.log("ERRORSSSS: ", errors)
         this.setState(prevState => ({
             errors: {
@@ -339,25 +352,37 @@ class CreateAccount extends React.Component {
 
     validateAll = async () => {
         let confirmPasswordVal;
-        let val_errors = await validate(this.state.employee, constraints)
+        let val_errors
+        let temp_errors = await validate(this.props.employee, constraints)
+        console.log("VALUE ERRORS: ", temp_errors)
 
-        if (this.state.employee.password !== this.state.confirmPassword)
+        if(!this.props.editMode){
+            if (this.props.employee.hash_pwd !== this.state.confirmPassword)
             confirmPasswordVal = ["Not the same as the password"]
 
-        val_errors.confirmPassword = confirmPasswordVal
+            val_errors = {
+                confirmPassword: confirmPasswordVal,
+                ...temp_errors,
+            }
+        }
 
-        let errors = Object.filter({...val_errors, confirmPasswordVal}, property => property !== undefined)
+        let errors = val_errors ? Object.filter(val_errors, property => property !== undefined) : {}
         this.setState(prevState => ({
-            errors: {
-                ...prevState.errors,
-                ...errors,
-            },
+            errors
         }), () => console.log(this.state.errors));
     }
 
     allValid = async() => {
         console.log("IN ALL VALID")
-        await this.validateAll(this.state.employee, constraints)
+        let localConstraints
+
+        if(this.props.editMode)
+            localConstraints = (({login, fst_name, last_name, emp_num, bu_id, div_id}) => ({login, fst_name, last_name, emp_num, bu_id, div_id}))(constraints)
+        else
+            localConstraints = constraints
+        
+        await this.validateAll(this.props.employee, localConstraints)
+        console.log("ERRORS BEFORE RETURN: ", this.state.errors)
         if(Object.keys(this.state.errors).length === 0 && this.state.errors.constructor === Object){
             console.log("NO ERRORS")
             return true
@@ -394,21 +419,27 @@ class CreateAccount extends React.Component {
         let employee = this.state.employee
 
         if (await this.allValid()) {
-            try{
-                response = await axios({
-                    method: 'post',
-                    url: '/auth/register',
-                    data: employee,
-                    headers: {
-                        'content-type': 'application/json',
-                    }
-                })
-                console.log(response)
-                this.handleResponse(response)
-            }
-            catch(err){
-                this.handleResponse(err.response)
-            }
+            this.props.submitHandler()
+            // if(!this.state.editMode){
+            //     try{
+            //         response = await axios({
+            //             method: 'post',
+            //             url: '/auth/register',
+            //             data: employee,
+            //             headers: {
+            //                 'content-type': 'application/json',
+            //             }
+            //         })
+            //         console.log(response)
+            //         this.handleResponse(response)
+            //     }
+            //     catch(err){
+            //         this.handleResponse(err.response)
+            //     }
+            // }
+            // else{
+                
+            // }
         }
     }
 
@@ -421,22 +452,24 @@ class CreateAccount extends React.Component {
     }
 
     render(){
-        let { classes } = this.props;
-        let { employee, errors, response } = this.state;
+        let { classes, employee, editMode } = this.props;
+        let { errors, response } = this.state;
+
+        console.log("FORM DATA: ", employee)
 
         return(
-            <Container>
+            <React.Fragment>
                 <div className={classes.formSection}>
                     <Typography variant="h6" gutterBottom component="h6" className={ classes.heading }>
-                        Register An Employee
+                        Login Details
                     </Typography>
                     <FormHelperText>{response.status && <ul className={response.status<300?classes.successList:classes.errorList}><li className={classes.errorListItem}>{response.message}</li></ul>}</FormHelperText>
                     <TextField
-                        error={errors.email}
-                        helperText={errors.email && <ul className={classes.errorList}> {errors.email.map((error)=>{ return <li className={classes.errorListItem}>{error}</li>})}</ul>}
-                        id="email"
-                        label="Email Address"
-                        value={employee.email_id}
+                        error={errors.login}
+                        helperText={errors.login && <ul className={classes.errorList}> {errors.login.map((error)=>{ return <li className={classes.errorListItem}>{error}</li>})}</ul>}
+                        id="login"
+                        label="Login *"
+                        value={employee.login}
                         onChange={this.handleTextChange}
                         onBlur={this.validate}
                         classes={{
@@ -453,97 +486,111 @@ class CreateAccount extends React.Component {
                         }}
                     />
  
+                    {!editMode && 
+                    
+                    <React.Fragment>
+                        <TextField
+                            id="hash_pwd"
+                            label="Password *"
+                            value={employee.hash_pwd}
+                            error={errors.hash_pwd}
+                            helperText={errors.hash_pwd && <ul className={classes.errorList}> {errors.hash_pwd.map((error)=>{ return <li className={classes.errorListItem}>{error}</li>})}</ul>}
+                            onBlur={this.validate}
+                            onChange={this.handleTextChange}
+                            type={this.state.showPassword ? 'text' : 'password'}
+                            classes={{
+                                root: classes.inputRoot,
+                            }}
+                            className={classNames(classes.textField, classes.dense, classes.singleSpanInput)}
+                            margin="dense"
+                            variant="filled"
+                            InputProps={{
+                                className: classes.input,
+                                endAdornment: <InputAdornment tabIndex={-1} position="end">
+                                                <IconButton
+                                                    aria-label="Toggle password visibility"
+                                                    onClick={this.handleClickShowPassword}
+                                                    tabIndex={-1}
+                                                >
+                                                    {this.state.showPassword ? <Visibility /> : <VisibilityOff />}
+                                                </IconButton>
+                                            </InputAdornment>
+                            }}
+                            InputLabelProps={{
+                                className: classes.inputLabel,
+                            }}
+                        />
+                        <TextField
+                            id="confirmPassword"
+                            label="Confirm Password *"
+                            type={this.state.showPassword ? 'text' : 'password'}
+                            error={errors.confirmPassword}
+                            helperText={errors.confirmPassword && <ul className={classes.errorList}> {errors.confirmPassword.map((error)=>{ return <li className={classes.errorListItem}>{error}</li>})}</ul>}
+                            value={this.state.confirmPassword}
+                            onBlur={this.validate}
+                            onChange={this.handleConfirmPassChange}
+                            classes={{
+                                root: classes.inputRoot,
+                            }}
+                            className={classNames(classes.textField, classes.dense, classes.singleSpanInput)}
+                            margin="dense"
+                            variant="filled"
+                            InputProps={{
+                                className: classes.input,
+                                endAdornment: <InputAdornment tabIndex={-1} position="end">
+                                                <IconButton
+                                                    aria-label="Toggle password visibility"
+                                                    onClick={this.handleClickShowPassword}
+                                                    tabIndex={-1}
+                                                >
+                                                    {this.state.showPassword ? <Visibility /> : <VisibilityOff />}
+                                                </IconButton>
+                                            </InputAdornment>
+                            }}
+                            InputLabelProps={{
+                                className: classes.inputLabel,
+                            }}
+                        />
+                    </React.Fragment>
+                    }
                     <TextField
-                        id="password"
-                        label="Password"
-                        value={employee.password}
-                        error={errors.password}
-                        helperText={errors.password && <ul className={classes.errorList}> {errors.password.map((error)=>{ return <li className={classes.errorListItem}>{error}</li>})}</ul>}
+                        id="fst_name"
+                        label="First Name *"
+                        classes={{
+                            root: classes.inputRoot,
+                        }}
+                        className={classNames(classes.textField, classes.dense, classes.singleSpanInput)}
+                        margin="dense"
+                        variant="filled"
+                        error={errors.fst_name}
+                        helperText={errors.fst_name && <ul className={classes.errorList}> {errors.fst_name.map((error)=>{ return <li className={classes.errorListItem}>{error}</li>})}</ul>}
+                        value={employee.fst_name}
+                        onChange={this.handleTextChange}
                         onBlur={this.validate}
-                        onChange={this.handleTextChange}
-                        type={this.state.showPassword ? 'text' : 'password'}
-                        classes={{
-                            root: classes.inputRoot,
-                        }}
-                        className={classNames(classes.textField, classes.dense, classes.singleSpanInput)}
-                        margin="dense"
-                        variant="filled"
                         InputProps={{
                             className: classes.input,
-                            endAdornment: <InputAdornment tabIndex={-1} position="end">
-                                            <IconButton
-                                                aria-label="Toggle password visibility"
-                                                onClick={this.handleClickShowPassword}
-                                                tabIndex={-1}
-                                            >
-                                                {this.state.showPassword ? <Visibility /> : <VisibilityOff />}
-                                            </IconButton>
-                                        </InputAdornment>
+                        }}
+                        InputLabelProps={{
+                            className: classes.inputLabel,
                         }}
                         InputLabelProps={{
                             className: classes.inputLabel,
                         }}
                     />
                     <TextField
-                        id="confirmPassword"
-                        label="Confirm Password"
-                        type={this.state.showPassword ? 'text' : 'password'}
-                        error={errors.confirmPassword}
-                        helperText={errors.confirmPassword && <ul className={classes.errorList}> {errors.confirmPassword.map((error)=>{ return <li className={classes.errorListItem}>{error}</li>})}</ul>}
+                        id="last_name"
+                        label="Last Name *"
+                        classes={{
+                            root: classes.inputRoot,
+                        }}
+                        className={classNames(classes.textField, classes.dense, classes.singleSpanInput)}
+                        margin="dense"
+                        variant="filled"
+                        error={errors.last_name}
+                        helperText={errors.last_name && <ul className={classes.errorList}> {errors.last_name.map((error)=>{ return <li className={classes.errorListItem}>{error}</li>})}</ul>}
+                        value={employee.last_name}
+                        onChange={this.handleTextChange}
                         onBlur={this.validate}
-                        onChange={this.handleConfirmPassChange}
-                        classes={{
-                            root: classes.inputRoot,
-                        }}
-                        className={classNames(classes.textField, classes.dense, classes.singleSpanInput)}
-                        margin="dense"
-                        variant="filled"
-                        InputProps={{
-                            className: classes.input,
-                            endAdornment: <InputAdornment tabIndex={-1} position="end">
-                                            <IconButton
-                                                aria-label="Toggle password visibility"
-                                                onClick={this.handleClickShowPassword}
-                                                tabIndex={-1}
-                                            >
-                                                {this.state.showPassword ? <Visibility /> : <VisibilityOff />}
-                                            </IconButton>
-                                        </InputAdornment>
-                        }}
-                        InputLabelProps={{
-                            className: classes.inputLabel,
-                        }}
-                    />
-                    <TextField
-                        id="firstName"
-                        label="First Name"
-                        classes={{
-                            root: classes.inputRoot,
-                        }}
-                        className={classNames(classes.textField, classes.dense, classes.singleSpanInput)}
-                        margin="dense"
-                        variant="filled"
-                        onChange={this.handleTextChange}
-                        InputProps={{
-                            className: classes.input,
-                        }}
-                        InputLabelProps={{
-                            className: classes.inputLabel,
-                        }}
-                        InputLabelProps={{
-                            className: classes.inputLabel,
-                        }}
-                    />
-                    <TextField
-                        id="lastName"
-                        label="Last Name"
-                        classes={{
-                            root: classes.inputRoot,
-                        }}
-                        className={classNames(classes.textField, classes.dense, classes.singleSpanInput)}
-                        margin="dense"
-                        variant="filled"
-                        onChange={this.handleTextChange}
                         InputProps={{
                             className: classes.input,
                         }}
@@ -551,45 +598,25 @@ class CreateAccount extends React.Component {
                             className: classes.inputLabel,
                         }}
                     />
-                    {/* <FormControlLabel
-                        control={
-                            <Checkbox
-                                id="isAdmin-checkbox"
-                                checked={this.state.employee.isAdmin}
-                                onChange={this.handleAdminChange}
-                                value="isAdmin"
-                            />
-                        }
-                        label="Make the Employee Admin?"
-                    /> */}
-                    {/* <FormControl component="fieldset" className={classes.radioGroup}>
-                        <FormLabel component="legend" className={classes.legend}>Access Rights</FormLabel>
-                        <RadioGroup
-                            aria-label="Access Rights"
-                            name="access_rights"
-                            className={classes.group}
-                            value={this.state.value}
-                            onChange={this.handleChange}
-                            defaultValue="employee"
-                        >
-                            <FormControlLabel value="employee" control={<Radio />} label="Employee" />
-                            <FormControlLabel value="manager" control={<Radio />} label="Manager" />
-                            <FormControlLabel value="admin" control={<Radio />} label="Admin" />
-                        </RadioGroup>
-                    </FormControl> */}
                 </div>
                 <div className={classes.formSection} style={{border: '1px dotted black', padding: '20px',}}>
+                    <Typography variant="h6" gutterBottom component="h6" className={ classes.heading }>
+                        Employee Details
+                    </Typography>
                     <TextField
-                        id="empNum"
-                        label="Employee ID"
+                        id="emp_num"
+                        label="Employee ID *"
                         classes={{
                             root: classes.inputRoot,
                         }}
                         className={classNames(classes.textField, classes.dense, classes.singleSpanInput)}
                         margin="dense"
                         variant="filled"
-                        value={this.state.employee.empNum}
+                        value={employee.emp_num}
+                        error={errors.emp_num}
+                        helperText={errors.emp_num && <ul className={classes.errorList}> {errors.emp_num.map((error)=>{ return <li className={classes.errorListItem}>{error}</li>})}</ul>}
                         onChange={this.handleTextChange}
+                        onBlur={this.validate}
                         InputProps={{
                             className: classes.input,
                         }}
@@ -604,11 +631,12 @@ class CreateAccount extends React.Component {
                         id="dropdown_1"
                         name="/admin/org-struct/division"
                         select
-                        label={`Organization`}
-                        helperText={errors.dropdown_1 && <ul className={classes.errorList}> {errors.dropdown_1.map((error)=>{ return <li className={classes.errorListItem}>{error}</li>})}</ul>}
+                        label={`Organization *`}
+                        error={errors.bu_id}
+                        helperText={errors.bu_id && <ul className={classes.errorList}> {errors.bu_id.map((error)=>{ return <li className={classes.errorListItem}>{error}</li>})}</ul>}
                         disabled={this.state.dropdown_1.disabled}
                         className={classNames(classes.textField, classes.dense)}
-                        value={this.state.dropdown_1.value}
+                        value={employee.bu_id}
                         onChange={this.handleSelectChange}
                         onBlur={this.validate}
                         SelectProps={{
@@ -645,10 +673,11 @@ class CreateAccount extends React.Component {
                         name="/admin/org-struct/position"
                         select
                         label={`Division`}
-                        helperText={errors.dropdown_2 && <ul className={classes.errorList}> {errors.dropdown_2.map((error)=>{ return <li className={classes.errorListItem}>{error}</li>})}</ul>}
+                        error={errors.div_id}
+                        helperText={errors.div_id && <ul className={classes.errorList}> {errors.div_id.map((error)=>{ return <li className={classes.errorListItem}>{error}</li>})}</ul>}
                         disabled={this.state.dropdown_2.disabled}
                         className={classNames(classes.textField, classes.dense)}
-                        value={this.state.dropdown_2.value}
+                        value={employee.div_id}
                         onChange={this.handleSelectChange}
                         onBlur={this.validate}
                         SelectProps={{
@@ -680,15 +709,15 @@ class CreateAccount extends React.Component {
                             </option>
                         ))}
                     </TextField>
-                    <TextField
+                    {/* <TextField
                         id="dropdown_3"
                         name="/admin/org-struct/responsibility"
                         select
                         label={`Position`}
-                        helperText={errors.dropdown_3 && <ul className={classes.errorList}> {errors.dropdown_3.map((error)=>{ return <li className={classes.errorListItem}>{error}</li>})}</ul>}
+                        helperText={errors.postn_held_id && <ul className={classes.errorList}> {errors.postn_held_id.map((error)=>{ return <li className={classes.errorListItem}>{error}</li>})}</ul>}
                         disabled={this.state.dropdown_3.disabled}
                         className={classNames(classes.textField, classes.dense)}
-                        value={this.state.dropdown_3.value}
+                        value={employee.postn_held_id}
                         onChange={this.handleSelectChange}
                         onBlur={this.validate}
                         SelectProps={{
@@ -725,10 +754,10 @@ class CreateAccount extends React.Component {
                         name="/employee/employee"
                         select
                         label={`Responsibility`}
-                        helperText={errors.dropdown_4 && <ul className={classes.errorList}> {errors.dropdown_4.map((error)=>{ return <li className={classes.errorListItem}>{error}</li>})}</ul>}
+                        helperText={errors.resp_id && <ul className={classes.errorList}> {errors.resp_id.map((error)=>{ return <li className={classes.errorListItem}>{error}</li>})}</ul>}
                         disabled={this.state.dropdown_4.disabled}
                         className={classNames(classes.textField, classes.dense)}
-                        value={this.state.dropdown_4.value}
+                        value={employee.resp_id}
                         onChange={this.handleSelectChange}
                         onBlur={this.validate}
                         SelectProps={{
@@ -765,10 +794,10 @@ class CreateAccount extends React.Component {
                         name=""
                         select
                         label={`Reports To`}
-                        helperText={errors.dropdown_5 && <ul className={classes.errorList}> {errors.dropdown_5.map((error)=>{ return <li className={classes.errorListItem}>{error}</li>})}</ul>}
+                        helperText={errors.report_to_id && <ul className={classes.errorList}> {errors.report_to_id.map((error)=>{ return <li className={classes.errorListItem}>{error}</li>})}</ul>}
                         disabled={this.state.dropdown_5.disabled}
                         className={classNames(classes.textField, classes.dense)}
-                        value={this.state.dropdown_5.value}
+                        value={employee.report_to_id}
                         onChange={this.handleSelectChange}
                         onBlur={this.validate}
                         SelectProps={{
@@ -799,12 +828,13 @@ class CreateAccount extends React.Component {
                                 {`${option.fst_name} ${option.last_name}`}
                             </option>
                         ))}
-                    </TextField>
+                    </TextField> */}
                 </div>
+                <FormHelperText>{response.status && <ul className={response.status<300?classes.successList:classes.errorList}><li className={classes.errorListItem}>{response.message}</li></ul>}</FormHelperText>
                 <Button onClick={this.submitForm} variant="contained" color="primary" className={classNames(classes.button, classes.textField)}>
-                    Register
+                    {editMode ? "Update" : "Register"}
                 </Button>
-            </Container>
+            </React.Fragment>
         )
     }
 }

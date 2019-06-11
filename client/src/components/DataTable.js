@@ -371,7 +371,7 @@ class EnhancedDataTable extends React.Component {
                                     stableSort(data, getSorting(order, orderBy))
                                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                     .map(data => {
-                                        let isSelected = this.isSelected(data.row_id)
+                                        let isSelected = editMode && this.isSelected(data.row_id)
                                         return (
                                             <TableRow
                                                 role="checkbox"

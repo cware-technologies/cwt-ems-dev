@@ -24,6 +24,7 @@ router.post('/register', passport.authenticate('register', { failWithError: true
     },
     function(err, req, res, next) {
         // Handle error
+        console.log(err)
         if(req.errorMessage){
             let err = req.errorMessage;
             return next(err);

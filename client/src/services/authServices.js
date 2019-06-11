@@ -17,7 +17,13 @@ function login(username, password) {
         }
     })
     .then(handleLoginResponse)
-    .catch(err => handleLoginResponse(err.response))
+    .catch(err => {
+        console.log("ERROR: ", err)
+        if(err.response.data.status)
+            handleLoginResponse(err.response)
+        else
+            throw "Can't connect to server"
+    })
 }
 
 function logout() {

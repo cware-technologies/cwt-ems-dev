@@ -101,21 +101,21 @@ class SignIn extends React.Component {
     // .catch(err => this.handleResponse(err.response))
   }
 
-  handleResponse = (res) => {
-    let error = res.data.message;
+  // handleResponse = (res) => {
+  //   let error = res.data.message;
 
-    if(res.data.status >= 400){
-      this.setState(prevState => ({
-        error
-      }))
-    }
+  //   if(res.data.status >= 400){
+  //     this.setState(prevState => ({
+  //       error
+  //     }))
+  //   }
 
-    else if(res.data.status >=200 && res.data.status <300){
-      setAuthToken({token: res.data.token})
-      addAuthHeaderAsBearerToken()
-      window.location.href = `${res.data.redirectURL}`;
-    }
-  }
+  //   else if(res.data.status >=200 && res.data.status <300){
+  //     setAuthToken({token: res.data.token})
+  //     addAuthHeaderAsBearerToken()
+  //     window.location.href = `${res.data.redirectURL}`;
+  //   }
+  // }
 
   render(){
     const { classes, alert } = this.props;
@@ -132,7 +132,7 @@ class SignIn extends React.Component {
           </Typography>
           <form className={classes.form}>
             {alert.message && <FormHelperText error>{ alert.message }</FormHelperText> }
-            <FormHelperText error>{error && <ul className={classes.errorList}><li className={classes.errorListItem}>{error}</li></ul>}</FormHelperText>
+            {/* <FormHelperText error>{error && <ul className={classes.errorList}><li className={classes.errorListItem}>{error}</li></ul>}</FormHelperText> */}
             <FormControl margin="normal" required fullWidth>
               <InputLabel htmlFor="email">Email Address</InputLabel>
               <Input

@@ -50,6 +50,9 @@ const leaveRows = [
 ]
 
 const leaveFields = [
+    { id: 'detail', type: 'text', label: 'Entitlement', selectOptions: [{ value: 'induction_checklist', name: 'Induction' }, { value: 'exit_checklist', name: 'Exit' }] },
+    { id: 'application', type: 'select', label: 'Entitlement', selectOptions: [{ value: 'induction_checklist', name: 'Induction' }, { value: 'exit_checklist', name: 'Exit' }] },
+    { id: 'application', type: 'select', label: 'Entitlement', selectOptions: [{ value: 'induction_checklist', name: 'Induction' }, { value: 'exit_checklist', name: 'Exit' }] },
     { id: 'application', type: 'select', label: 'Entitlement', selectOptions: [{ value: 'induction_checklist', name: 'Induction' }, { value: 'exit_checklist', name: 'Exit' }] },
 ]
 
@@ -97,39 +100,55 @@ class LeaveManager extends React.Component {
         const { value, data } = this.state;
 
         return (
-            <Container>
-                <Paper square className={classes.root}>
-                    <Tabs
-                        value={this.state.value}
-                        onChange={this.handleTabChange}
-                        variant="fullWidth"
-                        indicatorColor="primary"
-                        textColor="primary"
-                        classes={{
-                            root: classes.tabs,
-                        }}
-                    >
-                        <Tab icon={<AllIcon />} label="All" classes={{ labelIcon: classes.tabLabel, }} />
-                        {/* <Tab icon={<PendingIcon />} label="Pending" classes={{ labelIcon: classes.tabLabel, }} /> */}
-                        <Tab icon={<HistoryIcon />} label="Availed" classes={{ labelIcon: classes.tabLabel, }} />
-                        {/* <Tab icon={<DoubleTickIcon />} label="Approved" classes={{ labelIcon: classes.tabLabel, }} /> */}
-                    </Tabs>
-                    <TabContainer>
-                        {value === 0 && 
-                            <DataTable
-                                headerTitle="Leaves"
-                                rows={leaveRows}
-                                endpoint='admin/employee/entitlements'
-                                data={data}   
-                            />
-                        }
-                        {value === 1 && <div>Item Two</div>}
-                        {value === 2 && <div>Item Three</div>}
-                        {value === 3 && <div>Item Four</div>}
-                        {value === 4 && <div>Item Five</div>}
-                    </TabContainer>
-                </Paper>
-            </Container>
+            // <Container>
+            //      <ModalTrigger
+            //         title="Add"
+            //         button
+            //         innerRef={node => this.modalRef = node}
+            //         disabled={editMode}
+            //     >
+            //         <AddEditForm
+            //             headerTitle="LeaveTypes"
+            //             fields={formFields}
+            //             object={formData}
+            //             handleChange={this.handleChange}
+            //             handleSubmit={this.handleSubmit}
+            //             editMode={editMode}
+            //         />
+            //     </ModalTrigger>
+            //     <Paper square className={classes.root}>
+            //         <Tabs
+            //             value={this.state.value}
+            //             onChange={this.handleTabChange}
+            //             variant="fullWidth"
+            //             indicatorColor="primary"
+            //             textColor="primary"
+            //             classes={{
+            //                 root: classes.tabs,
+            //             }}
+            //         >
+            //             <Tab icon={<AllIcon />} label="All" classes={{ labelIcon: classes.tabLabel, }} />
+            //             {/* <Tab icon={<PendingIcon />} label="Pending" classes={{ labelIcon: classes.tabLabel, }} /> */}
+            //             <Tab icon={<HistoryIcon />} label="Availed" classes={{ labelIcon: classes.tabLabel, }} />
+            //             {/* <Tab icon={<DoubleTickIcon />} label="Approved" classes={{ labelIcon: classes.tabLabel, }} /> */}
+            //         </Tabs>
+            //         <TabContainer>
+            //             {value === 0 && 
+            //                 <DataTable
+            //                     headerTitle="Leaves"
+            //                     rows={leaveRows}
+            //                     endpoint='admin/employee/entitlements'
+            //                     data={data}   
+            //                 />
+            //             }
+            //             {value === 1 && <div>Item Two</div>}
+            //             {value === 2 && <div>Item Three</div>}
+            //             {value === 3 && <div>Item Four</div>}
+            //             {value === 4 && <div>Item Five</div>}
+            //         </TabContainer>
+            //     </Paper>
+            // </Container>
+            null
         );
     }
 }
