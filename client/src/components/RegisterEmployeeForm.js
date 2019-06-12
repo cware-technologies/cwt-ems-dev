@@ -169,7 +169,7 @@ class CreateAccount extends React.Component {
                 method: 'get',
                 url: '/admin/org-struct/organization',
             })
-            console.log("RESPONSE: ", response.data)
+
             this.handleGetResponse(response, 'dropdown_0')
         }
         catch(err){
@@ -197,11 +197,8 @@ class CreateAccount extends React.Component {
                 },
                 isFetching: false,
                 success: true,
-            }), this.log)
+            }))
         }
-    }
-    log(){
-        console.log(this.state)
     }
 
     getNextDropdown = (prevDD) => {
@@ -219,15 +216,12 @@ class CreateAccount extends React.Component {
 
     handleSelectChange = (event) => {
         let name = event.target.id
-        console.log("NAME: ", name)
         let state = dropdowns.find((dropdown) => {
-            console.log(dropdown, "     ", name)
             if(dropdown.name === name)
                 return dropdown.value
         }).value
         let value = event.target.value
         let endpoint = event.target.name
-        console.log("SELECT: ", name)
         // event.target.id = state
         this.validate(event)
 
@@ -248,7 +242,6 @@ class CreateAccount extends React.Component {
     OrgRequest = async(endpoint, name) => {
 
         if(this.state[name].value === null || this.state[name].value === ""){
-            console.log('NNUUUULLLLLL')
             if(name === 'dropdown_1'){
                 this.setState(prevState => ({
                     dropdown_2: {
@@ -295,7 +288,6 @@ class CreateAccount extends React.Component {
                     div_id: this.state.dropdown_2.value && this.state.dropdown_2.value,
                 }
             })
-            console.log("RESPONSE: ", response.data)
             this.handleGetResponse(response, name)
         }
         catch(err){
@@ -329,8 +321,7 @@ class CreateAccount extends React.Component {
         let value = event.target.value;
         let val_errors;
         let confirmPasswordVal;
-        console.log("Target: ", target)
-        console.log("Value: ", value)
+
         val_errors = validate.single(value, constraints[target]);
 
         if (this.props.employee.hash_pwd !== this.state.confirmPassword)
@@ -338,23 +329,20 @@ class CreateAccount extends React.Component {
         else
             confirmPasswordVal = undefined
         
-        console.log(val_errors);
         let errors = val_errors || confirmPasswordVal ? Object.filter({...val_errors, confirmPasswordVal}, property => property !== undefined) : {}
-        console.log("ERRORSSSS: ", errors)
         this.setState(prevState => ({
             errors: {
                 ...prevState.errors,
                 [target]: val_errors,
                 confirmPassword: confirmPasswordVal,
             },
-        }), console.log(this.state.errors));
+        }));
     }
 
     validateAll = async () => {
         let confirmPasswordVal;
         let val_errors
         let temp_errors = await validate(this.props.employee, constraints)
-        console.log("VALUE ERRORS: ", temp_errors)
 
         if(!this.props.editMode){
             if (this.props.employee.hash_pwd !== this.state.confirmPassword)
@@ -369,11 +357,10 @@ class CreateAccount extends React.Component {
         let errors = val_errors ? Object.filter(val_errors, property => property !== undefined) : {}
         this.setState(prevState => ({
             errors
-        }), () => console.log(this.state.errors));
+        }));
     }
 
     allValid = async() => {
-        console.log("IN ALL VALID")
         let localConstraints
 
         if(this.props.editMode)
@@ -382,13 +369,14 @@ class CreateAccount extends React.Component {
             localConstraints = constraints
         
         await this.validateAll(this.props.employee, localConstraints)
-        console.log("ERRORS BEFORE RETURN: ", this.state.errors)
+
         if(Object.keys(this.state.errors).length === 0 && this.state.errors.constructor === Object){
-            console.log("NO ERRORS")
+            this.setState(prevState => ({
+                response: {}
+            }))
             return true
         }
         else{
-            console.log("ERRORS FOUND")
             let response = {
                 status: 412,
                 message: 'Please Fill The Form Correctly',
@@ -396,7 +384,7 @@ class CreateAccount extends React.Component {
 
             this.setState(prevState => ({
                 response,
-            }), console.log(this.state))
+            }))
             return false
         }
     }
@@ -420,26 +408,6 @@ class CreateAccount extends React.Component {
 
         if (await this.allValid()) {
             this.props.submitHandler()
-            // if(!this.state.editMode){
-            //     try{
-            //         response = await axios({
-            //             method: 'post',
-            //             url: '/auth/register',
-            //             data: employee,
-            //             headers: {
-            //                 'content-type': 'application/json',
-            //             }
-            //         })
-            //         console.log(response)
-            //         this.handleResponse(response)
-            //     }
-            //     catch(err){
-            //         this.handleResponse(err.response)
-            //     }
-            // }
-            // else{
-                
-            // }
         }
     }
 
@@ -448,14 +416,12 @@ class CreateAccount extends React.Component {
 
         this.setState(prevState => ({
             response
-        }),console.log(this.state.response))
+        }))
     }
 
     render(){
         let { classes, employee, editMode } = this.props;
         let { errors, response } = this.state;
-
-        console.log("FORM DATA: ", employee)
 
         return(
             <React.Fragment>
@@ -599,7 +565,7 @@ class CreateAccount extends React.Component {
                         }}
                     />
                 </div>
-                <div className={classes.formSection} style={{border: '1px dotted black', padding: '20px',}}>
+                <div className={classes.formSection}>
                     <Typography variant="h6" gutterBottom component="h6" className={ classes.heading }>
                         Employee Details
                     </Typography>

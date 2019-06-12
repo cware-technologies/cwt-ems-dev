@@ -3,6 +3,9 @@ import axios from 'axios'
 import { connect } from 'react-redux'
 import { withStyles } from '@material-ui/core/styles'
 import { formStyle } from '../styles/form'
+import Tooltip from '@material-ui/core/Tooltip'
+import IconButton from '@material-ui/core/IconButton'
+import AddIcon from '@material-ui/icons/Add'
 import Container from './MainContainer'
 import { getUserOrganization } from '../reducers/authReducer'
 import DataTable from './DataTable'
@@ -11,7 +14,7 @@ import ModalTrigger from './ModalTrigger';
 
 const viewRows = [
     { id: 'val', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Name' },
-    { id: 'ATTRIB_11', numeric: true, disablePadding: false, lengthRatio:'Small', label: 'No Of Days' },
+    { id: 'ATTRIB_11', numeric: false, disablePadding: true, lengthRatio:'Small', label: 'No Of Days' },
 ]
 
 const formFields = [
@@ -195,24 +198,30 @@ class EntitlementsManager extends React.Component{
     render(){
         let { organization } = this.props
         let { data, formData, editMode } = this.state
-         console.log("ORG: ", this.props.organization)
+
+        let addComponent =  <ModalTrigger
+                                IconButton={
+                                    <Tooltip title="Add">
+                                        <IconButton aria-label="Add">
+                                            <AddIcon />
+                                        </IconButton>
+                                    </Tooltip>
+                                }
+                                innerRef={node => this.modalRef = node}
+                                disabled={editMode}
+                                onClose={this.unsetEditMode}
+                            >
+                                <AddEditForm
+                                    headerTitle="LeaveTypes"
+                                    fields={formFields}
+                                    object={formData}
+                                    handleChange={this.handleChange}
+                                    handleSubmit={this.handleSubmit}
+                                    editMode={editMode}
+                                />
+                            </ModalTrigger>
         return(
             <Container>
-                <ModalTrigger
-                    title="Add"
-                    button
-                    innerRef={node => this.modalRef = node}
-                    disabled={editMode}
-                >
-                    <AddEditForm
-                        headerTitle="LeaveTypes"
-                        fields={formFields}
-                        object={formData}
-                        handleChange={this.handleChange}
-                        handleSubmit={this.handleSubmit}
-                        editMode={editMode}
-                    />
-                </ModalTrigger>
                 <DataTable
                     headerTitle="Leave Types Checklist"
                     rows={viewRows}
@@ -224,6 +233,7 @@ class EntitlementsManager extends React.Component{
                     unsetEditMode={this.unsetEditMode}
                     handleDelete={this.handleDelete}
                     editMode={editMode}
+                    AddComponent={addComponent}
                 />
             </Container>
         )

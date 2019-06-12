@@ -66,5 +66,6 @@ router.post('/employee/details', adminController.upsertEmployeeDetails)
 
 router.get('/employees', adminController.getEmployees)
 router.put('/employees', adminController.updateEmployee)
+router.delete('/employees', adminController.deleteEmployee)
 
 module.exports = router

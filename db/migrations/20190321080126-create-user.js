@@ -40,7 +40,9 @@ module.exports = {
         references: {
           'model': 'c_emp',
           'key': 'row_id',
-        }
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
       },
       resp_id: {
         type: Sequelize.INTEGER(11),

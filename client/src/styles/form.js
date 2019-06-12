@@ -66,7 +66,7 @@ export const formStyle = theme => ({
     },
     button: {
         margin: 'auto',
-        marginTop: '50px',
+        marginTop: '10px',
         width: 300,
     },
     radioGroup: {

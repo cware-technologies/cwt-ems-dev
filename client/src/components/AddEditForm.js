@@ -41,6 +41,7 @@ class AddEditForm extends React.Component {
                         defaultValue={field.defaultValue}
                         onChange={(e) => handleChange(e, this.props.headerTitle)}
                         // onBlur={this.validate}
+                        className={classNames(classes.textField, classes.dense, classes.singleSpanInput)}
                         classes={{
                             root: classes.inputRoot,
                         }}
@@ -61,7 +62,7 @@ class AddEditForm extends React.Component {
                         id={field.id}
                         select
                         label={field.label}
-                        className={classNames(classes.textField, classes.dense)}
+                        className={classNames(classes.textField, classes.dense, classes.singleSpanInput)}
                         value={field.defaultValue ? field.defaultValue : object[field.id]}
                         disabled={field.readOnly}
                         defaultValue={field.defaultValue}
@@ -102,7 +103,7 @@ class AddEditForm extends React.Component {
                         id={field.id}
                         type='date'
                         label={field.label}
-                        className={classNames(classes.textField, classes.dense)}
+                        className={classNames(classes.textField, classes.dense, classes.singleSpanInput)}
                         value={this.props.editMode ? getDateFormValue(object[field.id]) : object[field.id]}
                         disabled={field.readOnly}
                         defaultValue={field.defaultValue}
@@ -128,7 +129,7 @@ class AddEditForm extends React.Component {
                             id={field.id}
                             type='number'
                             label={field.label}
-                            className={classNames(classes.textField, classes.dense)}
+                            className={classNames(classes.textField, classes.dense, classes.singleSpanInput)}
                             value={getNumberFieldValue(object[field.id], field.inputProps)}
                             disabled={field.readOnly}
                             defaultValue={field.defaultValue}
@@ -170,7 +171,14 @@ class AddEditForm extends React.Component {
                         this.getFormElement(field, object)
                     ) 
                 }
-                <Button onClick={(e) => handleSubmit(e, headerTitle)} variant='contained' color='primary'>{editMode ? 'Update' : "Add"}</Button>
+                <Button 
+                    className={classes.fullSpanInput}
+                    style={{width: 100, position: 'absolute', right: '4%', bottom: '4%'}}
+                    onClick={(e) => handleSubmit(e, headerTitle)} 
+                    variant='contained'
+                    fullWidth={false}
+                    color='primary'>{editMode ? 'Update' : "Add"}
+                </Button>
                 
                 </div>
             </React.Fragment>

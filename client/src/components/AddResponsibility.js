@@ -206,6 +206,9 @@ class AddResponsibility extends React.Component {
         }
     }
 
+    handleDelete = () => {
+
+    }
 
     render(){
         let { responsibility, data, viewData, responsibilityData, responsibilityForm, viewForm } = this.state
@@ -223,6 +226,7 @@ class AddResponsibility extends React.Component {
                     title='responsibility'
                     endpoint='/admin/org-struct/responsibility'
                     updateState={this.setResponsibility}
+                    actions
                     data={responsibilityData}
                     headers={[
                         {title:'Name', value:'name', type:'text'},
@@ -236,6 +240,7 @@ class AddResponsibility extends React.Component {
                     ]}
                     handleChange={this.handleChange}
                     handleSubmit={this.postResponsibility}
+                    handleDelete={this.handleDelete}
                     selectEntity={this.selectEntity}
                     formData={responsibilityForm}
                 />
@@ -243,6 +248,7 @@ class AddResponsibility extends React.Component {
                     title='view'
                     endpoint='/'
                     updateState={this.setResponsibility}
+                    actions
                     data={viewData}
                     headers={[
                         {title:'Name', value:'name', type:'text'},
@@ -256,6 +262,7 @@ class AddResponsibility extends React.Component {
                     ]}
                     handleChange={this.handleChange}
                     handleSubmit={this.postView}
+                    handleDelete={this.handleDelete}
                     selectEntity={this.selectEntity}
                     formData={viewForm}
                 />

@@ -65,7 +65,15 @@ const headStyles = theme => ({
         padding: 0,
         display: 'flex',
         color: 'white',
-        justifyContent: 'center',
+        // justifyContent: 'center',
+        alignItems: 'center',
+    },
+    tableCellAction: {
+        flexBasis: '48px',
+        flexGrow: 0,
+        padding: 0,
+        display: 'flex',
+        color: 'white',
     },
     tableCellDetail: {
         display: 'flex',
@@ -86,7 +94,12 @@ const headStyles = theme => ({
         width: '100%',
         display: 'flex',
         backgroundColor: theme.palette.grey[800],
-    }
+    },
+    '@global': {
+        'tbody > tr:nth-of-type(odd)': {
+            backgroundColor: theme.palette.grey[300],
+        }
+    },
 })
 
 class EnhancedTableHead extends React.Component {
@@ -100,11 +113,26 @@ class EnhancedTableHead extends React.Component {
         return (
             <TableHead>
                 <TableRow className={classes.row}>
+                    {
+                        this.props.actions &&
+                            <React.Fragment>
+                                <TableCell
+                                    align="left"
+                                    padding="none"
+                                    classes={{ root: classes.tableCellAction }}
+                                />
+                                <TableCell
+                                    align="left"
+                                    padding="none"
+                                    classes={{ root: classes.tableCellAction }}
+                                />
+                            </React.Fragment>
+                    }
                     {rows.map(
                         row => (
                             <TableCell
                                 key={row.id}
-                                align={row.numeric ? 'right' : 'left'}
+                                align={row.numeric ? 'right' :  row.lengthRatio === 'Small' ? 'center' : 'left'}
                                 padding={row.disablePadding ? 'none' : 'default'}
                                 sortDirection={orderBy === row.id ? order : false}
                                 classes={{ root: classes[`tableCell${row.lengthRatio}`] }}
@@ -126,21 +154,6 @@ class EnhancedTableHead extends React.Component {
                         ),
                         this,
                     )}
-                    {
-                        this.props.actions &&
-                            <React.Fragment>
-                                <TableCell
-                                    align="left"
-                                    padding="none"
-                                    classes={{ root: classes.tableCellSmall }}
-                                />
-                                <TableCell
-                                    align="left"
-                                    padding="none"
-                                    classes={{ root: classes.tableCellSmall }}
-                                />
-                            </React.Fragment>
-                    }
                 </TableRow>
             </TableHead>
         );
@@ -184,7 +197,7 @@ const toolbarStyles = theme => ({
 });
 
 let EnhancedTableToolbar = props => {
-    const { headerTitle, classes } = props;
+    const { headerTitle, classes, AddComponent } = props;
 
     return (
         <Toolbar
@@ -197,11 +210,9 @@ let EnhancedTableToolbar = props => {
             </div>
             <div className={classes.spacer} />
             <div className={classes.actions}>
-                <Tooltip title="Delete">
-                    <IconButton aria-label="Delete">
-                        <DeleteIcon />
-                    </IconButton>
-                </Tooltip>
+                {AddComponent &&
+                    AddComponent
+                }
             </div>
         </Toolbar>
     );
@@ -249,7 +260,15 @@ const styles = theme => ({
         flexGrow: 1,
         padding: 0,
         display: 'flex',
+        alignItems: 'center',
         justifyContent: 'center',
+    },
+    tableCellAction: {
+        flexBasis: '2%',
+        flexGrow: 0.5,
+        padding: 0,
+        display: 'flex',
+        color: 'white',
     },
     tableCellDetail: {
         display: 'flex',
@@ -355,6 +374,7 @@ class EnhancedDataTable extends React.Component {
                 <Paper className={classes.root}>
                     <EnhancedTableToolbar
                         headerTitle={headerTitle}
+                        AddComponent={this.props.AddComponent}
                     />
                     <div className={classes.tableWrapper}>
                         <Table className={classes.table} aria-labelledby="tableTitle">
@@ -384,26 +404,12 @@ class EnhancedDataTable extends React.Component {
                                                 onClick={this.handleModalOpen}
                                             >
                                                 {
-                                                    rows.map(row => {
-                                                        return(
-                                                            <TableCell
-                                                                component="th"
-                                                                scope="row"
-                                                                padding="none"
-                                                                classes={{ root: classes[`tableCell${row.lengthRatio}`] }}
-                                                            >
-                                                                { !row.date ? data[row.id] : getDate(data[row.id]).toDateString() }
-                                                            </TableCell>
-                                                        )
-                                                    })
-                                                }
-                                                {
                                                     this.props.actions &&
                                                         <React.Fragment>
                                                             <TableCell
                                                                 align="left"
                                                                 padding="none"
-                                                                classes={{ root: classes.tableCellSmall }}
+                                                                classes={{ root: classes.tableCellAction }}
                                                             >
                                                             { editMode ?  isSelected ?
                                                                 <Tooltip title="Edit">
@@ -426,7 +432,7 @@ class EnhancedDataTable extends React.Component {
                                                             <TableCell
                                                                 align="left"
                                                                 padding="none"
-                                                                classes={{ root: classes.tableCellSmall }}
+                                                                classes={{ root: classes.tableCellAction }}
                                                             >
                                                                 <Tooltip title="Delete">
                                                                     <IconButton disabled={editMode} aria-label="Delete" onClick={() => handleDelete(data.row_id)}>
@@ -435,6 +441,20 @@ class EnhancedDataTable extends React.Component {
                                                                 </Tooltip>
                                                             </TableCell>
                                                         </React.Fragment>
+                                                }
+                                                {
+                                                    rows.map(row => {
+                                                        return(
+                                                            <TableCell
+                                                                component="th"
+                                                                scope="row"
+                                                                padding="none"
+                                                                classes={{ root: classes[`tableCell${row.lengthRatio}`] }}
+                                                            >
+                                                                { !row.date ? data[row.id] : getDate(data[row.id]).toDateString() }
+                                                            </TableCell>
+                                                        )
+                                                    })
                                                 }
                                         </TableRow>
                                     )})

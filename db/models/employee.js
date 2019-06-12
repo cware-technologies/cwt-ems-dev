@@ -85,6 +85,7 @@ module.exports = (sequelize, DataTypes) => {
         model: 'c_emp',
         key: 'row_id',
       },
+      onDelete: 'SET NULL'
     },
     created: {
       allowNull: false,

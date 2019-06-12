@@ -15,6 +15,9 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+import Tooltip from '@material-ui/core/Tooltip'
+import IconButton from '@material-ui/core/IconButton'
+import DeleteIcon from '@material-ui/icons/Delete'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
 import classNames from 'classnames'
@@ -27,7 +30,7 @@ const styles = theme => ({
         maxHeight: 500,
     },
     table: {
-        minWidth: 700,
+        minWidth: 300,
     },
     heading: {
         fontSize: theme.typography.pxToRem(15),
@@ -44,6 +47,7 @@ const styles = theme => ({
     },
     tableRow: {
         width: '100%',
+        display: 'flex',
         cursor: 'pointer',
     },
     selectedRow: {
@@ -203,7 +207,7 @@ class SimpleTable extends React.Component {
     // }
 
     render(){
-        let {classes, title, headers, fields, formData, handleChange, handleSubmit, data} = this.props
+        let {classes, title, headers, fields, formData, handleChange, handleSubmit, handleDelete, data} = this.props
         let {editMode} = this.state
 
         return (
@@ -211,6 +215,16 @@ class SimpleTable extends React.Component {
                 <Table className={classes.table}>
                     <TableHead>
                         <TableRow>
+                            {
+                                this.props.actions &&
+                                    <React.Fragment>
+                                        <TableCell
+                                            align="left"
+                                            padding="none"
+                                            classes={{ root: classes.tableCellSmall }}
+                                        />
+                                    </React.Fragment>
+                            }
                             {headers.map(header =>
                                 <TableCell>{header.title}</TableCell>
                             )}
@@ -233,6 +247,45 @@ class SimpleTable extends React.Component {
                                     }}
                                     onClick={event => this.selectOrganization(event, row.row_id, row.bu_id )}
                                 >
+                                    {
+                                        this.props.actions &&
+                                            <React.Fragment>
+                                                {/* <TableCell
+                                                    align="left"
+                                                    padding="none"
+                                                    classes={{ root: classes.tableCellSmall }}
+                                                >
+                                                { editMode ?  isSelected ?
+                                                    <Tooltip title="Edit">
+                                                        <IconButton aria-label="Cancel" onClick={() => unsetEditMode(data)}>
+                                                            <CancelIcon />
+                                                        </IconButton>
+                                                    </Tooltip> : 
+                                                    <Tooltip title="Edit">
+                                                        <IconButton aria-label="Edit" onClick={() => setEditMode(data)}>
+                                                            <EditIcon />
+                                                        </IconButton>
+                                                    </Tooltip> :
+                                                    <Tooltip title="Edit">
+                                                    <IconButton aria-label="Edit" disabled={disableEdit} onClick={() => setEditMode(data)}>
+                                                        <EditIcon />
+                                                    </IconButton>
+                                                </Tooltip>
+                                                }
+                                                </TableCell> */}
+                                                <TableCell
+                                                    align="left"
+                                                    padding="none"
+                                                    classes={{ root: classes.tableCellSmall }}
+                                                >
+                                                    <Tooltip title="Delete">
+                                                        <IconButton disabled={editMode} aria-label="Delete" onClick={() => handleDelete(data.row_id)}>
+                                                            <DeleteIcon />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                </TableCell>
+                                            </React.Fragment>
+                                    }
                                     {headers.map(header =>
                                         <TableCell align="left">{header.value2 ? row[header.value] ? row[header.value][header.value2] : '' : row[header.value]}</TableCell>
                                     )}

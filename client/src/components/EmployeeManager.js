@@ -95,12 +95,20 @@ class EditEmployee2 extends React.Component {
   }
 
   handleResponse = (res, err) => {
-    let response = res.data;
+    let response = res.data ? res.data : response;
+    console.log(response)
+    if(response === undefined){
+      this.props.error('Action Failed, Try Again')
+    }
 
-    if(err)
-      this.props.error(response.message)
-    else
-      this.props.success(response.message)
+    if(err || response.status >= 400){
+      let error = response.message || 'Action Failed, Try Again'
+      this.props.error(error)
+    }
+    else{
+      let message = response.message || 'Action Successful'
+      this.props.success(message)
+    }
     
   }
 
@@ -158,6 +166,7 @@ class EditEmployee2 extends React.Component {
       this.handleResponse(response)
     }
     catch(err){
+      console.log(err)
       this.handleResponse(err.response, true)
     }
   }
@@ -171,7 +180,7 @@ class EditEmployee2 extends React.Component {
     try {
       response = await axios({
         method: 'delete',
-        url: '/admin/leave-types',
+        url: '/admin/employees',
         headers: {
           'content-type': 'application/json',
         },
@@ -180,14 +189,16 @@ class EditEmployee2 extends React.Component {
         },
       })
 
-      this.setState(prevState => ({
-        data: newData,
-      }))
+      if(response.data.data < 400)
+        this.setState(prevState => ({
+          data: newData,
+        }))
 
-      console.log("ADD RESPONSE: ", response)
+      this.handleResponse(response)
+
     }
     catch (err) {
-
+      this.handleResponse(err.response, true)
     }
   }
 
@@ -242,7 +253,7 @@ class EditEmployee2 extends React.Component {
           />
         </ModalTrigger>
         <DataTable
-          headerTitle="Leave Types Checklist"
+          headerTitle="Employee List"
           rows={employeeRows}
           endpoint='/access-rights/view'
           params={{ organization: organization }}

@@ -99,7 +99,7 @@ class MainList extends React.Component {
 
   render() {
     let { classes, match } = this.props;
-    console.log(this.props.views)
+
     return (
       <React.Fragment>
         {
@@ -293,7 +293,7 @@ class AdminList extends React.Component {
 
   handleClick = (e) => {
     let target = e.currentTarget.id;
-    this.setState(state => ({ [target]: !state[target] }), () => console.log(this.state));
+    this.setState(state => ({ [target]: !state[target] }));
   };
 
   render() {

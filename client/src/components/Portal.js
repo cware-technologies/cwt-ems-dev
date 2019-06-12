@@ -34,7 +34,7 @@ const EntitlementsManager = lazy(() => import('./EntitlementsManager'));
 const AttachEntitlement = lazy(() => import('./AttachEntitlement'));
 const EmployeeAttendanceList = lazy(() => import('./EmployeeAttendanceList'));
 const EmployeeDetailsSearch = lazy(() => import('./EmployeeDetailsSearch'));
-const EditEmployee = lazy(() => import('./EditEmployee2'));
+const EmployeeManager = lazy(() => import('./EmployeeManager'));
 
 const styles = theme => ({
   root: {
@@ -80,7 +80,6 @@ class Portal extends React.Component {
   render() {
     const { classes, match, alert } = this.props;
     const { alertOpen } = this.state
-    console.log("RE-RENDERRRRRRRRRRRRRRRRRRRRRRRR!!!: ", alert)
 
     return (
       <div className={classes.root}>
@@ -127,7 +126,7 @@ class Portal extends React.Component {
             <Route path={`${match.path}attach-entitlements`} component={AttachEntitlement} />
             <Route path={`${match.path}attendance-list`} component={EmployeeAttendanceList} />
             <Route path={`${match.path}employee-details`} component={EmployeeDetailsSearch} />
-            <Route path={`${match.path}edit-employee`} component={EditEmployee} />
+            <Route path={`${match.path}employee-manager`} component={EmployeeManager} />
             <Redirect from='/' to='/portal/dashboard' />
           </Switch>
         </Suspense>

@@ -28,20 +28,34 @@ class ModalTrigger extends React.Component {
     };
 
     render(){
-        const { classes, title, children, button, disabled } = this.props
+        const { classes, title, children, button, disabled, IconButton } = this.props
+
+        if(IconButton){
+            var clonedIconButton = React.cloneElement(
+                IconButton, 
+                {
+                    onClick: this.handleModalOpen,
+                    disabled: disabled ? true : false, 
+                }
+            );
+        }
 
         return(
             <React.Fragment>
-                <Button
-                    component="button"
-                    variant={button ? "outlined" : "text"}
-                    color='primary'
-                    className={classes.readMore}
-                    onClick={this.handleModalOpen}
-                    disabled={disabled ? true : false}
-                >
-                    {title}
-                </Button>
+                {
+                    IconButton ? 
+                    clonedIconButton :
+                    <Button
+                        component="button"
+                        variant={button ? "outlined" : "text"}
+                        color='primary'
+                        className={classes.readMore}
+                        onClick={this.handleModalOpen}
+                        disabled={disabled ? true : false}
+                    >
+                        {title}
+                    </Button>
+                }
 
                 <Modal
                     modalOpen={this.state.modalOpen}

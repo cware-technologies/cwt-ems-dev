@@ -25,14 +25,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING(200),
       allowNull: false,
     },
-    // password: {
-    //   type: DataTypes.STRING,
-    //   allowNull: false,
-    //   validate: {
-    //     is:  /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^\w\d\s])(?!.*\s).{8,}/,
-    //     notEmpty: true,
-    //   }
-    // },
     emp_id: {
       type: DataTypes.INTEGER(11),
       allowNull: true,
@@ -40,7 +32,9 @@ module.exports = (sequelize, DataTypes) => {
       references: {
         'model': 'c_emp',
         'key': 'row_id',
-      }
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE',
     },
     resp_id: {
         type: DataTypes.INTEGER(11),

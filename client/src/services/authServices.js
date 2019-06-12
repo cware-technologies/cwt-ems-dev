@@ -21,8 +21,10 @@ function login(username, password) {
         console.log("ERROR: ", err)
         if(err.response.data.status)
             handleLoginResponse(err.response)
-        else
-            throw "Can't connect to server"
+        else{
+            err.message = "Can't connect to server"
+            throw err
+        }
     })
 }
 
