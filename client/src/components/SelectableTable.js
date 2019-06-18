@@ -26,11 +26,11 @@ const styles = theme => ({
     root: {
         width: '100%',
         marginTop: theme.spacing.unit * 3,
-        overflowX: 'auto',
         maxHeight: 500,
     },
     table: {
         minWidth: 300,
+        position: 'relative',
     },
     heading: {
         fontSize: theme.typography.pxToRem(15),
@@ -45,6 +45,12 @@ const styles = theme => ({
         width: '100%',
         display: 'flex',
     },
+    tableBody: {
+    },
+    tableHeader: {
+        position: 'absolute',
+        top: '0px',
+    },
     tableRow: {
         width: '100%',
         display: 'flex',
@@ -53,127 +59,47 @@ const styles = theme => ({
     selectedRow: {
         border: `2px solid ${theme.palette.secondary.light}`
     },
+    tableCellAction: {
+        flexBasis: '2%',
+        flexGrow: 0.5,
+        padding: 0,
+        display: 'flex',
+        color: 'white',
+    },
 });
 
 class SimpleTable extends React.Component {
     state = {
         selected: 0,
-        entity: {
-            name: '',
-            desc: '',
-            parent: null,
-            organization: null,
-            division: null,
-        },
+        // entity: {
+        //     name: '',
+        //     desc: '',
+        //     parent: null,
+        //     organization: null,
+        //     division: null,
+        // },
         data: [],
         editMode: false,
         isFetching: false,
         success: null,
     }
 
-    // async componentDidMount(){
-    //     let response
-    //     if(this.props.endpoint !== '/'){
-    //         try{
-    //             response = await axios({
-    //                 method: 'get',
-    //                 url: `${this.props.endpoint}`,
-    //                 params: {
-    //                     bu_id: this.props.organization && this.props.organization,
-    //                     div_id: this.props.division && this.props.division
-    //                 },
-    //             })
-    //             console.log(`${this.props.title} REEEESSSSSPPONSE: `, response)
-    //             this.handleGetResponse(response)
-    //         }
-    //         catch (err) {
-    //             this.handleGetResponse(err.response)
-    //         }
-    //     }
-    // }
-
-    // handleGetResponse = (res) => {
-    //     let error = res.data.message;
-
-    //     if (res.data.status >= 400) {
-    //         this.setState(prevState => ({
-    //             isFetching: false,
-    //             success: false,
-    //         }))
-    //     }
-
-    //     else if (res.data.status >= 200 && res.data.status < 300) {
-    //         this.setState(prevState => ({
-    //             data: res.data.result,
-    //             isFetching: false,
-    //             success: true,
-    //         }))
-    //     }
-    // }
-
-    handleChange = (event) => {
-        let target = event.target.id;
-        let value = event.target.value;
-        this.setState(prevState => ({
-            entity: {
-                ...prevState.entity,
-                [target]: value,
-            }
-        }))
-    }
-
-    // handleSubmit = async() => {
-    //     this.setState({
+    // handleChange = (event) => {
+    //     let target = event.target.id;
+    //     let value = event.target.value;
+    //     this.setState(prevState => ({
     //         entity: {
-    //             ...this.state.entity,
-    //             organization: this.props.organization,
-    //             division: this.props.division,
+    //             ...prevState.entity,
+    //             [target]: value,
     //         }
-    //     }, this.sendPostRequest)
-
-    // }
-
-    // sendPostRequest = async () => {
-    //     let response;
-
-    //     try{
-    //         response = await axios({
-    //             method: 'post',
-    //             url: `${this.props.endpoint}`,
-    //             data: this.state.entity,
-    //         })
-
-    //         this.handlePostResponse(response)
-    //         return
-    //     }
-    //     catch(err){
-    //         this.handlePostResponse(err.response)
-    //         return
-    //     }
-    // }
-
-    // handlePostResponse = (res) => {
-    //     if (res.data.status >= 400) {
-    //         this.setState(prevState => ({
-                
-    //         }))
-    //     }
-
-    //     else if (res.data.status >= 200 && res.data.status < 300) {
-    //         this.setState(prevState => ({
-    //             data: [
-    //                 ...prevState.data,
-    //                 res.data.result,
-    //             ]
-    //         }))
-    //     }
+    //     }))
     // }
 
     isSelected = (id) => {
         return this.state.selected === id
     }
 
-    selectOrganization = (event, id, org) => {
+    selectEntity = (event, id, org) => {
         this.setState(prevState => ({
             selected: id
         }), () => {
@@ -184,27 +110,6 @@ class SimpleTable extends React.Component {
 
         })
     }
-
-    // getParents = () => {
-    //     let foundOrg = this.props.headers.find(ele => ele.value === 'organization')
-    //     let foundDiv = this.props.headers.find(ele => ele.value === 'division')
-
-    //     if(foundOrg){
-    //         this.state.data.map(row => {
-    //             row.organization = row.C_BU.name
-    //         })
-    //     }
-
-    //     if(foundDiv){
-    //         this.state.data.map(row => {
-    //             row.division = row.C_DIV.name
-    //         })
-    //     }
-
-    //     // this.state.data.map(row => {
-    //     //     row.parent = row.parent ? row.parent.name : 0
-    //     // })
-    // }
 
     render(){
         let {classes, title, headers, fields, formData, handleChange, handleSubmit, handleDelete, data} = this.props
@@ -221,7 +126,7 @@ class SimpleTable extends React.Component {
                                         <TableCell
                                             align="left"
                                             padding="none"
-                                            classes={{ root: classes.tableCellSmall }}
+                                            classes={{ root: classes.tableCellAction }}
                                         />
                                     </React.Fragment>
                             }
@@ -230,7 +135,7 @@ class SimpleTable extends React.Component {
                             )}
                         </TableRow>
                     </TableHead>
-                    <TableBody>
+                    <TableBody className={classes.tableBody}>
                         {data && data.map(row => {
                             const isSelected = this.isSelected(row.row_id);
                             // this.getParents()             
@@ -245,7 +150,7 @@ class SimpleTable extends React.Component {
                                         root: classes.tableRow,
                                         selected: classes.selectedRow,
                                     }}
-                                    onClick={event => this.selectOrganization(event, row.row_id, row.bu_id )}
+                                    onClick={event => this.selectEntity(event, row.row_id, row.bu_id )}
                                 >
                                     {
                                         this.props.actions &&
@@ -253,7 +158,7 @@ class SimpleTable extends React.Component {
                                                 {/* <TableCell
                                                     align="left"
                                                     padding="none"
-                                                    classes={{ root: classes.tableCellSmall }}
+                                                    classes={{ root: classes.tableCellAction }}
                                                 >
                                                 { editMode ?  isSelected ?
                                                     <Tooltip title="Edit">
@@ -276,7 +181,7 @@ class SimpleTable extends React.Component {
                                                 <TableCell
                                                     align="left"
                                                     padding="none"
-                                                    classes={{ root: classes.tableCellSmall }}
+                                                    classes={{ root: classes.tableCellAction }}
                                                 >
                                                     <Tooltip title="Delete">
                                                         <IconButton disabled={editMode} aria-label="Delete" onClick={() => handleDelete(data.row_id)}>

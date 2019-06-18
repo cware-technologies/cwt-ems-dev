@@ -329,7 +329,6 @@ class CreateAccount extends React.Component {
         else
             confirmPasswordVal = undefined
         
-        let errors = val_errors || confirmPasswordVal ? Object.filter({...val_errors, confirmPasswordVal}, property => property !== undefined) : {}
         this.setState(prevState => ({
             errors: {
                 ...prevState.errors,

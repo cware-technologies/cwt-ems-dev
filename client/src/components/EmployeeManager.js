@@ -1,15 +1,26 @@
 import React from 'react';
 import axios from 'axios';
+import compose from 'recompose/compose';
 import { connect } from 'react-redux'
 import { alertActions } from '../actions'
+import { withStyles } from '@material-ui/core/styles'
 import ModalTrigger from './ModalTrigger';
 import AddEditForm from './AddEditForm';
 import DataTable from './DataTable';
 import Container from './MainContainer';
 import RegisterEmployeeForm from './RegisterEmployeeForm'
+import Search from './Search'
+
+const styles = theme => ({
+  actionPanel: {
+    display: 'flex',
+    flexDirection: 'row',
+  }
+})
 
 const employeeRows = [
-  { id: 'full_name', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Name' },
+  { id: 'fst_name', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'First Name' },
+  { id: 'last_name', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Last Name' },
   { id: 'bu_id', numeric: false, disablePadding: false, lengthRatio: 'Title', label: 'Organization' },
 ]
 
@@ -23,6 +34,9 @@ class EditEmployee2 extends React.Component {
   modalRef = React.createRef()
   state = {
     data: [],
+    selected: null,
+    query: '',
+    isSearching: false,
     formData: {
       login: '',
       hash_pwd: '',
@@ -69,6 +83,14 @@ class EditEmployee2 extends React.Component {
         },
     }), () => {console.log("STOOOT: ", this.state);resolve()})
     })
+  }
+
+  onSearchChange = (e) => {
+    let value = e.target.value
+    console.log("SEARCH CHANGE")
+    this.setState(prevState => ({
+      query: value,
+    }))
   }
 
   handleChange = (target, value) => {
@@ -202,12 +224,24 @@ class EditEmployee2 extends React.Component {
     }
   }
 
-  componentDidMount() {
-    this.getList()
+  selectEmployee = (selected) => {
+    console.log(selected)
+
+    this.setState(prevState => ({
+        selected: selected.row_id,
+    }), () => this.getChecklist())
   }
+
+  // componentDidMount() {
+  //   this.getList()
+  // }
 
   getList = async () => {
     let response
+    console.log("Hi")
+    this.setState( prevState => ({
+      isSearching: true,
+    }))
 
     try {
       response = await axios({
@@ -217,12 +251,15 @@ class EditEmployee2 extends React.Component {
           'content-type': 'application/json',
         },
         params: {
+          query: this.state.query,
           organization: this.props.organization,
         },
       })
+
       this.setState(prevState => ({
         data: response.data.data,
-      }))
+        isSearching: false,
+      }), () => console.log(this.state))
       console.log("RESPONSE: ", response)
     }
     catch (err) {
@@ -231,27 +268,36 @@ class EditEmployee2 extends React.Component {
   }
 
   render() {
-    let { organization } = this.props
-    let { data, formData, editMode } = this.state
+    let { organization, classes } = this.props
+    let { data, formData, editMode, query, isSearching } = this.state
 
     return (
       <Container>
-        <ModalTrigger
-          title="Add"
-          button
-          innerRef={node => this.modalRef = node}
-          disabled={editMode}
-          onClose={this.unsetEditMode}
-        >
-          <RegisterEmployeeForm
-            headerTitle="LeaveTypes"
-            fields={formFields}
-            employee={formData}
-            changeHandler={this.handleChange}
-            submitHandler={this.handleSubmit}
-            editMode={editMode}
-          />
-        </ModalTrigger>
+        <div className={classes.actionPanel}>
+            <Search
+                title="Employee"
+                query={query}
+                submitHandler={this.getList}
+                changeHandler={this.onSearchChange}
+                isSearching={isSearching}
+            />
+            <ModalTrigger
+              title="Add"
+              button
+              innerRef={node => this.modalRef = node}
+              disabled={editMode}
+              onClose={this.unsetEditMode}
+            >
+              <RegisterEmployeeForm
+                headerTitle="LeaveTypes"
+                fields={formFields}
+                employee={formData}
+                changeHandler={this.handleChange}
+                submitHandler={this.handleSubmit}
+                editMode={editMode}
+              />
+            </ModalTrigger>
+        </div>
         <DataTable
           headerTitle="Employee List"
           rows={employeeRows}
@@ -269,4 +315,7 @@ class EditEmployee2 extends React.Component {
   }
 }
 
-export default connect(()=>{}, {...alertActions})(EditEmployee2)
+export default compose(
+  withStyles(styles),
+  connect(()=>{}, {...alertActions})
+)(EditEmployee2)

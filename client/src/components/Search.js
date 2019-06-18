@@ -6,7 +6,8 @@ import classNames from 'classnames';
 import { fade } from '@material-ui/core/styles/colorManipulator';
 import InputBase from '@material-ui/core/InputBase';
 import SearchIcon from '@material-ui/icons/Search';
-import { Button } from '@material-ui/core';
+import { Button, IconButton } from '@material-ui/core';
+import { ReactComponent as LoadingSpinner } from '../assets/loading.svg'
 
 const styles = theme => ({
     search: {
@@ -25,12 +26,15 @@ const styles = theme => ({
           width: 'auto',
         },
     },
+    form: {
+        height: '100%',
+    },
     searchIcon: {
         height: '100%',
         width: theme.spacing.unit * 9,
         position: 'absolute',
         right: 0,
-        pointerEvents: 'none',
+        top: 0,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -38,6 +42,7 @@ const styles = theme => ({
     inputRoot: {
         color: 'inherit',
         width: '100%',
+        height: '100%',
     },
     inputInput: {
         paddingTop: theme.spacing.unit,
@@ -46,9 +51,18 @@ const styles = theme => ({
         paddingLeft: theme.spacing.unit,
         transition: theme.transitions.create('width'),
         width: '100%',
+        height: '100%',
+        boxSizing: 'inherit',
         [theme.breakpoints.up('md')]: {
             width: 200,
         },
+    },
+    icon: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
     },
 })
 
@@ -57,21 +71,26 @@ class SearchBar extends React.Component {
 
     }
 
+    submitHandler = (e) => {
+        e.preventDefault()
+
+        this.props.submitHandler()
+    }
+
     render(){
-        const { classes, match, title, submitHandler, changeHandler, query } = this.props
+        const { classes, match, title, submitHandler, changeHandler, query, isSearching } = this.props
         let { userMenuAnchorEl } = this.state;
         const userMenuOpen = Boolean(userMenuAnchorEl);
+        console.log(isSearching)
 
         return (
             <React.Fragment>
                 <div className={classes.search}>
-                    <div className={classes.searchIcon}>
-                        <SearchIcon />
-                    </div>
-                    <form onSubmit={submitHandler} target="_top">
+                    
+                    <form onSubmit={this.submitHandler} target="_top" className={classes.form}>
                         <InputBase
                             id='query'
-                            onChange={(e) => changeHandler(e, title)}
+                            onChange={changeHandler}
                             value={query}
                             placeholder={`Search ${title}…`}
                             classes={{
@@ -79,6 +98,15 @@ class SearchBar extends React.Component {
                                 input: classes.inputInput,
                             }}
                         />
+                        <div className={classes.searchIcon}>
+                            {
+                                isSearching ? <div ><LoadingSpinner className={classes.icon}/></div> : 
+                            
+                                <IconButton type='submit' key="search" aria-label="Search" color="inherit">
+                                    <SearchIcon />
+                                </IconButton>
+                            }
+                        </div>
                     </form>
                 </div>
             </React.Fragment>

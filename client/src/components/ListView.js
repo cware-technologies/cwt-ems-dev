@@ -160,6 +160,10 @@ const toolbarStyles = theme => ({
         flex: '1 1 100%',
     },
     actions: {
+        flexBasis: '10%',
+        flexGrow: 1,
+        display: 'flex',
+        justifyContent: 'flex-end',
         color: theme.palette.text.secondary,
     },
     title: {
@@ -168,7 +172,7 @@ const toolbarStyles = theme => ({
 });
 
 let EnhancedTableToolbar = props => {
-    const { headerTitle, classes } = props;
+    const { headerTitle, classes, actions } = props;
 
     return (
         <Toolbar
@@ -184,7 +188,8 @@ let EnhancedTableToolbar = props => {
                 <Button onClick={props.handleUpdate} variant="contained" color="primary" /* className={classNames(classes.button, classes.textField)} */>
                     Update
                 </Button>
-                <Tooltip title="Delete">
+                { actions.map(action => action)}
+                {/* <Tooltip title="Delete">
                     <IconButton aria-label="Delete">
                         <DeleteIcon />
                     </IconButton>
@@ -193,7 +198,7 @@ let EnhancedTableToolbar = props => {
                     <IconButton aria-label="Filter list">
                         <FilterListIcon />
                     </IconButton>
-                </Tooltip>
+                </Tooltip> */}
             </div>
         </Toolbar>
     );
@@ -293,60 +298,58 @@ class EnhancedDataTable extends React.Component {
     state = {
         order: 'asc',
         orderBy: 'name',
-        data: [],
-        updates: {},
         page: 0,
         rowsPerPage: 5,
         isFetching: false,
         success: false,
     };
 
-    componentDidMount(){
-        this.getViews()
-    }
+    // componentDidMount(){
+    //     this.getViews()
+    // }
 
-    componentDidUpdate(prevProps){
-        console.log(prevProps.responsibility, this.props.responsibility)
-        if(prevProps.responsibility !== this.props.responsibility)
-            this.getViews()
-    }
+    // componentDidUpdate(prevProps){
+    //     console.log(prevProps.responsibility, this.props.responsibility)
+    //     if(prevProps.responsibility !== this.props.responsibility)
+    //         this.getViews()
+    // }
 
-    getViews = async() => {
-        let response
+    // getViews = async() => {
+    //     let response
 
-        try{
-            response = await axios({
-                method: 'get',
-                url: '/admin/access-rights/responsibility-view',
-                params: {
-                    resp_id: this.props.responsibility,
-                }
-            })
+    //     try{
+    //         response = await axios({
+    //             method: 'get',
+    //             url: '/admin/access-rights/responsibility-view',
+    //             params: {
+    //                 resp_id: this.props.responsibility,
+    //             }
+    //         })
 
-            console.log("RESP_VIEW_RESPONSE", response)
-            this.handleResponse(response)
-        }
-        catch(err){
-            this.handleResponse(err.response)
-        }
-    }
+    //         console.log("RESP_VIEW_RESPONSE", response)
+    //         this.handleResponse(response)
+    //     }
+    //     catch(err){
+    //         this.handleResponse(err.response)
+    //     }
+    // }
 
-    handleResponse = (res) => {
-        if (res.data.status >= 400) {
-            this.setState(prevState => ({
-                isFetching: false,
-                success: false,
-            }),)
-        }
+    // handleResponse = (res) => {
+    //     if (res.data.status >= 400) {
+    //         this.setState(prevState => ({
+    //             isFetching: false,
+    //             success: false,
+    //         }),)
+    //     }
 
-        else if (res.data.status >= 200 && res.data.status < 300) {
-            this.setState(prevState => ({
-                data: res.data.result[0].view && res.data.result[0].view,
-                isFetching: false,
-                success: true,
-            }),  () => console.log("LIST VIEW STATE: ", this.state))
-        }
-    }
+    //     else if (res.data.status >= 200 && res.data.status < 300) {
+    //         this.setState(prevState => ({
+    //             data: res.data.result[0].view && res.data.result[0].view,
+    //             isFetching: false,
+    //             success: true,
+    //         }),  () => console.log("LIST VIEW STATE: ", this.state))
+    //     }
+    // }
 
     handleRequestSort = (event, property) => {
         const orderBy = property;
@@ -367,74 +370,75 @@ class EnhancedDataTable extends React.Component {
         this.setState({ rowsPerPage: event.target.value });
     };
 
-    handleCheckboxChange = (event, id, idx) => {
-        let target = event.target.id
-        let value = event.target.checked
-        let data = this.state.data
-        let flag = target === 'readOnly' ? 'FLG_01' : 'FLG_02'
+    // handleCheckboxChange = (event, id, idx) => {
+    //     let target = event.target.id
+    //     let value = event.target.checked
+    //     let data = this.state.data
+    //     let flag = target === 'readOnly' ? 'FLG_01' : 'FLG_02'
 
         
-        let index = 0
-        for(index; index < data.length; index++) {
-            if(data[index].row_id === id) 
-                break;
-        }
+    //     let index = 0
+    //     for(index; index < data.length; index++) {
+    //         if(data[index].row_id === id) 
+    //             break;
+    //     }
             
 
-        // let selection = data.filter(row => row.row_id === id)
-        // console.log("SELECTION: ", selection)
-        // let index = selection[0] && selection[0].row_id
+    //     // let selection = data.filter(row => row.row_id === id)
+    //     // console.log("SELECTION: ", selection)
+    //     // let index = selection[0] && selection[0].row_id
 
-        data[index] = {
-            ...data[index],
-            C_RESP_VIEW: {
-                ...data[index].C_RESP_VIEW,
-                [flag]: value,
-            }
-        }
+    //     data[index] = {
+    //         ...data[index],
+    //         C_RESP_VIEW: {
+    //             ...data[index].C_RESP_VIEW,
+    //             [flag]: value,
+    //         }
+    //     }
 
-        this.setState(prevState => ({
-            data: data,
-            updates: {
-                ...prevState.updates,
-                [idx]: {
-                    ...prevState.updates[idx],
-                    [flag]: value,
-                }
-            }
-        }), () => console.log("UPDATE STATE: ", this.state))
-    }
+    //     this.setState(prevState => ({
+    //         data: data,
+    //         updates: {
+    //             ...prevState.updates,
+    //             [idx]: {
+    //                 ...prevState.updates[idx],
+    //                 [flag]: value,
+    //             }
+    //         }
+    //     }), () => console.log("UPDATE STATE: ", this.state))
+    // }
 
-    handleUpdate = async (event) => {
-        let response
-        console.log("UPPPPDDDAAATTTEEE!!!")
-        try{
-            response = await axios({
-                method: 'put',
-                url: '/admin/access-rights/responsibility-view',
-                data: {
-                    updates: this.state.updates,
-                }
-            })
+    // handleUpdate = async (event) => {
+    //     let response
+    //     console.log("UPPPPDDDAAATTTEEE!!!")
+    //     try{
+    //         response = await axios({
+    //             method: 'put',
+    //             url: '/admin/access-rights/responsibility-view',
+    //             data: {
+    //                 updates: this.state.updates,
+    //             }
+    //         })
 
-            console.log("RESP VIEW UPDATE RES: ", response)
+    //         console.log("RESP VIEW UPDATE RES: ", response)
 
-        }
-        catch(err){
-            console.log("RESP VIEW UPDATE RES: ", err.response)
-        }
-    }
+    //     }
+    //     catch(err){
+    //         console.log("RESP VIEW UPDATE RES: ", err.response)
+    //     }
+    // }
 
     render() {
-        const { classes, rows, /* data, */ headerTitle } = this.props;
-        const { data, order, orderBy, rowsPerPage, page } = this.state;
+        const { classes, rows, data, headerTitle, handleCheckboxChange, handleUpdate, actions } = this.props;
+        const { /* data, */ order, orderBy, rowsPerPage, page } = this.state;
         const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
 
         return (
                 <Paper className={classes.root}>
                     <EnhancedTableToolbar
                         headerTitle={headerTitle}
-                        handleUpdate={this.handleUpdate}
+                        handleUpdate={handleUpdate}
+                        actions={actions}
                     />
                     <div className={classes.tableWrapper}>
                         <Table className={classes.table} aria-labelledby="tableTitle">
@@ -484,7 +488,7 @@ class EnhancedDataTable extends React.Component {
                                                         name="readOnly"
                                                         type="checkbox"
                                                         checked={!!n.C_RESP_VIEW.FLG_01}
-                                                        onChange={(event) => this.handleCheckboxChange(event, n.row_id,  n.C_RESP_VIEW.row_id)}
+                                                        onChange={(event) => handleCheckboxChange(event, n.row_id,  n.C_RESP_VIEW.row_id)}
                                                     />
                                                 </TableCell>
                                                 <TableCell
@@ -498,7 +502,7 @@ class EnhancedDataTable extends React.Component {
                                                         name="write"
                                                         type="checkbox"
                                                         checked={!!n.C_RESP_VIEW.FLG_02}
-                                                        onChange={(event) => this.handleCheckboxChange(event, n.row_id, n.C_RESP_VIEW.row_id)}
+                                                        onChange={(event) => handleCheckboxChange(event, n.row_id, n.C_RESP_VIEW.row_id)}
                                                     />
                                                 </TableCell>
                                             </TableRow>

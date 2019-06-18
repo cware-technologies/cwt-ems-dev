@@ -23,6 +23,27 @@ const formFields = [
     { id: 'ATTRIB_11', type:'number', label: 'No Of Days', inputProps: { min: '1', max: '50', step: '1' } },
 ]
 
+const schema = {
+    val: {
+        presence: {
+            allowEmpty: false,
+            message: "Is Required"
+        },
+    },
+    type: {
+        presence: {
+            allowEmpty: false,
+            message: "Is Required"
+        },
+    },
+    ATTRIB_11: {
+        presence: {
+            allowEmpty: false,
+            message: "Is Required"
+        },
+    },
+}
+
 class EntitlementsManager extends React.Component{
     modalRef = React.createRef()
     state = {
@@ -129,7 +150,8 @@ class EntitlementsManager extends React.Component{
                     data: [
                         ...prevState.data,
                         response.data.data
-                    ]
+                    ],
+                    formData: {},
                 }))
             }
         }
@@ -214,6 +236,7 @@ class EntitlementsManager extends React.Component{
                                 <AddEditForm
                                     headerTitle="LeaveTypes"
                                     fields={formFields}
+                                    schema={schema}
                                     object={formData}
                                     handleChange={this.handleChange}
                                     handleSubmit={this.handleSubmit}

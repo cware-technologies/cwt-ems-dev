@@ -20,11 +20,16 @@ const models = require('../db/models'),
 async function getOrganizations(req, res, next){
     try{
         let data = await Organization.findAll({
+                where: {
+                    row_id: {
+                        [Op.not]: 1,
+                    }
+                },
                 include: [{
                     model: Organization,
                     as: 'parent',
                     attributes: ['row_id','name'],
-                }]
+                }],
             }
         )
         
@@ -263,6 +268,11 @@ async function getViews(req, res, next){
                     as: 'organization',
                     attributes: ['row_id', 'name'],
                 },
+                {
+                    model: Responsibility,
+                    through: 'c_resp_view',
+                    as: 'responsibility',
+                },
             ]
         })
 
@@ -304,28 +314,51 @@ async function postView(req, res, next){
 }
 
 async function postResponsibilityView(req, res, next){
-    let view
-    let responsibility
+    let views = req.body.views
+    let responsibility = req.body.resp_id
+    let organization = req.body.bu_id
 
-    try{
-        data = await ResponsibilityView.create({
-            view_id: req.body.view_id,
-            resp_id: req.body.resp_id,
-            bu_id: req.body.bu_id,
+    let promises = views.map(view => {
+        return ResponsibilityView.create({
+            view_id: view,
+            resp_id: responsibility,
+            bu_id: organization,
             FLG_01: 1,
             FLG_02: 0,
         })
+    })
 
+    Promise.all(promises)
+    .then(result =>
         res.status(200).json({
             status: 200,
-            result: data,
+            result,
         })
-    }
-    catch(err){
+    )
+    .catch(err => {
         err.status = 400
         err.message = `Database Error: ${err}`
         next(err)
-    }
+    })
+    // try{
+    //     data = await ResponsibilityView.create({
+    //         view_id: req.body.view_id,
+    //         resp_id: req.body.resp_id,
+    //         bu_id: req.body.bu_id,
+    //         FLG_01: 1,
+    //         FLG_02: 0,
+    //     })
+
+    //     res.status(200).json({
+    //         status: 200,
+    //         result: data,
+    //     })
+    // }
+    // catch(err){
+    //     err.status = 400
+    //     err.message = `Database Error: ${err}`
+    //     next(err)
+    // }
 }
 
 async function getResponsibilityViews(req, res, next){
@@ -589,7 +622,7 @@ async function applyForInductionExit(req, res, next){
             }
         }).map(el => {
             el.get({ plain: true })
-            let picked = (({ val, type }) => ({ name: val, type, emp_id: application.employee, FLG_01: false }))(el);
+            let picked = (({ row_id, val, type }) => ({ name: val, type, emp_id: application.employee, ATTRIB_11: row_id, FLG_01: false }))(el);
             return picked
         })
 
@@ -604,7 +637,7 @@ async function applyForInductionExit(req, res, next){
     }
     catch(err){
         err.status = 400
-        err.message = `Database Error: ${err}`
+        err.message = err.name === 'SequelizeUniqueConstraintError' ? 'Already Applied' : `Database Error: ${err}`
         next(err)
     }
 }
@@ -738,13 +771,22 @@ async function deleteLeaveTypeLOVS(req, res, next){
 }
 
 async function getEmployees(req, res, next){
-    let employee = req.query
+    let search = req.query
+    let query = search.query.split(' ')
 
     try{
         let data = await User.findAll({
             where: {
                 bu_id: {
                     [Op.not]: 1,
+                },
+                [Op.or]: { 
+                    fst_name: {
+                        [Op.substring]: query[0],
+                    },
+                    last_name: {
+                        [Op.substring]: query[1] || query[0],
+                    },
                 }
             },
             attributes: ['login'],

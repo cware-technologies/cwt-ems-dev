@@ -7,6 +7,7 @@ import ListItem from '@material-ui/core/ListItem'
 import Checkbox from '@material-ui/core/Checkbox'
 import ListItemText from '@material-ui/core/ListItemText'
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
+import TextField from '@material-ui/core/TextField'
 
 const styles = theme => ({
     root: {
@@ -38,14 +39,57 @@ const styles = theme => ({
 })
 
 class Checklist extends React.Component{
+
+    state = {
+        filter: 'all',
+    }
+
+    handleFilterChange = (e) => {
+        let value = e.target.value
+
+        this.setState(prevState => ({
+            filter: value,
+        }))
+    }
+
+    filterData = (data) => {
+        if(this.state.filter === 'all')
+            return data
+
+        return data.filter(row => row.type === this.state.filter)
+    }
+
     render(){
-        let { classes, data, handleToggle, updateHandler } = this.props
+        let { classes, data, handleToggle, updateHandler, filterOptions } = this.props
         console.log(data)
         return(
             <React.Fragment>
                 <div></div>
                 <List className={classes.root}>
-                    {data.map(row => (
+                    <TextField
+                        id='filter-list'
+                        select
+                        label='Filter'
+                        value={this.state.filter}
+                        disabled={filterOptions.length === 0 ? true : false}
+                        defaultValue=''
+                        onChange={this.handleFilterChange}
+                        SelectProps={{
+                            native: true,
+                        }}
+                        margin="dense"
+                        variant="outlined"
+                    >
+                        <option value={'all'}>
+                            {'All'}
+                        </option>
+                        {filterOptions.map((option, index) => (
+                            <option key={index} value={option.value}>
+                                {option.name}
+                            </option>
+                        ))}
+                    </TextField>
+                    {this.filterData(data).map(row => (
                             <ListItem key={row.row_id} role={undefined} dense >
                                 <ListItemText primary={row.name} />
                                 <ListItemSecondaryAction>
@@ -64,6 +108,10 @@ class Checklist extends React.Component{
             </React.Fragment>
         )
     }
+}
+
+Checklist.defaultProps = {
+    filterOptions: []
 }
 
 export default withStyles(styles)(Checklist)

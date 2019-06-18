@@ -48,3 +48,7 @@ export const getDateFormValue = (datetime) => {
 
   return
 }
+
+export const errorHandler = () => {
+  
+}

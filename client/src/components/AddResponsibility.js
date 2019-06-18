@@ -1,18 +1,81 @@
 import React from 'react'
 import axios from 'axios'
 import {connect} from 'react-redux'
+import Tooltip from '@material-ui/core/Tooltip'
+import IconButton from '@material-ui/core/IconButton'
+import AddIcon from '@material-ui/icons/Add'
 import Container from './MainContainer'
 import DataTable from './DataTable'
-import SelectableTable from './SelectableTable'
 import ListView from './ListView'
-import AddViewToResponsibility from './AddViewToResponsibility'
+import AddEditForm from './AddEditForm'
+import ModalTrigger from './ModalTrigger'
 import { Button } from '@material-ui/core';
 import { getUserOrganization } from '../reducers/authReducer';
 
-const viewRows = [
-    { id: 'name', numeric: false, disablePadding: true, label: 'Name' },
-    { id: 'desc', numeric: false, disablePadding: true, label: 'Description' },
+const responsibilityRows = [
+    { id: 'name', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Name' },
+    { id: ['organization', 'name'], numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Organization' },
+    { id: 'desc', numeric: false, disablePadding: true, lengthRatio: 'Detail', label: 'Description' },
 ]
+
+const responsibilityFields = [
+    { id: 'name', type:'text', label: 'Name' },
+    { id: 'desc', type:'text', label: 'Description' },
+]
+
+const responsibilitySchema = {
+    name: {
+        presence: {
+            allowEmpty: false,
+            message: "Is Required"
+        },
+    },
+    desc: {
+        presence: {
+            allowEmpty: false,
+            message: "Is Required"
+        },
+    },
+}
+
+const viewRows = [
+    { id: 'name', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Name' },
+    { id: 'desc', numeric: false, disablePadding: true, lengthRatio: 'Detail', label: 'Description' },
+]
+
+const viewFields = [
+    { id: 'name', type:'text', label: 'Name' },
+    { id: 'desc', type:'text', label: 'Description' },
+    { id: 'ATTRIB_01', type:'text', label: 'Path' },
+    { id: 'ATTRIB_02', type:'select', label: 'Location', selectOptions: [{ value: 'navbar', name: 'Navbar' }, { value: 'usermenu', name: 'User Menu' }]}
+]
+
+const viewSchema = {
+    name: {
+        presence: {
+            allowEmpty: false,
+            message: "Is Required"
+        },
+    },
+    desc: {
+        presence: {
+            allowEmpty: false,
+            message: "Is Required"
+        },
+    },
+    ATTRIB_01: {
+        presence: {
+            allowEmpty: false,
+            message: "Is Required"
+        },
+    },
+    ATTRIB_02: {
+        presence: {
+            allowEmpty: false,
+            message: "Is Required"
+        },
+    },
+}
 
 const responsibilityViewRows = [
     { id: 'name', numeric: false, disablePadding: true, label: 'Name', },
@@ -22,13 +85,16 @@ const responsibilityViewRows = [
 ]
 
 class AddResponsibility extends React.Component {
+    respModalRef = React.createRef()
+    viewModalRef = React.createRef()
+
     state = {
+        editMode: false,
         organization: null,
         responsibility: null,
         view: null,
-        responsibilityData: [],
-        viewData: [],
         isFetching: true,
+        isFetchingRespViews: false,
         success: null,
         viewData: [],
         data: [],
@@ -36,9 +102,11 @@ class AddResponsibility extends React.Component {
         responsibilityForm: {
             
         },
+        viewData: [],
         viewForm: {
 
         },
+        updates: {},
     }
 
     async componentDidMount(){
@@ -48,18 +116,17 @@ class AddResponsibility extends React.Component {
     getData = async () => {
         axios.all([this.getViews(), this.getResponsibilities()])
             .then(axios.spread((views, responsibilities) => {
-                console.log(views, responsibilities)
                 this.setState(prevState => ({
                     viewData: views.data.result,
                     responsibilityData: responsibilities.data.result,
-                }), () => console.log("STATUE:", this.state))
+                }))
             }));
     }
 
     getViews = () => {
         return axios({
             method: 'get',
-            url: '/admin/access-rights/view',
+            url: '/admin/access-rights/vie\w',
             params: {
                 bu_id: 1
             }
@@ -78,12 +145,16 @@ class AddResponsibility extends React.Component {
 
     selectEntity = (entity, primary, organization) => {
         let labelField = `${entity}Label`
-        
+
         this.setState(prevState => ({
             [entity]: primary,
             organization: organization !== null ? organization : prevState.organization,
             // [labelField]: label,
-        }))
+        }), () => {
+            if(entity === 'responsibility'){
+                this.getRespViews()
+            }
+        })
     }
 
     handleSubmit = async() => {
@@ -96,13 +167,44 @@ class AddResponsibility extends React.Component {
                     url: '/admin/access-rights/responsibility-view',
                     data: {
                         resp_id: this.state.responsibility,
-                        view_id: this.state.view,
+                        views: this.state.view,
                         bu_id: this.state.organization,
                     }
                 })
 
-                console.log("VIEW RESP POST RESPONSE: ", response)
+                console.log(response)
 
+                if(response.data.status === 200){
+                    this.setState(prevState => {
+                        let newViews = prevState.viewData.filter(row => {
+                            for(let i = 0; i < response.data.result.length; i++){
+                                if(response.data.result[i].view_id === row.row_id)
+                                    return true
+                            }
+
+                            return false
+                        })
+
+                        newViews = newViews.map(row => {
+                            return {
+                                ...row,
+                                C_RESP_VIEW: {
+                                    FLG_01: true,
+                                    FLG_02: false,
+                                }
+                            }
+                        })
+                        
+                        console.log("NEW VIEWS: ", newViews)
+                        return {
+                            data: [
+                                ...prevState.data,
+                                ...newViews,
+                            ]
+                        }
+                    })
+                }
+                
             }
             catch(err){
 
@@ -128,13 +230,24 @@ class AddResponsibility extends React.Component {
     }
 
     getTitle = () => {
-        if(this.state.data.length > 0){
-            let row = this.state.data.filter(row => row.row_id === this.state.responsibility)
-            console.log("ROW: ", row)
+        if(this.state.responsibilityData.length > 0){
+            let row = this.state.responsibilityData.filter(row => row.row_id === this.state.responsibility)
             return row[0] ? row[0].name : ""
         }
         else
             return ""
+    }
+
+    getViewData = () => {
+        let { data } = this.state
+        return this.state.viewData.filter(row => {
+            for(let index = 0; index < data.length; index++) {
+                if(data[index].row_id === row.row_id){
+                    return false
+                }
+            }
+            return true
+        })
     }
 
     handleChange = (event, element) => {
@@ -145,7 +258,7 @@ class AddResponsibility extends React.Component {
                 ...prevState[`${element}Form`],
                 [target]: value,
             }
-        }), () => console.log('STSTSTSAAATTE: ', this.state))
+        }))
     }
 
     postResponsibility = async(event, element) => {
@@ -154,7 +267,7 @@ class AddResponsibility extends React.Component {
                 ...prevState[`${element}Form`],
                 organization: this.props.organization,
             }
-        }), () => {console.log('ORG: ', this.props.organization, this.state); this.sendPostRequest(element, '/admin/org-struct/responsibility')})
+        }), () => { this.sendPostRequest(element, '/admin/org-struct/responsibility') })
 
     }
 
@@ -164,7 +277,7 @@ class AddResponsibility extends React.Component {
                 ...prevState[`${element}Form`],
                 organization: this.props.organization,
             }
-        }), () => {console.log('ORG: ', this.props.organization, this.state); this.sendPostRequest(element, '/admin/access-rights/view')})
+        }), () => { this.sendPostRequest(element, '/admin/access-rights/view') })
 
     }
 
@@ -177,13 +290,12 @@ class AddResponsibility extends React.Component {
                 url: `${endpoint}`,
                 data: this.state[`${element}Form`],
             })
-
             console.log(response)
             this.handlePostResponse(response, element)
             return
         }
         catch(err){
-            console.log(response)
+            console.log(err)
             this.handlePostResponse(err.response, element)
             return
         }
@@ -202,17 +314,221 @@ class AddResponsibility extends React.Component {
                     ...prevState[`${element}Data`],
                     res.data.result,
                 ]
-            }))
+            }), ()=>console.log(this.state))
         }
+    }
+
+    clearSelection = (entity, rest) => {
+        let newValue = rest
+        if( rest.length <= 0 )
+            newValue = null
+
+        let newState = {
+            [entity]: newValue,
+            data: entity === 'responsibility' ? [] : this.state.data,
+        }
+
+        this.setState(prevState => newState)
     }
 
     handleDelete = () => {
 
     }
 
+    // VIEW PERMISSIONS METHODS
+
+    getRespViews = async() => {
+        let response
+
+        try{
+            response = await axios({
+                method: 'get',
+                url: '/admin/access-rights/responsibility-view',
+                params: {
+                    resp_id: this.state.responsibility,
+                }
+            })
+
+            console.log("RESP_VIEW_RESPONSE", response)
+            this.handleRespViewResponse(response)
+        }
+        catch(err){
+            this.handleRespViewResponse(err.response)
+        }
+    }
+
+    handleRespViewResponse = (res) => {
+        if (res.data.status >= 400) {
+            this.setState(prevState => ({
+                isFetchingRespViews: false,
+                success: false,
+            }),)
+        }
+
+        else if (res.data.status >= 200 && res.data.status < 300) {
+            this.setState(prevState => ({
+                data: res.data.result[0].view && res.data.result[0].view,
+                isFetchingRespViews: false,
+                success: true,
+            }),  () => console.log("LIST VIEW STATE: ", this.state))
+        }
+    }
+
+    handleCheckboxChange = (event, id, idx) => {
+        let target = event.target.id
+        let value = event.target.checked
+        let data = this.state.data
+        let flag = target === 'readOnly' ? 'FLG_01' : 'FLG_02'
+
+        console.log("Handle Checkbox Change")
+
+        
+        let index = 0
+        for(index; index < data.length; index++) {
+            if(data[index].row_id === id) 
+                break;
+        }
+            
+
+        // let selection = data.filter(row => row.row_id === id)
+        // console.log("SELECTION: ", selection)
+        // let index = selection[0] && selection[0].row_id
+
+        data[index] = {
+            ...data[index],
+            C_RESP_VIEW: {
+                ...data[index].C_RESP_VIEW,
+                [flag]: value,
+            }
+        }
+
+        this.setState(prevState => ({
+            data: data,
+            updates: {
+                ...prevState.updates,
+                [idx]: {
+                    ...prevState.updates[idx],
+                    [flag]: value,
+                }
+            }
+        }), () => console.log("UPDATE STATE: ", this.state))
+    }
+
+    handleUpdate = async (event) => {
+        let response
+        console.log("UPPPPDDDAAATTTEEE!!!")
+        try{
+            response = await axios({
+                method: 'put',
+                url: '/admin/access-rights/responsibility-view',
+                data: {
+                    updates: this.state.updates,
+                }
+            })
+
+            console.log("RESP VIEW UPDATE RES: ", response)
+
+        }
+        catch(err){
+            console.log("RESP VIEW UPDATE RES: ", err.response)
+        }
+    }
+
     render(){
-        let { responsibility, data, viewData, responsibilityData, responsibilityForm, viewForm } = this.state
-        console.log("STATE RESPONSIBILITY: ", this.state)
+        let { 
+            responsibility, 
+            data, 
+            viewData, 
+            responsibilityData, 
+            responsibilityForm, 
+            viewForm, 
+            isFetchingRespViews 
+        } = this.state
+
+        let { editMode } = this.state
+
+        let RespAddComp = 
+            <ModalTrigger
+                IconButton={
+                    <Tooltip title="Add">
+                        <IconButton aria-label="Add">
+                            <AddIcon />
+                        </IconButton>
+                    </Tooltip>
+                }
+                innerRef={node => this.respModalRef = node}
+                disabled={editMode}
+                onClose={this.unsetEditMode}
+            >
+                <AddEditForm
+                    headerTitle="responsibility"
+                    fields={responsibilityFields}
+                    schema={responsibilitySchema}
+                    object={responsibilityForm}
+                    handleChange={this.handleChange}
+                    handleSubmit={this.postResponsibility}
+                    editMode={editMode}
+                />
+            </ModalTrigger>
+
+        let ViewAddComp =
+            <ModalTrigger
+                IconButton={
+                    <Tooltip title="Add">
+                        <IconButton aria-label="Add">
+                            <AddIcon />
+                        </IconButton>
+                    </Tooltip>
+                }
+                innerRef={node => this.viewModalRef = node}
+                disabled={editMode}
+                onClose={this.unsetEditMode}
+            >
+                <AddEditForm
+                    headerTitle="view"
+                    fields={viewFields}
+                    schema={viewSchema}
+                    object={viewForm}
+                    handleChange={this.handleChange}
+                    handleSubmit={this.postView}
+                    editMode={editMode}
+                />
+            </ModalTrigger>
+
+        let ViewAttachComp = 
+            <ModalTrigger
+                IconButton={
+                    <Tooltip title="Add">
+                        <IconButton aria-label="Add">
+                            <AddIcon />
+                        </IconButton>
+                    </Tooltip>
+                }
+                innerRef={node => this.viewModalRef = node}
+                disabled={!responsibility && !isFetchingRespViews }
+                onClose={this.unsetEditMode}
+            >
+                <React.Fragment>
+                    <DataTable
+                        headerTitle='view'
+                        rows={viewRows}
+                        data={this.getViewData()}
+                        actions
+                        isSelectable
+                        selectMultiple
+                        setEditMode={this.setEditMode}
+                        unsetEditMode={this.unsetEditMode}
+                        handleDelete={this.handleDelete}
+                        selectEntity={this.selectEntity}
+                        clearSelection={this.clearSelection}
+                        AddComponent={ViewAddComp}
+                    />
+                    <Button onClick={this.handleSubmit} variant="contained" color="primary" /* className={classNames(classes.button, classes.textField)} */>
+                        Add View
+                    </Button>
+                </React.Fragment>
+            </ModalTrigger>
+
         return (
             <Container>
                 {/* <DataTable
@@ -222,59 +538,29 @@ class AddResponsibility extends React.Component {
                     params={{ organization: organization }}
                     data={data}
                 /> */}
-                <SelectableTable
-                    title='responsibility'
-                    endpoint='/admin/org-struct/responsibility'
-                    updateState={this.setResponsibility}
-                    actions
+                <DataTable
+                    headerTitle='responsibility'
+                    rows={responsibilityRows}
                     data={responsibilityData}
-                    headers={[
-                        {title:'Name', value:'name', type:'text'},
-                        {title:'Organization', value:'organization', value2:'name', type:'select'},
-                        {title:'Description', value:'desc', type:'text'}
-                    ]}
-                    fields={[
-                        {label:'Name', id:'name', type:'text'},
-                        {label:'Organization', id:'organization', value2:'name', type:'text', readOnly: true, defaultValue: `${this.props.organization}`, selectOptions:[{value: 'navbar', name:'Navbar'}, {value: 'user-menu', name:'User Menu'}]},
-                        {label:'Description', id:'desc', type:'text'}
-                    ]}
-                    handleChange={this.handleChange}
-                    handleSubmit={this.postResponsibility}
-                    handleDelete={this.handleDelete}
-                    selectEntity={this.selectEntity}
-                    formData={responsibilityForm}
-                />
-                <SelectableTable
-                    title='view'
-                    endpoint='/'
-                    updateState={this.setResponsibility}
                     actions
-                    data={viewData}
-                    headers={[
-                        {title:'Name', value:'name', type:'text'},
-                        {title:'Description', value:'desc', type:'text'}
-                    ]}
-                    fields={[
-                        {label:'Name', id:'name', type:'text'},
-                        {label:'Description', id:'desc', type:'text'},
-                        {label:'Path', id:'path', type:'text'},
-                        {label:'Location', id:'location', type:'select', selectOptions:[{value: 'navbar', name:'Navbar'}, {value: 'user-menu', name:'User Menu'},]}
-                    ]}
-                    handleChange={this.handleChange}
-                    handleSubmit={this.postView}
+                    isSelectable
+                    setEditMode={this.setEditMode}
+                    unsetEditMode={this.unsetEditMode}
                     handleDelete={this.handleDelete}
                     selectEntity={this.selectEntity}
-                    formData={viewForm}
+                    clearSelection={this.clearSelection}
+                    AddComponent={RespAddComp}
                 />
-                <Button onClick={this.handleSubmit} variant="contained" color="primary" /* className={classNames(classes.button, classes.textField)} */>
-                    Add View
-                </Button>
+                
                 <ListView 
-                    headerTitle={this.getTitle()}
+                    headerTitle={`${this.getTitle()} Views`}
                     rows={responsibilityViewRows}
                     endpoint='/access-rights/view'
+                    handleCheckboxChange={this.handleCheckboxChange}
+                    handleUpdate={this.handleUpdate}
                     responsibility={responsibility}
                     data={data}
+                    actions={[ViewAttachComp]}
                 />
             </Container>
         )

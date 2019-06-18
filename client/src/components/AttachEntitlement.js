@@ -21,8 +21,8 @@ const style = theme => ({
 })
 
 const entitlementRows = [
-    { id: 'val', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Entitlement' },
-    { id: 'ATTRIB_11', numeric: true, disablePadding: false, lengthRatio:'Small', label: 'No Of Days' },
+    { id: ['function', 'val'], numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Entitlement' },
+    { id: ['function', 'ATTRIB_11'], numeric: true, disablePadding: false, lengthRatio:'Small', label: 'No Of Days' },
 ]
 
 const applicationFormFields = [
@@ -128,10 +128,6 @@ class EmployeeInduction extends React.Component {
         });
     }
 
-    setUser = () => {
-
-    }
-
     handleChange = (event, element) => {
         let target = event.target.id;
         let value = event.target.value;
@@ -140,7 +136,7 @@ class EmployeeInduction extends React.Component {
                 ...prevState[`${element}FormData`],
                 [target]: value,
             }
-        }), () => console.log('STSTSTSAAATTE: ', this.state))
+        }))
     }
 
     handleCheckboxChange = (e, id) => {
@@ -174,7 +170,7 @@ class EmployeeInduction extends React.Component {
         }), () => this.getChecklist())
     }
 
-    selectEntity = (entity, primary, organization) => {
+    selectEntity = (entity, primary, organization = null) => {
         let labelField = `${entity}Label`
         console.log("SELECT ENTITY: ", primary, " ", entity)
 
@@ -197,9 +193,9 @@ class EmployeeInduction extends React.Component {
                 }
             })
             console.log("RESRESRES: ", response)
-            let newData = response.data.result.map(row => row.function)
+            // let newData = response.data.result.map(row => row.function)
             this.setState(prevState => ({
-                checklistData: newData,
+                checklistData: response.data.result,
             }))
         }catch(err){
 

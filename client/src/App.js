@@ -62,6 +62,12 @@ const theme = createMuiTheme(
 					backgroundColor: 'white',
 				},
 			},
+			MuiFormHelperText: {
+				root: {
+					margin: 0,
+				}
+				
+			},
 		},
 		drawerWidth: 240,
 	}
@@ -95,7 +101,7 @@ class App extends Component {
 							<Switch>
 								<Route path='/signin' component={SignIn} />
 								<Route strict path='/portal/' component={Portal} />
-								{ loggedIn ? <Redirect exact from='/' to='/portal/dashboard' /> : <Redirect exact from='/' to='/signin' /> }
+								{ loggedIn ? <Redirect exact from='/' to='/portal/dashboard' /> : <Redirect from='/' to='/signin' /> }
 							</Switch>
 						</div>
 					</React.Fragment>

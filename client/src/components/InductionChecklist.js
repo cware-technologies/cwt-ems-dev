@@ -3,6 +3,10 @@ import axios from 'axios'
 import { connect } from 'react-redux'
 import { withStyles } from '@material-ui/core/styles'
 import { formStyle } from '../styles/form'
+import Tooltip from '@material-ui/core/Tooltip'
+import IconButton from '@material-ui/core/IconButton'
+import AddIcon from '@material-ui/icons/Add'
+import ModalTrigger from './ModalTrigger'
 import Container from './MainContainer'
 import { getUserOrganization } from '../reducers/authReducer'
 import DataTable from './DataTable'
@@ -18,7 +22,23 @@ const formFields = [
     { id: 'type', type:'select', label: 'Type', selectOptions: [{value: 'induction_checklist', name: 'Induction'}, {value: 'exit_checklist', name: 'Exit'}] },
 ]
 
+const schema = {
+    val: {
+        presence: {
+            allowEmpty: false,
+            message: "Is Required"
+        },
+    },
+    type: {
+        presence: {
+            allowEmpty: false,
+            message: "Is Required"
+        },
+    },
+}
+
 class InductionChecklist extends React.Component{
+    modalRef = React.createRef()
     state = {
         data: [],
         formData: {
@@ -104,7 +124,7 @@ class InductionChecklist extends React.Component{
         let response
         let data = this.state.formData
         data.bu_id = this.props.organization
-        console.log(data)
+        console.log("HANDLE ADD")
 
         try{
             response = await axios({
@@ -120,7 +140,8 @@ class InductionChecklist extends React.Component{
                 data: [
                     ...prevState.data,
                     response.data.data
-                ]
+                ],
+                formData: {},
             }))
         }
         catch(err){
@@ -188,7 +209,30 @@ class InductionChecklist extends React.Component{
     render(){
         let { organization } = this.props
         let { data, formData, editMode } = this.state
-         console.log("ORG: ", this.props.organization)
+
+        let addComponent =  <ModalTrigger
+                                IconButton={
+                                    <Tooltip title="Add">
+                                        <IconButton aria-label="Add">
+                                            <AddIcon />
+                                        </IconButton>
+                                    </Tooltip>
+                                }
+                                innerRef={node => this.modalRef = node}
+                                disabled={editMode}
+                                onClose={this.unsetEditMode}
+                            >
+                                <AddEditForm
+                                    headerTitle="Induction/Exit Document"
+                                    fields={formFields}
+                                    schema={schema}
+                                    object={formData}
+                                    handleChange={this.handleChange}
+                                    handleSubmit={this.handleSubmit}
+                                    editMode={editMode}
+                                />
+                            </ModalTrigger>
+
         return(
             <Container>
                 <DataTable
@@ -202,14 +246,7 @@ class InductionChecklist extends React.Component{
                     unsetEditMode={this.unsetEditMode}
                     handleDelete={this.handleDelete}
                     editMode={editMode}
-                />
-                <AddEditForm
-                    headerTitle="Induction/Exit Document"
-                    fields={formFields}
-                    object={formData}
-                    handleChange={this.handleChange}
-                    handleSubmit={this.handleSubmit}
-                    editMode={editMode}
+                    AddComponent={addComponent}
                 />
             </Container>
         )

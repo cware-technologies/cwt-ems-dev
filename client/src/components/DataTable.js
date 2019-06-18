@@ -16,6 +16,7 @@ import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
+import Chip from '@material-ui/core/Chip';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import CancelIcon from '@material-ui/icons/Cancel';
@@ -95,6 +96,18 @@ const headStyles = theme => ({
         display: 'flex',
         backgroundColor: theme.palette.grey[800],
     },
+    rowActions: {
+        flexBasis: '105px',
+        flexGrow: 0,
+        padding: 0,
+        display: 'flex',
+    },
+    selectableRow: {
+        flexBasis: '90%',
+        flexGrow: 1,
+        padding: 0,
+        display: 'flex',
+    },
     '@global': {
         'tbody > tr:nth-of-type(odd)': {
             backgroundColor: theme.palette.grey[300],
@@ -115,7 +128,7 @@ class EnhancedTableHead extends React.Component {
                 <TableRow className={classes.row}>
                     {
                         this.props.actions &&
-                            <React.Fragment>
+                        <div id='row-actions' className={classes.rowActions}>
                                 <TableCell
                                     align="left"
                                     padding="none"
@@ -126,34 +139,39 @@ class EnhancedTableHead extends React.Component {
                                     padding="none"
                                     classes={{ root: classes.tableCellAction }}
                                 />
-                            </React.Fragment>
+                            </div>
                     }
-                    {rows.map(
-                        row => (
-                            <TableCell
-                                key={row.id}
-                                align={row.numeric ? 'right' :  row.lengthRatio === 'Small' ? 'center' : 'left'}
-                                padding={row.disablePadding ? 'none' : 'default'}
-                                sortDirection={orderBy === row.id ? order : false}
-                                classes={{ root: classes[`tableCell${row.lengthRatio}`] }}
-                            >
-                                <Tooltip
-                                    title="Sort"
-                                    placement={row.numeric ? 'bottom-end' : 'bottom-start'}
-                                    enterDelay={300}
+                    <div 
+                        id='selectable-row'
+                        className={classes.selectableRow} 
+                    >
+                        {rows.map(
+                            row => (
+                                <TableCell
+                                    key={row.id}
+                                    align={row.numeric ? 'right' :  row.lengthRatio === 'Small' ? 'center' : 'left'}
+                                    padding={row.disablePadding ? 'none' : 'default'}
+                                    sortDirection={orderBy === row.id ? order : false}
+                                    classes={{ root: classes[`tableCell${row.lengthRatio}`] }}
                                 >
-                                    <TableSortLabel
-                                        active={orderBy === row.id}
-                                        direction={order}
-                                        onClick={this.createSortHandler(row.id)}
+                                    <Tooltip
+                                        title="Sort"
+                                        placement={row.numeric ? 'bottom-end' : 'bottom-start'}
+                                        enterDelay={300}
                                     >
-                                        {row.label}
-                                    </TableSortLabel>
-                                </Tooltip>
-                            </TableCell>
-                        ),
-                        this,
-                    )}
+                                        <TableSortLabel
+                                            active={orderBy === row.id}
+                                            direction={order}
+                                            onClick={this.createSortHandler(row.id)}
+                                        >
+                                            {row.label}
+                                        </TableSortLabel>
+                                    </Tooltip>
+                                </TableCell>
+                            ),
+                            this,
+                        )}
+                    </div>
                 </TableRow>
             </TableHead>
         );
@@ -174,6 +192,7 @@ EnhancedTableHead.propTypes = {
 const toolbarStyles = theme => ({
     root: {
         paddingRight: theme.spacing.unit,
+        display: 'flex',
     },
     highlight:
         theme.palette.type === 'light'
@@ -185,30 +204,61 @@ const toolbarStyles = theme => ({
                 color: theme.palette.text.primary,
                 backgroundColor: theme.palette.secondary.dark,
             },
+    tableTitle: {
+        textTransform: 'capitalize',
+        flexBasis: '30%',
+        flexGrow: 1,
+    },
     spacer: {
         flex: '1 1 100%',
     },
     actions: {
+        flexBasis: '10%',
+        flexGrow: 1,
+        display: 'flex',
+        justifyContent: 'flex-end',
         color: theme.palette.text.secondary,
     },
     title: {
         flex: '0 0 auto',
     },
+    selectedChips: {
+        display: 'flex',
+        flexBasis: '60%',
+        flexWrap: 'wrap',
+        flexGrow: 2,
+        // flexGrow: 2,
+    },
+    chip: {
+        margin: theme.spacing.unit,
+    },
 });
 
 let EnhancedTableToolbar = props => {
-    const { headerTitle, classes, AddComponent } = props;
+    const { headerTitle, classes, AddComponent, selected, selectedData, handleClearSelection } = props;
 
     return (
         <Toolbar
             className={classNames(classes.root)}
         >
             <div className={classes.title}>
-                <Typography variant="h6" id="tableTitle">
+                <Typography variant="h6" id="tableTitle" className={classes.tableTitle}>
                     { headerTitle }
                 </Typography>
             </div>
-            <div className={classes.spacer} />
+            { selected.length !== 0 &&
+                <div className={classes.selectedChips}>
+                    <div className={classes.spacer} />
+                    {selectedData.map(row => 
+                        <Chip
+                            label={`${row.name}`}
+                            onDelete={() => handleClearSelection(row.row_id)}
+                            className={classes.chip}
+                            color="primary"
+                        />
+                    )}
+                </div>
+            }
             <div className={classes.actions}>
                 {AddComponent &&
                     AddComponent
@@ -229,6 +279,7 @@ const styles = theme => ({
     root: {
         width: '100%',
         marginTop: theme.spacing.unit * 3,
+        minWidth: 300,
     },
     container: {
         flexDirection: 'row',
@@ -286,7 +337,19 @@ const styles = theme => ({
     row: {
         width: '100%',
         display: 'flex',
-        // cursor: 'pointer',
+        cursor: 'pointer',
+    },
+    rowActions: {
+        flexBasis: '105px',
+        flexGrow: 0,
+        padding: 0,
+        display: 'flex',
+    },
+    selectableRow: {
+        flexBasis: '90%',
+        flexGrow: 1,
+        padding: 0,
+        display: 'flex',
     },
     error: {
         color: 'crimson',
@@ -314,7 +377,8 @@ const styles = theme => ({
         outline: 'none',
     },
     selected: {
-        backgroundColor: theme.palette.secondary.light,
+        backgroundColor: theme.palette.secondary,
+        border: `2px solid ${theme.palette.secondary.dark}`,
     }
 });
 
@@ -327,6 +391,7 @@ class EnhancedDataTable extends React.Component {
         rowsPerPage: 5,
         modalOpen: false,
         selectedRow: null,
+        selected: [],
     };
 
     handleRequestSort = (event, property) => {
@@ -360,13 +425,84 @@ class EnhancedDataTable extends React.Component {
         }), () => this.props.unsetEditMode())
     }
 
+    getCellValue = (obj, nesting) => {
+
+        if(typeof nesting === 'string')
+            return obj[nesting]
+
+        let value = obj
+        nesting.forEach(field => {
+            value = value[field]
+        })
+        return value
+    }
+
     isSelected = (id) => {
-        return id === this.state.selectedRow
+        return this.state.selected.indexOf(id) !== -1
+    }
+
+    multipleRowsSelect = (id) => {
+        return new Promise((resolve, reject) => {
+            let { selected } = this.state
+            const selectedIndex = selected.indexOf(id);
+            let newSelected = [];
+        
+            if (selectedIndex === -1) {
+            newSelected = newSelected.concat(selected, id);
+            } else if (selectedIndex === 0) {
+            newSelected = newSelected.concat(selected.slice(1));
+            } else if (selectedIndex === selected.length - 1) {
+            newSelected = newSelected.concat(selected.slice(0, -1));
+            } else if (selectedIndex > 0) {
+            newSelected = newSelected.concat(
+                selected.slice(0, selectedIndex),
+                selected.slice(selectedIndex + 1),
+            );
+            }
+        
+            this.setState(prevState => ({
+                selected: newSelected
+            }), () => resolve())
+        })
+    }
+
+    selectEntity = async (event, id, org) => {
+        if(this.props.selectMultiple){
+            await this.multipleRowsSelect(id)
+            if(this.props.title === 'view')
+                org = null
+
+            this.props.selectEntity(this.props.headerTitle, this.state.selected, org)
+        }
+        else{
+            if(this.state.selected[0] === id){
+                this.handleClearSelection(id)
+            }
+            else{
+                this.setState(prevState => ({
+                    selected: [id]
+                }), () => {
+                    if(this.props.title === 'view')
+                        org = null
+                    
+                    this.props.selectEntity(this.props.headerTitle, this.state.selected[0], org)
+                })
+            }
+        }
+        
+    }
+
+    handleClearSelection = (id) => {
+        let newSelected = this.state.selected.filter(row => row !== id)
+
+        this.setState(prevProps => ({
+            selected: newSelected,
+        }), () => this.props.clearSelection(this.props.headerTitle, this.state.selected))
     }
 
     render() {
-        const { classes, rows, data, headerTitle, editMode, handleDelete, disableEdit } = this.props;
-        const { /* data, */ order, orderBy, rowsPerPage, page } = this.state;
+        const { classes, rows, data, headerTitle, editMode, handleDelete, disableEdit, isSelectable } = this.props;
+        const { /* data, */ order, orderBy, rowsPerPage, page, selected } = this.state;
         const { setEditMode, unsetEditMode } = this;
         const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
 
@@ -375,6 +511,9 @@ class EnhancedDataTable extends React.Component {
                     <EnhancedTableToolbar
                         headerTitle={headerTitle}
                         AddComponent={this.props.AddComponent}
+                        selected={selected}
+                        selectedData={data.filter(row => selected.find(id => row.row_id === id))}
+                        handleClearSelection={this.handleClearSelection}
                     />
                     <div className={classes.tableWrapper}>
                         <Table className={classes.table} aria-labelledby="tableTitle">
@@ -391,21 +530,22 @@ class EnhancedDataTable extends React.Component {
                                     stableSort(data, getSorting(order, orderBy))
                                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                     .map(data => {
-                                        let isSelected = editMode && this.isSelected(data.row_id)
+                                        let isSelected = editMode || this.isSelected(data.row_id)
                                         return (
                                             <TableRow
                                                 role="checkbox"
                                                 tabIndex={-1}
+                                                aria-checked={isSelected}
+                                                selected={isSelected}
                                                 key={data.id}
                                                 classes={{
                                                     root: classes.row,
                                                 }}
                                                 className={isSelected && classes.selected}
-                                                onClick={this.handleModalOpen}
                                             >
                                                 {
                                                     this.props.actions &&
-                                                        <React.Fragment>
+                                                        <div id='row-actions' className={classes.rowActions}>
                                                             <TableCell
                                                                 align="left"
                                                                 padding="none"
@@ -440,22 +580,33 @@ class EnhancedDataTable extends React.Component {
                                                                     </IconButton>
                                                                 </Tooltip>
                                                             </TableCell>
-                                                        </React.Fragment>
+                                                        </div>
                                                 }
-                                                {
-                                                    rows.map(row => {
-                                                        return(
-                                                            <TableCell
-                                                                component="th"
-                                                                scope="row"
-                                                                padding="none"
-                                                                classes={{ root: classes[`tableCell${row.lengthRatio}`] }}
-                                                            >
-                                                                { !row.date ? data[row.id] : getDate(data[row.id]).toDateString() }
-                                                            </TableCell>
-                                                        )
-                                                    })
-                                                }
+                                                <div 
+                                                    id='selectable-row'
+                                                    style={ !isSelectable ? { cursor: 'auto'} : {} }
+                                                    className={classes.selectableRow} 
+                                                    onClick={isSelectable ? event => this.selectEntity(event, data.row_id, data.bu_id ) : null}
+                                                >
+                                                    {
+                                                        rows.map(row => {
+                                                            let cellValue = this.getCellValue(data, row.id)
+
+                                                            return(
+                                                                <Tooltip title={cellValue}>
+                                                                    <TableCell
+                                                                        component="th"
+                                                                        scope="row"
+                                                                        padding="none"
+                                                                        classes={{ root: classes[`tableCell${row.lengthRatio}`] }}
+                                                                    >
+                                                                        { !row.date ? cellValue : getDate(cellValue).toDateString() }
+                                                                    </TableCell>
+                                                                </Tooltip>
+                                                            )
+                                                        })
+                                                    }
+                                                </div>
                                         </TableRow>
                                     )})
                                 }

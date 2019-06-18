@@ -51,13 +51,12 @@ const login = (username, password) => async (dispatch) => {
     }
 }
 
-const logout = () => {
+const logout = () => dispatch => {
     authServices.logout();
-    window.location.href = `/signin`
-    return {
+    dispatch({
         type: authConstants.LOGOUT,
-    };
-    
+    });
+    window.location.href = `/signin`
 }
 
 const verifyUser = (user) => async (dispatch) => {
