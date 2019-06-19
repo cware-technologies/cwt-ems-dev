@@ -68,4 +68,8 @@ router.get('/employees', adminController.getEmployees)
 router.put('/employees', adminController.updateEmployee)
 router.delete('/employees', adminController.deleteEmployee)
 
+router.post('/employees/changeStatus', adminController.changeEmployeeStatus)
+
+
+
 module.exports = router

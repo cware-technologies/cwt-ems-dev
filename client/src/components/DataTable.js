@@ -20,6 +20,7 @@ import Chip from '@material-ui/core/Chip';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import CancelIcon from '@material-ui/icons/Cancel';
+import Switch from '@material-ui/core/Switch';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import { lighten } from '@material-ui/core/styles/colorManipulator';
 import Container from './MainContainer';
@@ -235,7 +236,7 @@ const toolbarStyles = theme => ({
 });
 
 let EnhancedTableToolbar = props => {
-    const { headerTitle, classes, AddComponent, selected, selectedData, handleClearSelection } = props;
+    const { headerTitle, classes, AddComponent, actionBar, selected, selectedData, handleClearSelection } = props;
 
     return (
         <Toolbar
@@ -260,9 +261,10 @@ let EnhancedTableToolbar = props => {
                 </div>
             }
             <div className={classes.actions}>
-                {AddComponent &&
+                { AddComponent &&
                     AddComponent
                 }
+                { actionBar && actionBar.map(action => action) }
             </div>
         </Toolbar>
     );
@@ -383,6 +385,7 @@ const styles = theme => ({
 });
 
 class EnhancedDataTable extends React.Component {
+    checkboxRef = React.createRef()
     state = {
         order: 'asc',
         orderBy: 'name',
@@ -423,6 +426,56 @@ class EnhancedDataTable extends React.Component {
         this.setState(prevState => ({
             selectedRow: null,
         }), () => this.props.unsetEditMode())
+    }
+
+    handleToggleChange = async (e, id) => {
+        let value = e.target.checked
+        let response
+
+        let confirmed = window.confirm("Are You Sure?")
+        if(confirmed){
+            this.checkboxRef.disabled = true
+
+            try{
+                response = await this.props.handleSwitchChange(value, id)
+
+                console.log("REFERENCE SUCCESS: ", this.checkboxRef)
+                this.checkboxRef.checked = value
+                this.checkboxRef.disabled = false
+                return
+            }
+            catch(err){
+                console.log("REFERENCE FAILURE: ", this.checkboxRef)
+                this.checkboxRef.checked = !value
+                this.checkboxRef.disabled = false
+                return
+            }
+        }
+        else{
+            console.log(value, "     ", !value, "    ",  this.checkboxRef)
+            this.checkboxRef.checked = !value
+            return
+        }
+    }
+
+    getRowComponent = (type, id, data) => {
+        switch(type){
+            case 'toggle':
+                console.log("ACTIVE: ", this.props.switchActive, "  ", !!this.props.switchActive)
+                console.log("FLAG: ", data, "    ", !!data[id])
+                return (
+                    <input
+                        id={id}
+                        type="checkbox"
+                        color="primary"
+                        defaultChecked={!!data[id]}
+                        // checked={!!this.props.switchActive}
+                        ref={node => this.checkboxRef = node}
+                        onChange={(e) => this.handleToggleChange(e, data.row_id)}
+                        value={this.props.switchActive ? 'active ' : 'inactive'}
+                    />
+                )
+        }
     }
 
     getCellValue = (obj, nesting) => {
@@ -511,6 +564,7 @@ class EnhancedDataTable extends React.Component {
                     <EnhancedTableToolbar
                         headerTitle={headerTitle}
                         AddComponent={this.props.AddComponent}
+                        actionBar={this.props.actionBar}
                         selected={selected}
                         selectedData={data.filter(row => selected.find(id => row.row_id === id))}
                         handleClearSelection={this.handleClearSelection}
@@ -600,7 +654,13 @@ class EnhancedDataTable extends React.Component {
                                                                         padding="none"
                                                                         classes={{ root: classes[`tableCell${row.lengthRatio}`] }}
                                                                     >
-                                                                        { !row.date ? cellValue : getDate(cellValue).toDateString() }
+                                                                        { 
+                                                                            !row.type || row.type === 'text' ? 
+                                                                                !row.date ? 
+                                                                                    cellValue : 
+                                                                                    getDate(cellValue).toDateString() :
+                                                                            this.getRowComponent(row.type, row.id, data)
+                                                                        }
                                                                     </TableCell>
                                                                 </Tooltip>
                                                             )

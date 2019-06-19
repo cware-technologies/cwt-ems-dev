@@ -855,6 +855,25 @@ async function deleteEmployee(req, res, next){
 
 }
 
+async function changeEmployeeStatus(req, res, next){
+    let checked = req.body.checked
+    let employee = req.body.employee
+
+    try{
+        let data = await Employee.update({FLG_01: checked}, { where: { row_id: employee }})
+
+        res.status(200).json({
+            status: 200,
+            message: 'Employee status updated',
+        })
+    }
+    catch(err){
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
 async function getEmployeeEntitlements(req, res, next){
     let employee = req.query
 
@@ -1025,4 +1044,5 @@ module.exports = {
     getEmployees,
     updateEmployee,
     deleteEmployee,
+    changeEmployeeStatus,
 }

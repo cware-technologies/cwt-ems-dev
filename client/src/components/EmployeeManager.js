@@ -19,9 +19,10 @@ const styles = theme => ({
 })
 
 const employeeRows = [
-  { id: 'fst_name', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'First Name' },
-  { id: 'last_name', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Last Name' },
-  { id: 'bu_id', numeric: false, disablePadding: false, lengthRatio: 'Title', label: 'Organization' },
+  { id: 'fst_name', type: 'text', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'First Name' },
+  { id: 'last_name', type: 'text', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Last Name' },
+  { id: 'bu_id', type: 'text', numeric: false, disablePadding: false, lengthRatio: 'Title', label: 'Organization' },
+  { id: 'FLG_01', type: 'toggle', numeric: false, disablePadding: false, lengthRatio: 'Small', label: 'Inactive/Active' },
 ]
 
 const formFields = [
@@ -37,6 +38,7 @@ class EditEmployee2 extends React.Component {
     selected: null,
     query: '',
     isSearching: false,
+    active: false,
     formData: {
       login: '',
       hash_pwd: '',
@@ -78,16 +80,15 @@ class EditEmployee2 extends React.Component {
     return new Promise((resolve, reject) => {
       this.setState(prevState => ({
         formData: {
-            ...prevState.formData,
-            [property]: value,
+          ...prevState.formData,
+          [property]: value,
         },
-    }), () => {console.log("STOOOT: ", this.state);resolve()})
+      }), () => { console.log("STOOOT: ", this.state); resolve() })
     })
   }
 
   onSearchChange = (e) => {
     let value = e.target.value
-    console.log("SEARCH CHANGE")
     this.setState(prevState => ({
       query: value,
     }))
@@ -101,6 +102,39 @@ class EditEmployee2 extends React.Component {
           [target]: value,
         }
       }), () => resolve())
+    })
+  }
+
+  handleSwitchChange = async (checked, id) => {
+    return new Promise(async (resolve, reject) => {
+      let response
+      console.log("SWITCH HANDLER")
+      try {
+        response = await axios({
+          method: 'post',
+          url: '/admin/employees/changeStatus',
+          headers: {
+            'content-type': 'application/json',
+          },
+          data: {
+            checked,
+            employee: id,
+          },
+        })
+
+        if (response.data.status === 200) {
+          this.props.success(response.data.message)
+          resolve()
+        }
+        else {
+          this.props.error(response.data)
+          reject()
+        }
+      }
+      catch (err) {
+        this.props.error({message: "Action couldn't be completed"})
+        reject()
+      }
     })
   }
 
@@ -119,19 +153,19 @@ class EditEmployee2 extends React.Component {
   handleResponse = (res, err) => {
     let response = res.data ? res.data : response;
     console.log(response)
-    if(response === undefined){
+    if (response === undefined) {
       this.props.error('Action Failed, Try Again')
     }
 
-    if(err || response.status >= 400){
+    if (err || response.status >= 400) {
       let error = response.message || 'Action Failed, Try Again'
       this.props.error(error)
     }
-    else{
+    else {
       let message = response.message || 'Action Successful'
       this.props.success(message)
     }
-    
+
   }
 
   handleUpdate = async () => {
@@ -144,7 +178,7 @@ class EditEmployee2 extends React.Component {
     newData.push(this.state.formData)
 
     try {
-    response = await axios({
+      response = await axios({
         method: 'put',
         url: '/admin/employees',
         headers: {
@@ -162,7 +196,7 @@ class EditEmployee2 extends React.Component {
 
         this.props.success('User Updated Succesfully')
       }
-      else{
+      else {
         this.props.error('User Update Failed')
       }
     }
@@ -175,19 +209,19 @@ class EditEmployee2 extends React.Component {
     let response
     let employee = this.state.formData
 
-    try{
+    try {
       response = await axios({
-          method: 'post',
-          url: '/auth/register',
-          data: employee,
-          headers: {
-              'content-type': 'application/json',
-          }
+        method: 'post',
+        url: '/auth/register',
+        data: employee,
+        headers: {
+          'content-type': 'application/json',
+        }
       })
       console.log(response)
       this.handleResponse(response)
     }
-    catch(err){
+    catch (err) {
       console.log(err)
       this.handleResponse(err.response, true)
     }
@@ -211,7 +245,7 @@ class EditEmployee2 extends React.Component {
         },
       })
 
-      if(response.data.data < 400)
+      if (response.data.data < 400)
         this.setState(prevState => ({
           data: newData,
         }))
@@ -225,11 +259,10 @@ class EditEmployee2 extends React.Component {
   }
 
   selectEmployee = (selected) => {
-    console.log(selected)
 
     this.setState(prevState => ({
-        selected: selected.row_id,
-    }), () => this.getChecklist())
+      selected,
+    }))
   }
 
   // componentDidMount() {
@@ -239,7 +272,7 @@ class EditEmployee2 extends React.Component {
   getList = async () => {
     let response
     console.log("Hi")
-    this.setState( prevState => ({
+    this.setState(prevState => ({
       isSearching: true,
     }))
 
@@ -269,34 +302,34 @@ class EditEmployee2 extends React.Component {
 
   render() {
     let { organization, classes } = this.props
-    let { data, formData, editMode, query, isSearching } = this.state
+    let { data, formData, editMode, query, isSearching, selected, active } = this.state
 
     return (
       <Container>
         <div className={classes.actionPanel}>
-            <Search
-                title="Employee"
-                query={query}
-                submitHandler={this.getList}
-                changeHandler={this.onSearchChange}
-                isSearching={isSearching}
+          <Search
+            title="Employee"
+            query={query}
+            submitHandler={this.getList}
+            changeHandler={this.onSearchChange}
+            isSearching={isSearching}
+          />
+          <ModalTrigger
+            title="Add"
+            button
+            innerRef={node => this.modalRef = node}
+            disabled={editMode}
+            onClose={this.unsetEditMode}
+          >
+            <RegisterEmployeeForm
+              headerTitle="LeaveTypes"
+              fields={formFields}
+              employee={formData}
+              changeHandler={this.handleChange}
+              submitHandler={this.handleSubmit}
+              editMode={editMode}
             />
-            <ModalTrigger
-              title="Add"
-              button
-              innerRef={node => this.modalRef = node}
-              disabled={editMode}
-              onClose={this.unsetEditMode}
-            >
-              <RegisterEmployeeForm
-                headerTitle="LeaveTypes"
-                fields={formFields}
-                employee={formData}
-                changeHandler={this.handleChange}
-                submitHandler={this.handleSubmit}
-                editMode={editMode}
-              />
-            </ModalTrigger>
+          </ModalTrigger>
         </div>
         <DataTable
           headerTitle="Employee List"
@@ -305,9 +338,12 @@ class EditEmployee2 extends React.Component {
           params={{ organization: organization }}
           data={data}
           actions
+          selectEntity={this.selectEmployee}
           setEditMode={this.setEditMode}
           unsetEditMode={this.unsetEditMode}
           handleDelete={this.handleDelete}
+          handleSwitchChange={this.handleSwitchChange}
+          switchActive={active}
           editMode={editMode}
         />
       </Container>
@@ -317,5 +353,5 @@ class EditEmployee2 extends React.Component {
 
 export default compose(
   withStyles(styles),
-  connect(()=>{}, {...alertActions})
+  connect(() => { }, { ...alertActions })
 )(EditEmployee2)
