@@ -1,22 +1,13 @@
 import React from 'react';
 import axios from 'axios';
-import compose from 'recompose/compose';
 import { connect } from 'react-redux'
 import { alertActions } from '../actions'
-import { withStyles } from '@material-ui/core/styles'
 import ModalTrigger from './ModalTrigger';
-import AddEditForm from './AddEditForm';
 import DataTable from './DataTable';
 import Container from './MainContainer';
+import ActionPanel from './ActionPanel'
 import RegisterEmployeeForm from './RegisterEmployeeForm'
 import Search from './Search'
-
-const styles = theme => ({
-  actionPanel: {
-    display: 'flex',
-    flexDirection: 'row',
-  }
-})
 
 const employeeRows = [
   { id: 'fst_name', type: 'text', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'First Name' },
@@ -306,7 +297,7 @@ class EditEmployee2 extends React.Component {
 
     return (
       <Container>
-        <div className={classes.actionPanel}>
+        <ActionPanel>
           <Search
             title="Employee"
             query={query}
@@ -322,15 +313,13 @@ class EditEmployee2 extends React.Component {
             onClose={this.unsetEditMode}
           >
             <RegisterEmployeeForm
-              headerTitle="LeaveTypes"
-              fields={formFields}
               employee={formData}
               changeHandler={this.handleChange}
               submitHandler={this.handleSubmit}
               editMode={editMode}
             />
           </ModalTrigger>
-        </div>
+        </ActionPanel>
         <DataTable
           headerTitle="Employee List"
           rows={employeeRows}
@@ -343,7 +332,6 @@ class EditEmployee2 extends React.Component {
           unsetEditMode={this.unsetEditMode}
           handleDelete={this.handleDelete}
           handleSwitchChange={this.handleSwitchChange}
-          switchActive={active}
           editMode={editMode}
         />
       </Container>
@@ -351,7 +339,4 @@ class EditEmployee2 extends React.Component {
   }
 }
 
-export default compose(
-  withStyles(styles),
-  connect(() => { }, { ...alertActions })
-)(EditEmployee2)
+export default connect(() => { }, { ...alertActions })(EditEmployee2)

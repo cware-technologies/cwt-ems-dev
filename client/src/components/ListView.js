@@ -450,7 +450,10 @@ class EnhancedDataTable extends React.Component {
                                 rowCount={data.length}
                             />
                             <TableBody className={classes.tableBody}>
-                                {stableSort(data.length > 0 ? data : [], getSorting(order, orderBy))
+                                { data.length === 0 ? 
+                                    <Typography align='center' variant='overline'>Nothing To Show Here...</Typography> :
+                                    
+                                    stableSort(data.length > 0 ? data : [], getSorting(order, orderBy))
                                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                     .map((n, index) => {
                                         console.log(n.FLG_01, "    ", n.FLG_02)

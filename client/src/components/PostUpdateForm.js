@@ -1,5 +1,6 @@
 import React from 'react';
 import axios from 'axios';
+import validate from 'validate.js'
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import compose from 'recompose/compose';
@@ -8,6 +9,7 @@ import { formStyle } from '../styles/form';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
+import FormHelperText from '@material-ui/core/FormHelperText'
 import Container from './MainContainer';
 import TextEditor from './TextEditor';
 import { getUserOrganization } from '../reducers/authReducer';
@@ -78,7 +80,68 @@ class PostUpdateForm extends React.Component {
                 disabled: true,
                 value: null,
             },
+            response: {},
         };
+    }
+
+    validate = (event) => {
+        let target = event.target.id;
+        let value = event.target.value;
+        let val_errors;
+
+        console.log("VALIDATE")
+
+        val_errors = validate.single(value, this.props.schema[target]);
+        
+        this.setState(prevState => ({
+            errors: {
+                ...prevState.errors,
+                [target]: val_errors,
+            },
+        }));
+    }
+
+    validateAll = async () => {
+        return new Promise(async(resolve, reject) => {
+        
+            let val_errors = await validate(this.props.object, this.props.schema)
+
+            let errors = val_errors ? Object.filter(val_errors, property => property !== undefined) : {}
+            this.setState(prevState => ({
+                errors
+            }), resolve());
+        })
+    }
+
+    allValid = async() => {
+        // let localConstraints
+
+        // if(this.props.editMode)
+        //     localConstraints = (({login, fst_name, last_name, emp_num, bu_id, div_id}) => ({login, fst_name, last_name, emp_num, bu_id, div_id}))(constraints)
+        // else
+        //     localConstraints = constraints
+        
+        await this.validateAll(this.props.object, this.props.schema)
+
+        console.log("VAL ERRORS", this.state.errors,Object.keys(this.state.errors).length)
+
+        if(Object.keys(this.state.errors.constructor === Object && this.state.errors).length === 0 ){
+            this.setState(prevState => ({
+                response: {}
+            }))
+            return true
+        }
+        else{
+            let response = {
+                status: 412,
+                message: 'Please Fill The Form Correctly',
+            }
+
+            this.setState(prevState => ({
+                response,
+            }))
+            return false
+        }
     }
 
     handleSelectChange = (e) => {
@@ -158,56 +221,19 @@ class PostUpdateForm extends React.Component {
     handleTextChange = (e) => {
         let target = e.target.id
         let value = e.target.value
-
-        this.setState(prevState => ({
-            news: {
-                ...prevState.news,
-                [target]: value,
-            },
-        }))
+        this.validate(e)
+        this.props.changeHandler(target, value)
     }
 
-    handleSubmit = async () => {
-        let response
-        let data = this.state.news
-        data.organization = this.props.userOrganization
-
-        try {
-            response = await axios({
-                method: 'post',
-                url: '/admin/post',
-                data: data,
-            })
-
-            console.log(response)
-        }
-        catch (err) {
-            console.log(err.response)
-        }
-    }
-
-    handleSubmitResponse = (res) => {
-        let error = res.data.message;
-
-        if (res.data.status >= 400) {
-            if (res.data.redirectURL)
-                window.location.href = `${res.data.redirectURL}`;
-        }
-
-        else if (res.data.status >= 200 && res.data.status < 300) {
-            let newData = this.state.data.filter(row => {
-                return this.state.checked.indexOf(row.row_id) === -1
-            })
-            console.log("New Data: ", newData)
-            this.setState(prevState => ({
-                data: newData,
-                checked: []
-            }))
+    handleSubmit = async (e) => {
+        if(await this.allValid()){
+            this.props.handleSubmit(e)
         }
     }
 
     render() {
-        const { classes } = this.props;
+        const { classes, changeHandler } = this.props;
+        const { response } = this.state;
 
         return (
             <Container>
@@ -357,7 +383,14 @@ class PostUpdateForm extends React.Component {
                         }}
                     />
                     {/* <TextEditor /> */}
-                    <Button onClick={this.handleSubmit} variant="contained" color="primary" className={classNames(classes.button, classes.textField)}>
+                    <FormHelperText>{response.status && <ul className={response.status<300?classes.successList:classes.errorList}><li className={classes.errorListItem}>{response.message}</li></ul>}</FormHelperText>
+                    <Button 
+                        className={classes.fullSpanInput}
+                        style={{width: 100, position: 'absolute', right: '4%', bottom: '4%'}}
+                        onClick={this.handleSubmit}
+                        variant="contained"
+                        color="primary"
+                    >
                         Post
                     </Button>
                 </div>

@@ -240,10 +240,30 @@ async function postResponsibilities(req, res, next){
             bu_id: responsibility.organization,
         })
 
-        res.status(200).json({
-            status: 200,
-            result: data,
-        })
+        try{
+            let data2 = await Responsibility.findOne({
+                where: {
+                    row_id: data.row_id
+                },
+                include: [
+                    {
+                        model: Organization,
+                        as: 'organization',
+                        attributes: ['row_id', 'name'],
+                    },
+                ]
+            })
+
+            res.status(200).json({
+                status: 200,
+                result: data2,
+            })
+        }
+        catch(err){
+            err.status = 400
+            err.message = `Database Error: ${err}`
+            next(err)
+        }
     }
     catch(err){
         err.status = 400
@@ -530,6 +550,25 @@ async function postNews(req, res, next){
         fs.unlink(req.file.path, error => {
             next(err)
         })
+    }
+}
+
+async function changeNewsStatus(req, res, next){
+    let checked = req.body.checked
+    let news = req.body.news
+
+    try{
+        let data = await News.update({ stat_cd: checked }, { where: { row_id: news }})
+
+        res.status(200).json({
+            status: 200,
+            result: data,
+        })
+    }
+    catch(err){
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
     }
 }
 
@@ -1025,6 +1064,7 @@ module.exports = {
     uploadHRDoc,
     downloadHRDoc,
     postNews,
+    changeNewsStatus,
     getInductionExitLOVS,
     postInductionExitLOVS,
     updateInductionExitLOVS,

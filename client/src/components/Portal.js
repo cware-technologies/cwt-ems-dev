@@ -35,6 +35,7 @@ const AttachEntitlement = lazy(() => import('./AttachEntitlement'));
 const EmployeeAttendanceList = lazy(() => import('./EmployeeAttendanceList'));
 const EmployeeDetailsSearch = lazy(() => import('./EmployeeDetailsSearch'));
 const EmployeeManager = lazy(() => import('./EmployeeManager'));
+const NewsManager = lazy(() => import('./NewsManager'));
 
 const styles = theme => ({
   root: {
@@ -112,7 +113,7 @@ class Portal extends React.Component {
             <Route path={`${match.path}pay-slips`} component={PaySlipTabs} />
             <Route path={`${match.path}it-tickets`} component={ITTicketTabs} />
             <Route path={`${match.path}news-and-updates`} component={NewsAndUpdates} />
-            <Route path={`${match.path}post-update`} component={PostUpdateForm} />
+            <Route path={`${match.path}post-update`} component={NewsManager} />
             <Route path={`${match.path}edit-profile`} component={ProfileEditForm} />
             <Route path={`${match.path}my-profile`} component={Profile} />
             <Route path={`${match.path}attendance`} component={Attendance} />

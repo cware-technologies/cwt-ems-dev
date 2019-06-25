@@ -416,44 +416,44 @@ class EnhancedDataTable extends React.Component {
         this.setState({ rowsPerPage: event.target.value });
     };
 
-    setEditMode = (data) => {
+    setEditMode = (data, component) => {
         this.setState(prevState => ({
             selectedRow: data.row_id,
-        }), () => this.props.setEditMode(data))
+        }), () => this.props.setEditMode(data, component))
     }
 
-    unsetEditMode = () => {
+    unsetEditMode = (data, component) => {
         this.setState(prevState => ({
             selectedRow: null,
-        }), () => this.props.unsetEditMode())
+        }), () => this.props.unsetEditMode(data, component))
     }
 
-    handleToggleChange = async (e, id) => {
+    handleToggleChange = async (e, data) => {
         let value = e.target.checked
         let response
-
+        console.log("VALUE!!!: ", e.target.value)
         let confirmed = window.confirm("Are You Sure?")
         if(confirmed){
-            this.checkboxRef.disabled = true
+            this[`checkboxRef${data.row_id}`].disabled = true
 
             try{
-                response = await this.props.handleSwitchChange(value, id)
+                response = await this.props.handleSwitchChange(value, data.row_id)
 
-                console.log("REFERENCE SUCCESS: ", this.checkboxRef)
-                this.checkboxRef.checked = value
-                this.checkboxRef.disabled = false
+                console.log("REFERENCE SUCCESS: ", this[`checkboxRef${data.row_id}`])
+                this[`checkboxRef${data.row_id}`].checked = value
+                this[`checkboxRef${data.row_id}`].disabled = false
                 return
             }
             catch(err){
-                console.log("REFERENCE FAILURE: ", this.checkboxRef)
-                this.checkboxRef.checked = !value
-                this.checkboxRef.disabled = false
+                console.log("REFERENCE FAILURE: ", this[`checkboxRef${data.row_id}`])
+                this[`checkboxRef${data.row_id}`].checked = !value
+                this[`checkboxRef${data.row_id}`].disabled = false
                 return
             }
         }
         else{
-            console.log(value, "     ", !value, "    ",  this.checkboxRef)
-            this.checkboxRef.checked = !value
+            console.log(value, "     ", !value, "    ",  this[`checkboxRef${data.row_id}`])
+            this[`checkboxRef${data.row_id}`].checked = !value
             return
         }
     }
@@ -462,17 +462,18 @@ class EnhancedDataTable extends React.Component {
         switch(type){
             case 'toggle':
                 console.log("ACTIVE: ", this.props.switchActive, "  ", !!this.props.switchActive)
-                console.log("FLAG: ", data, "    ", !!data[id])
+                console.log("FLAG: ", data, "    ",!parseInt(data[id]), ": ", !!parseInt(data[id]))
                 return (
                     <input
                         id={id}
                         type="checkbox"
                         color="primary"
-                        defaultChecked={!!data[id]}
+                        name={data[id]}
+                        defaultChecked={data[id] === 'active' ? true : data[id] === 'inactive' ? false : !!parseInt(data[id])}
                         // checked={!!this.props.switchActive}
-                        ref={node => this.checkboxRef = node}
-                        onChange={(e) => this.handleToggleChange(e, data.row_id)}
-                        value={this.props.switchActive ? 'active ' : 'inactive'}
+                        ref={node => this[`checkboxRef${data.row_id}`] = node}
+                        onChange={(e) => this.handleToggleChange(e, data)}
+                        value={data[id] == '1' ? "active" : data[id] == '0' ? 'inactive' : data[id] }
                     />
                 )
         }
@@ -545,6 +546,16 @@ class EnhancedDataTable extends React.Component {
         
     }
 
+    handleDelete = (id) => {
+        let confirmation = window.confirm("Are You Sure You Want To Delete This Record?")
+        if(confirmation){
+            this.props.handleDelete(id)
+        }
+        else{
+            return
+        }
+    }
+
     handleClearSelection = (id) => {
         let newSelected = this.state.selected.filter(row => row !== id)
 
@@ -558,7 +569,7 @@ class EnhancedDataTable extends React.Component {
         const { /* data, */ order, orderBy, rowsPerPage, page, selected } = this.state;
         const { setEditMode, unsetEditMode } = this;
         const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
-
+        console.log(headerTitle)
         return (
                 <Paper className={classes.root}>
                     <EnhancedTableToolbar
@@ -580,7 +591,8 @@ class EnhancedDataTable extends React.Component {
                                 actions={this.props.actions}
                             />
                             <TableBody className={classes.tableBody}>
-                                {
+                                { data.length === 0 ? 
+                                    <Typography align='center' variant='overline'>Nothing To Show Here...</Typography> :
                                     stableSort(data, getSorting(order, orderBy))
                                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                     .map(data => {
@@ -591,7 +603,7 @@ class EnhancedDataTable extends React.Component {
                                                 tabIndex={-1}
                                                 aria-checked={isSelected}
                                                 selected={isSelected}
-                                                key={data.id}
+                                                key={data.row_id}
                                                 classes={{
                                                     root: classes.row,
                                                 }}
@@ -607,17 +619,17 @@ class EnhancedDataTable extends React.Component {
                                                             >
                                                             { editMode ?  isSelected ?
                                                                 <Tooltip title="Edit">
-                                                                    <IconButton aria-label="Cancel" onClick={() => unsetEditMode(data)}>
+                                                                    <IconButton aria-label="Cancel" onClick={() => unsetEditMode(data, headerTitle)}>
                                                                         <CancelIcon />
                                                                     </IconButton>
                                                                 </Tooltip> : 
                                                                 <Tooltip title="Edit">
-                                                                    <IconButton aria-label="Edit" onClick={() => setEditMode(data)}>
+                                                                    <IconButton aria-label="Edit" onClick={() => setEditMode(data, headerTitle)}>
                                                                         <EditIcon />
                                                                     </IconButton>
                                                                 </Tooltip> :
                                                                 <Tooltip title="Edit">
-                                                                <IconButton aria-label="Edit" disabled={disableEdit} onClick={() => setEditMode(data)}>
+                                                                <IconButton aria-label="Edit" disabled={disableEdit} onClick={() => setEditMode(data, headerTitle)}>
                                                                     <EditIcon />
                                                                 </IconButton>
                                                             </Tooltip>
@@ -629,7 +641,7 @@ class EnhancedDataTable extends React.Component {
                                                                 classes={{ root: classes.tableCellAction }}
                                                             >
                                                                 <Tooltip title="Delete">
-                                                                    <IconButton disabled={editMode} aria-label="Delete" onClick={() => handleDelete(data.row_id)}>
+                                                                    <IconButton disabled={editMode} aria-label="Delete" onClick={() => this.handleDelete(data.row_id)}>
                                                                         <DeleteIcon />
                                                                     </IconButton>
                                                                 </Tooltip>
@@ -649,6 +661,7 @@ class EnhancedDataTable extends React.Component {
                                                             return(
                                                                 <Tooltip title={cellValue}>
                                                                     <TableCell
+                                                                        key={data.row_id}
                                                                         component="th"
                                                                         scope="row"
                                                                         padding="none"

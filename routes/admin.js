@@ -40,7 +40,8 @@ router.delete('/hr-docs', adminController.deleteHRDocs)
 router.get('/hr-docs/download', adminController.downloadHRDoc)
 router.post('/hr-docs/upload', upload.single('file'), adminController.uploadHRDoc)
 
-router.post('/post', adminController.postNews)
+router.post('/news/add', adminController.postNews)
+router.post('/news/changeStatus', adminController.changeNewsStatus)
 
 router.get('/induction-lovs', adminController.getInductionExitLOVS)
 router.post('/induction-lovs', adminController.postInductionExitLOVS)

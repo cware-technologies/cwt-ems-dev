@@ -54,7 +54,7 @@ class InductionChecklist extends React.Component{
                 ...record,
             },
             editMode: true,
-        }), () => console.log(this.state))
+        }), () => this.modalRef.handleModalOpen())
     }
 
     unsetEditMode = () => {
@@ -77,7 +77,7 @@ class InductionChecklist extends React.Component{
                 ...prevState.formData,
                 [target]: value,
             }
-        }),() => console.log(this.state))
+        }))
     }
 
     handleSubmit = async() => {

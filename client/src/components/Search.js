@@ -21,12 +21,15 @@ const styles = theme => ({
         marginRight: theme.spacing.unit * 2,
         marginLeft: 0,
         width: '100%',
+        flexGrow: 3,
+        flexBasis: '60%',
         [theme.breakpoints.up('sm')]: {
         //   marginLeft: theme.spacing.unit * 3,
           width: 'auto',
         },
     },
     form: {
+        width: '100%',
         height: '100%',
     },
     searchIcon: {
@@ -53,9 +56,6 @@ const styles = theme => ({
         width: '100%',
         height: '100%',
         boxSizing: 'inherit',
-        [theme.breakpoints.up('md')]: {
-            width: 200,
-        },
     },
     icon: {
         position: 'absolute',

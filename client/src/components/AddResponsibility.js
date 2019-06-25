@@ -11,6 +11,7 @@ import AddEditForm from './AddEditForm'
 import ModalTrigger from './ModalTrigger'
 import { Button } from '@material-ui/core';
 import { getUserOrganization } from '../reducers/authReducer';
+import { alertActions } from '../actions';
 
 const responsibilityRows = [
     { id: 'name', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Name' },
@@ -85,7 +86,7 @@ const responsibilityViewRows = [
 ]
 
 class AddResponsibility extends React.Component {
-    respModalRef = React.createRef()
+    responsibilityModalRef = React.createRef()
     viewModalRef = React.createRef()
 
     state = {
@@ -107,10 +108,44 @@ class AddResponsibility extends React.Component {
 
         },
         updates: {},
+        openedWindow: null,
     }
 
     async componentDidMount(){
         this.getData()
+    }
+
+    setEditMode = (record, component) => {
+        console.log("COMPONENT: ", component)
+        this.setState(prevState => ({
+            [`${component}Form`]: {
+                ...prevState[`${component}Form`],
+                ...record,
+            },
+            editMode: true,
+            openedWindow: component,
+        }), () => {console.log(this.state);this[`${component}ModalRef`].handleModalOpen()})
+    }
+
+    unsetEditMode = (data, component) => {
+        let formdata = {}
+        console.log(window)
+        if(this.state.openedWindow === 'responsibility'){
+            responsibilityFields.forEach(row => formdata[row.id] = '')
+            this.setState(prevState => ({
+                responsibilityForm: formdata,
+                editMode: false,
+                openedWindow: null,
+            }))
+        }
+        else if(this.state.openedWindow === 'view'){
+            viewFields.forEach(row => formdata[row.id] = '')
+            this.setState(prevState => ({
+                viewForm: formdata,
+                editMode: false,
+                openedWindow: null,
+            }))
+        }
     }
 
     getData = async () => {
@@ -120,7 +155,8 @@ class AddResponsibility extends React.Component {
                     viewData: views.data.result,
                     responsibilityData: responsibilities.data.result,
                 }))
-            }));
+            }))
+            .catch(err => this.props.error({ message: "Could Not Load Data, Refresh To Try Again." }))
     }
 
     getViews = () => {
@@ -194,6 +230,8 @@ class AddResponsibility extends React.Component {
                                 }
                             }
                         })
+
+
                         
                         console.log("NEW VIEWS: ", newViews)
                         return {
@@ -203,6 +241,11 @@ class AddResponsibility extends React.Component {
                             ]
                         }
                     })
+
+                    this.props.success("Views Added Successfully!")
+                }
+                else{
+                    this.props.error({ message: "Action Couldn't Be Completed, Try Again." })
                 }
                 
             }
@@ -303,6 +346,7 @@ class AddResponsibility extends React.Component {
 
     handlePostResponse = (res, element) => {
         if (res.data.status >= 400) {
+            this.props.error({ message: "Action Failed, Try Again!" })
             this.setState(prevState => ({
                 
             }))
@@ -314,7 +358,9 @@ class AddResponsibility extends React.Component {
                     ...prevState[`${element}Data`],
                     res.data.result,
                 ]
-            }), ()=>console.log(this.state))
+            }))
+
+            this.props.success("Action Successful!")
         }
     }
 
@@ -362,7 +408,9 @@ class AddResponsibility extends React.Component {
             this.setState(prevState => ({
                 isFetchingRespViews: false,
                 success: false,
-            }),)
+            }))
+
+            this.props.error({ message: "Could Not Load Data, Refresh To Try Again." })
         }
 
         else if (res.data.status >= 200 && res.data.status < 300) {
@@ -426,11 +474,15 @@ class AddResponsibility extends React.Component {
                 }
             })
 
-            console.log("RESP VIEW UPDATE RES: ", response)
-
+            if(response.data.status >= 400){
+                this.props.error({ message: "Could Not Update Data, Please Try Again." })
+            }
+            else if(response.data.status == 200){
+                this.props.error({ message: "Data Update Successfully!" })
+            }
         }
         catch(err){
-            console.log("RESP VIEW UPDATE RES: ", err.response)
+            this.props.error({ message: "Could Not Update Data, Please Try Again." })            
         }
     }
 
@@ -456,7 +508,7 @@ class AddResponsibility extends React.Component {
                         </IconButton>
                     </Tooltip>
                 }
-                innerRef={node => this.respModalRef = node}
+                innerRef={node => this.responsibilityModalRef = node}
                 disabled={editMode}
                 onClose={this.unsetEditMode}
             >
@@ -513,7 +565,6 @@ class AddResponsibility extends React.Component {
                         headerTitle='view'
                         rows={viewRows}
                         data={this.getViewData()}
-                        actions
                         isSelectable
                         selectMultiple
                         setEditMode={this.setEditMode}
@@ -573,4 +624,4 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps, {})(AddResponsibility)
+export default connect(mapStateToProps, {...alertActions})(AddResponsibility)
