@@ -48,18 +48,37 @@ async function getOrganizations(req, res, next){
 async function postOrganization(req, res, next){
     let organization = req.body
 
-    Organization.create({
-        name: organization.name,
-        par_row_id: organization.parent,
-    }).then(result => {
-        res.status(200).json({
-            status: 200,
-            result: result,
-        })
-    }).catch((err) => {
+    if(!organization.par_row_id){
+        organization.par_row_id = 1
+    }
+
+    try{
+        let data = await Organization.upsert(organization)
+        try{
+            let data2 = await Organization.findOne({
+                where: { 
+                    name: organization.name
+                }
+            })
+            res.status(200).json({
+                status: 200,
+                result: data2,
+                updated: !data,
+            })
+
+        }
+        catch(err){
+            res.status(200).json({
+                status: 200,
+                result: data,
+            })
+        }
+    }
+    catch(err){
         err.status = 400
+        err.message = `Database Error: ${err}`
         next(err)
-    })
+    }
 }
 
 async function getDivisions(req, res, next){
@@ -97,33 +116,35 @@ async function getDivisions(req, res, next){
 
 async function postDivision(req, res, next){
     let division = req.body
-    console.log(division)
-    Division.create({
-        name: division.name,
-        par_row_id: division.parent,
-        bu_id: division.organization,
-    },{
-        include: [
-            {
-                model: Organization,
-                as: 'organization',
-                attributes: ['row_id', 'name'],
-            },
-            {
-                model: Division,
-                as: 'parent',
-                attributes: ['row_id', 'name'],
-            }
-        ]
-    }).then(result => {
-        res.status(200).json({
-            status: 200,
-            result: result,
-        })
-    }).catch((err) => {
+
+    try{
+        let data = await Division.upsert(division)
+        
+        try{
+            let data2 = await Division.findOne({
+                where: { 
+                    name: division.name
+                }
+            })
+            res.status(200).json({
+                status: 200,
+                result: data2,
+                updated: !data,
+            })
+
+        }
+        catch(err){
+            res.status(200).json({
+                status: 200,
+                result: data,
+            })
+        }
+    }
+    catch(err){
         err.status = 400
+        err.message = `Database Error: ${err}`
         next(err)
-    })
+    }
 }
 
 async function getPositions(req, res, next){
@@ -167,38 +188,34 @@ async function getPositions(req, res, next){
 async function postPosition(req, res, next){
     let position = req.body
 
-    Position.create({
-        name: position.name,
-        par_row_id: position.parent,
-        bu_id: position.organization,
-        div_id: position.division,
-    },{
-        include: [
-            {
-                model: Organization,
-                as: 'organization',
-                attributes: ['row_id', 'name'],
-            },
-            {
-                model: Division,
-                as: 'division',
-                attributes: ['row_id', 'name'],
-            },
-            {
-                model: Position,
-                as: 'parent',
-                attributes: ['row_id', 'name'],
-            }
-        ]
-    }).then(result => {
-        res.status(200).json({
-            status: 200,
-            result: result,
-        })
-    }).catch((err) => {
+    try{
+        let data = await Position.upsert(position)
+
+        try{
+            let data2 = await Position.findOne({
+                where: {
+                    name: position.name,
+                }
+            })
+
+            res.status(200).json({
+                status: 200,
+                result: data2,
+                updated: !data,
+            })
+        }
+        catch(err){
+            res.status(200).json({
+                status: 200,
+                result: data,
+            })
+        }
+    }
+    catch(err){
         err.status = 400
+        err.message = `Database Error: ${err}`
         next(err)
-    })
+    }
 }
 
 async function getResponsibilities(req, res, next){
@@ -427,14 +444,21 @@ async function updateResponsibilityView(req, res, next){
 
     console.log(values)
 
-    values.forEach(async value => {
-        try{
-            let data = await ResponsibilityView.update(value, { where: {row_id: value.row_id }})
+    let promises = values.map(async value => ResponsibilityView.update(value, { where: {row_id: value.row_id }}))
+    
+    Promise.all(promises)
+    .then(result =>
+        res.status(200).json({
+            status: 200,
+            data: result,
+        })
+    )
+    .catch(err => {
+            err.status = 400
+            err.message = `Database Error: ${err}`
+            next(err)
         }
-        catch(err){
-            console.log(err)
-        }
-    })
+    )
 }
 
 async function getHRDocs(req, res, next){
@@ -833,13 +857,26 @@ async function getEmployees(req, res, next){
                 {
                     model: Employee,
                     as: 'employee',
-                }
+                    include: [
+                        {
+                            model: Position,
+                            as: 'position_held',
+                        },
+                        {
+                            model: Responsibility,
+                            as: 'responsibility',
+                        },
+                    ]
+                },
+                {
+                    model: Organization,
+                    as: 'organization',
+                },
+                {
+                    model: Division,
+                    as: 'division'
+                },
             ]
-        }).map(el => {
-            let element = el.get({plain: true})
-            element = {...element, ...element.employee}
-            delete element.employee
-            return element
         })
 
         res.status(200).json({

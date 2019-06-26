@@ -64,6 +64,12 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER(11),
       allowNull: true,
       defaultValue: null,
+      references: {
+        'model': 'c_resp',
+        'key' : 'row_id',
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'SET NULL',
     },
     pr_postn_id: {
       type: DataTypes.INTEGER(11),
@@ -202,6 +208,7 @@ module.exports = (sequelize, DataTypes) => {
     Employee.belongsTo( models.C_DIV, { as: 'division', foreignKey: 'div_id' })
     Employee.belongsTo( models.C_POSTN, { as: 'position_held', foreignKey: 'postn_held_id' })
     Employee.belongsTo( models.C_POSTN, { as: 'primary_access_position', foreignKey: 'pr_postn_id' })
+    Employee.belongsTo( models.C_RESP, { as: 'responsibility', foreignKey: 'resp_id' })
   };
   return Employee;
 };

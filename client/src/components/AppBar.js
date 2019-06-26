@@ -97,7 +97,7 @@ class AppBar extends React.Component {
                     >
                         <MenuIcon />
                     </IconButton>
-                    <Typography
+                    {/* <Typography
                         component="h1"
                         variant="h6"
                         color="inherit"
@@ -105,7 +105,7 @@ class AppBar extends React.Component {
                         className={classes.title}
                     >
                         Welcome &#91;Enter Name Here&#93;
-                    </Typography>
+                    </Typography> */}
                     <SearchBar />
                     <Link to={`${match.url}notifications`} style={{ textDecoration: 'none' }}>
                         <div style={{ color: 'white' }}>

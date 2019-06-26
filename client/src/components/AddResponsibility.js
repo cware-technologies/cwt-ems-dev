@@ -474,14 +474,16 @@ class AddResponsibility extends React.Component {
                 }
             })
 
+            console.log(response)
             if(response.data.status >= 400){
                 this.props.error({ message: "Could Not Update Data, Please Try Again." })
             }
             else if(response.data.status == 200){
-                this.props.error({ message: "Data Update Successfully!" })
+                this.props.success("Data Updated Successfully!")
             }
         }
         catch(err){
+            console.log(response)
             this.props.error({ message: "Could Not Update Data, Please Try Again." })            
         }
     }
@@ -594,10 +596,10 @@ class AddResponsibility extends React.Component {
                     rows={responsibilityRows}
                     data={responsibilityData}
                     actions
+                    disableDelete
                     isSelectable
                     setEditMode={this.setEditMode}
                     unsetEditMode={this.unsetEditMode}
-                    handleDelete={this.handleDelete}
                     selectEntity={this.selectEntity}
                     clearSelection={this.clearSelection}
                     AddComponent={RespAddComp}

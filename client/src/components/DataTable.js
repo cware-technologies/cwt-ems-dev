@@ -62,8 +62,8 @@ const headStyles = theme => ({
         alignItems: 'center',
     },
     tableCellSmall: {
-        flexBasis: '2%',
-        flexGrow: 1,
+        flexBasis: '15px',
+        flexGrow: 0,
         padding: 0,
         display: 'flex',
         color: 'white',
@@ -71,6 +71,7 @@ const headStyles = theme => ({
         alignItems: 'center',
     },
     tableCellAction: {
+        width: '48px',
         flexBasis: '48px',
         flexGrow: 0,
         padding: 0,
@@ -309,7 +310,7 @@ const styles = theme => ({
         alignItems: 'center',
     },
     tableCellSmall: {
-        flexBasis: '2%',
+        flexBasis: '15px',
         flexGrow: 1,
         padding: 0,
         display: 'flex',
@@ -317,11 +318,14 @@ const styles = theme => ({
         justifyContent: 'center',
     },
     tableCellAction: {
-        flexBasis: '2%',
+        width: '48px',
+        flexBasis: '48px',
         flexGrow: 0.5,
         padding: 0,
         display: 'flex',
         color: 'white',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     tableCellDetail: {
         display: 'flex',
@@ -431,7 +435,7 @@ class EnhancedDataTable extends React.Component {
     handleToggleChange = async (e, data) => {
         let value = e.target.checked
         let response
-        console.log("VALUE!!!: ", e.target.value)
+
         let confirmed = window.confirm("Are You Sure?")
         if(confirmed){
             this[`checkboxRef${data.row_id}`].disabled = true
@@ -439,20 +443,17 @@ class EnhancedDataTable extends React.Component {
             try{
                 response = await this.props.handleSwitchChange(value, data.row_id)
 
-                console.log("REFERENCE SUCCESS: ", this[`checkboxRef${data.row_id}`])
                 this[`checkboxRef${data.row_id}`].checked = value
                 this[`checkboxRef${data.row_id}`].disabled = false
                 return
             }
             catch(err){
-                console.log("REFERENCE FAILURE: ", this[`checkboxRef${data.row_id}`])
                 this[`checkboxRef${data.row_id}`].checked = !value
                 this[`checkboxRef${data.row_id}`].disabled = false
                 return
             }
         }
         else{
-            console.log(value, "     ", !value, "    ",  this[`checkboxRef${data.row_id}`])
             this[`checkboxRef${data.row_id}`].checked = !value
             return
         }
@@ -461,15 +462,13 @@ class EnhancedDataTable extends React.Component {
     getRowComponent = (type, id, data) => {
         switch(type){
             case 'toggle':
-                console.log("ACTIVE: ", this.props.switchActive, "  ", !!this.props.switchActive)
-                console.log("FLAG: ", data, "    ",!parseInt(data[id]), ": ", !!parseInt(data[id]))
                 return (
                     <input
                         id={id}
                         type="checkbox"
                         color="primary"
                         name={data[id]}
-                        defaultChecked={data[id] === 'active' ? true : data[id] === 'inactive' ? false : !!parseInt(data[id])}
+                        defaultChecked={data[id] === 'active' ? true : data[id] === 'inactive' ? false : !!parseInt(this.getCellValue(data, id))}
                         // checked={!!this.props.switchActive}
                         ref={node => this[`checkboxRef${data.row_id}`] = node}
                         onChange={(e) => this.handleToggleChange(e, data)}
@@ -485,9 +484,20 @@ class EnhancedDataTable extends React.Component {
             return obj[nesting]
 
         let value = obj
-        nesting.forEach(field => {
-            value = value[field]
-        })
+
+        try{
+            nesting.forEach(field => {
+                if(value[field] !== null)
+                    value = value[field]
+                else{
+                    throw 'null Value'
+                }
+            })
+        }
+        catch(err) {
+            return ""
+        }
+
         return value
     }
 
@@ -565,11 +575,11 @@ class EnhancedDataTable extends React.Component {
     }
 
     render() {
-        const { classes, rows, data, headerTitle, editMode, handleDelete, disableEdit, isSelectable } = this.props;
+        const { classes, rows, data, headerTitle, editMode, handleDelete, disableEdit, isSelectable, disableDelete } = this.props;
         const { /* data, */ order, orderBy, rowsPerPage, page, selected } = this.state;
         const { setEditMode, unsetEditMode } = this;
         const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
-        console.log(headerTitle)
+
         return (
                 <Paper className={classes.root}>
                     <EnhancedTableToolbar
@@ -641,7 +651,7 @@ class EnhancedDataTable extends React.Component {
                                                                 classes={{ root: classes.tableCellAction }}
                                                             >
                                                                 <Tooltip title="Delete">
-                                                                    <IconButton disabled={editMode} aria-label="Delete" onClick={() => this.handleDelete(data.row_id)}>
+                                                                    <IconButton disabled={editMode || disableDelete} aria-label="Delete" onClick={() => this.handleDelete(data.row_id)}>
                                                                         <DeleteIcon />
                                                                     </IconButton>
                                                                 </Tooltip>
@@ -652,7 +662,7 @@ class EnhancedDataTable extends React.Component {
                                                     id='selectable-row'
                                                     style={ !isSelectable ? { cursor: 'auto'} : {} }
                                                     className={classes.selectableRow} 
-                                                    onClick={isSelectable ? event => this.selectEntity(event, data.row_id, data.bu_id ) : null}
+                                                    onClick={isSelectable ? event => this.selectEntity(event, data.row_id, data.name ) : null}
                                                 >
                                                     {
                                                         rows.map(row => {
@@ -664,7 +674,7 @@ class EnhancedDataTable extends React.Component {
                                                                         key={data.row_id}
                                                                         component="th"
                                                                         scope="row"
-                                                                        padding="none"
+                                                                        padding={row.disablePadding ? 'none' : 'default'}
                                                                         classes={{ root: classes[`tableCell${row.lengthRatio}`] }}
                                                                     >
                                                                         { 

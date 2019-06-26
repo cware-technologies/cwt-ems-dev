@@ -47,7 +47,7 @@ module.exports = {
       postn_held_id: {
         type: Sequelize.INTEGER(11),
         allowNull: true,
-        defaultValue: 1,
+        defaultValue: null,
         references: {
           'model': 'c_postn',
           'key' : 'row_id',
@@ -58,7 +58,13 @@ module.exports = {
       resp_id: {
         type: Sequelize.INTEGER(11),
         allowNull: true,
-        defaultValue: Sequelize.UUIDV4,
+        defaultValue: null,
+        references: {
+          'model': 'c_resp',
+          'key' : 'row_id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL',
       },
       pr_postn_id: {
         type: Sequelize.INTEGER(11),

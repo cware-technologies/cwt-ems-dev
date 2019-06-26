@@ -20,6 +20,16 @@ const error = (error) => (dispatch, getState) => {
     })
 }
 
+const warning = (warning) => (dispatch, getState) => {
+    let changed = getState().alertReducer.changed
+
+    dispatch({
+        type: alertConstants.WARNING,
+        message: warning,
+        changed,
+    })
+}
+
 const clear = () => (dispatch, getState) => {
     dispatch({
         type: alertConstants.CLEAR,
@@ -29,5 +39,6 @@ const clear = () => (dispatch, getState) => {
 export const alertActions = {
     success,
     error,
+    warning,
     clear,
 };

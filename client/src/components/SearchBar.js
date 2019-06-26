@@ -17,6 +17,8 @@ import DocumentsIcon from '@material-ui/icons/Description'
 
 const styles = theme => ({
     search: {
+        display: 'flex',
+        minWidth: 200,
         flexGrow:2,
         position: 'relative',
         borderTopRightRadius: theme.shape.borderRadius,
@@ -28,20 +30,18 @@ const styles = theme => ({
         marginRight: theme.spacing.unit * 2,
         marginLeft: 0,
         width: '100%',
-        [theme.breakpoints.up('sm')]: {
-        //   marginLeft: theme.spacing.unit * 3,
-          width: 'auto',
-        },
     },
     filterBar: {
+        flexBasis: '10%',
         width: 300,
         border: '1px solid',
         borderColor: fade(theme.palette.common.white, 0.15),
         borderTopLeftRadius: theme.shape.borderRadius,
         borderBottomLeftRadius: theme.shape.borderRadius,
         backgroundColor: fade(theme.palette.common.white, 0.15),
+        padding: 0,
         width: 'auto',
-        height: '53%',
+        height: '100%',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -49,6 +49,7 @@ const styles = theme => ({
         borderBottomWidth: '4px',
     },
     searchIcon: {
+        flexBasis: '10%',
         height: '100%',
         width: theme.spacing.unit * 9,
         position: 'absolute',
@@ -60,11 +61,13 @@ const styles = theme => ({
     },
     filterIcon: {
         height: '100%',
+        width: '100%',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
     },
     inputRoot: {
+        flexBasis: '80%',
         color: 'inherit',
         width: '100%',
     },
@@ -75,9 +78,6 @@ const styles = theme => ({
         paddingLeft: theme.spacing.unit,
         transition: theme.transitions.create('width'),
         width: '100%',
-        [theme.breakpoints.up('md')]: {
-            width: 200,
-        },
     },
     iconButtonRoot: {
         borderRadius: '0px',
@@ -110,41 +110,41 @@ class SearchBar extends React.Component {
 
         return (
             <React.Fragment>
-                <div className={classes.filterBar}>
-                    <IconButton
-                        disableRipple
-                        color="inherit"
-                        aria-owns={userMenuOpen ? 'menu-appbar' : undefined}
-                        aria-haspopup="true"
-                        onClick={this.handleMenu}
-                        className={classes.filterIcon}
-                        classes = {{
-                            root: classes.iconButtonRoot,
-                        }}
-                    >
-                        { this.state.filter === 'employee' ? <PersonIcon /> : this.state.filter === 'news' ? <NewsIcon /> : <DocumentsIcon />}
-                        <ExpandMoreIcon />
-                    </IconButton>
-                    <Menu
-                        id="menu-appbar"
-                        anchorEl={userMenuAnchorEl}
-                        anchorPosition={{
-                            left: 50,
-                            top: 50,
-                        }}
-                        transformOrigin={{
-                            vertical: 'top',
-                            horizontal: 'right',
-                        }}
-                        open={userMenuOpen}
-                        onClose={this.handleClose}
-                    >
-                        <MenuItem id="employee" onClick={this.handleClose}>Employees</MenuItem>
-                        <MenuItem id="news" onClick={this.handleClose}>News And Updates</MenuItem>
-                        <MenuItem id="documents" onClick={this.handleClose}>Documents</MenuItem>
-                    </Menu>
-                </div>
+                <Menu
+                    id="menu-appbar"
+                    anchorEl={userMenuAnchorEl}
+                    anchorPosition={{
+                        left: 50,
+                        top: 50,
+                    }}
+                    transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right',
+                    }}
+                    open={userMenuOpen}
+                    onClose={this.handleClose}
+                >
+                    <MenuItem id="employee" onClick={this.handleClose}>Employees</MenuItem>
+                    <MenuItem id="news" onClick={this.handleClose}>News And Updates</MenuItem>
+                    <MenuItem id="documents" onClick={this.handleClose}>Documents</MenuItem>
+                </Menu>
                 <div className={classes.search}>
+                    <div className={classes.filterBar}>
+                        <IconButton
+                            disableRipple
+                            color="inherit"
+                            aria-owns={userMenuOpen ? 'menu-appbar' : undefined}
+                            aria-haspopup="true"
+                            onClick={this.handleMenu}
+                            className={classes.filterIcon}
+                            classes = {{
+                                root: classes.iconButtonRoot,
+                            }}
+                        >
+                            { this.state.filter === 'employee' ? <PersonIcon /> : this.state.filter === 'news' ? <NewsIcon /> : <DocumentsIcon />}
+                            <ExpandMoreIcon />
+                        </IconButton>
+                    </div>
                     <div className={classes.searchIcon}>
                         <SearchIcon />
                     </div>

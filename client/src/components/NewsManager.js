@@ -17,7 +17,7 @@ const rows = [
     { id: 'type_cd', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Type' },
     { id: 'ATTRIB_10', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Title' },
     { id: 'created', date: true, numeric: false, disablePadding: true, lengthRatio:'Title', label: 'Posted On'},
-    { id: 'stat_cd', type: 'toggle', numeric: false, disablePadding: true, lengthRatio:'Small', label: 'Active/InActive'},
+    { id: 'stat_cd', type: 'toggle', numeric: false, disablePadding: true, lengthRatio:'Action', label: 'Active'},
 ]
 
 const fields = [
@@ -87,7 +87,7 @@ class NewsManager extends React.Component{
                 ...record,
             },
             editMode: true,
-        }), () => this.modalRef.handleModalOpen())
+        }), () => {console.log(this.state);this.modalRef.handleModalOpen()})
     }
 
     unsetEditMode = () => {
@@ -279,7 +279,7 @@ class NewsManager extends React.Component{
                                 onClose={this.unsetEditMode}
                             >
                                 <PostUpdateForm
-                                    employee={formData}
+                                    data={formData}
                                     changeHandler={this.handleChange}
                                     submitHandler={this.handleSubmit}
                                     editMode={editMode}

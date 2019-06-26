@@ -47,8 +47,6 @@ class AddEditForm extends React.Component {
         let value = event.target.value;
         let val_errors;
 
-        console.log("VALIDATE")
-
         val_errors = validate.single(value, this.props.schema[target]);
         
         this.setState(prevState => ({
@@ -80,8 +78,6 @@ class AddEditForm extends React.Component {
         //     localConstraints = constraints
         
         await this.validateAll(this.props.object, this.props.schema)
-
-        console.log("VAL ERRORS", this.state.errors,Object.keys(this.state.errors).length)
 
         if(Object.keys(this.state.errors.constructor === Object && this.state.errors).length === 0 ){
             this.setState(prevState => ({
@@ -243,8 +239,6 @@ class AddEditForm extends React.Component {
         let { response, errors } = this.state
 
         let Title = editMode ? `Edit ${headerTitle}` : `Add ${headerTitle}`
-
-        getDateFormValue(object['ATTRIB_18'])
 
         return (
             <React.Fragment>

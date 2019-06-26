@@ -49,8 +49,8 @@ const externalFeedTypes = [
 ]
 
 let dropdowns = [
-    { name: 'dropdown_1', value: 'type' },
-    { name: 'dropdown_2', value: 'type' },
+    { name: 'dropdown_1', value: 'type_cd' },
+    { name: 'dropdown_2', value: 'type_cd' },
 ]
 
 class PostUpdateForm extends React.Component {
@@ -232,7 +232,7 @@ class PostUpdateForm extends React.Component {
     }
 
     render() {
-        const { classes, changeHandler } = this.props;
+        const { data, classes, changeHandler } = this.props;
         const { response } = this.state;
 
         return (
@@ -247,7 +247,7 @@ class PostUpdateForm extends React.Component {
                         label="Type of Update"
                         className={classNames(classes.textField, classes.dense)}
                         disabled={this.state.dropdown_1.disabled}
-                        value={this.state.dropdown_1.value}
+                        value={data.type_cd}
                         onChange={this.handleSelectChange}
                         SelectProps={{
                             native: true,
@@ -284,7 +284,7 @@ class PostUpdateForm extends React.Component {
                         label="External Feed Type"
                         className={classNames(classes.textField, classes.dense, classes.singleSpanInput)}
                         disabled={this.state.dropdown_2.disabled}
-                        value={this.state.dropdown_2.value}
+                        value={data.type_cd}
                         onChange={this.handleSelectChange}
                         SelectProps={{
                             native: true,
@@ -316,7 +316,7 @@ class PostUpdateForm extends React.Component {
                         ))}
                     </TextField>
                     <TextField
-                        id="link"
+                        id="ATTRIB_02"
                         label="Link"
                         classes={{
                             root: classes.inputRoot,
@@ -325,7 +325,7 @@ class PostUpdateForm extends React.Component {
                         margin="dense"
                         variant="filled"
                         disabled={this.state.textField_1.disabled}
-                        value={this.state.news.link}
+                        value={data.ATTRIB_02}
                         onChange={this.handleTextChange}
                         InputProps={{
                             className: classes.input,
@@ -338,7 +338,7 @@ class PostUpdateForm extends React.Component {
                         }}
                     />
                     <TextField
-                        id="title"
+                        id="ATTRIB_10"
                         label="Title"
                         classes={{
                             root: classes.inputRoot,
@@ -346,7 +346,7 @@ class PostUpdateForm extends React.Component {
                         className={classNames(classes.textField, classes.dense, classes.singleSpanInput)}
                         margin="dense"
                         variant="filled"
-                        value={this.state.news.title}
+                        value={data.ATTRIB_10}
                         onChange={this.handleTextChange}
                         InputProps={{
                             className: classes.input,
@@ -359,7 +359,7 @@ class PostUpdateForm extends React.Component {
                         }}
                     />
                     <TextField
-                        id="body"
+                        id="ATTRIB_01"
                         label="Body"
                         classes={{
                             root: classes.inputRoot,
@@ -370,7 +370,7 @@ class PostUpdateForm extends React.Component {
                         disabled={!this.state.dropdown_2.disabled}
                         margin="dense"
                         variant="filled"
-                        value={this.state.news.body}
+                        value={data.ATTRIB_01}
                         onChange={this.handleTextChange}
                         InputProps={{
                             className: classes.input,

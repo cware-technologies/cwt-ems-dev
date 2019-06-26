@@ -231,6 +231,7 @@ class CreateAccount extends React.Component {
                 value,
             }
         }), () => {
+            console.log(this.state)
             return this.props.changeHandler(state, value)
             .then(res => this.OrgRequest(endpoint, name))
             .catch(err => { return })
@@ -640,7 +641,7 @@ class CreateAccount extends React.Component {
                         label={`Division`}
                         error={errors.div_id}
                         helperText={errors.div_id && <ul className={classes.errorList}> {errors.div_id.map((error)=>{ return <li className={classes.errorListItem}>{error}</li>})}</ul>}
-                        disabled={this.state.dropdown_2.disabled}
+                        disabled={!!this.state.dropdown_1.value}
                         className={classNames(classes.textField, classes.dense)}
                         value={employee.div_id}
                         onChange={this.handleSelectChange}

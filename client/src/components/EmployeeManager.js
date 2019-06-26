@@ -10,10 +10,13 @@ import RegisterEmployeeForm from './RegisterEmployeeForm'
 import Search from './Search'
 
 const employeeRows = [
-  { id: 'fst_name', type: 'text', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'First Name' },
-  { id: 'last_name', type: 'text', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Last Name' },
-  { id: 'bu_id', type: 'text', numeric: false, disablePadding: false, lengthRatio: 'Title', label: 'Organization' },
-  { id: 'FLG_01', type: 'toggle', numeric: false, disablePadding: false, lengthRatio: 'Small', label: 'Inactive/Active' },
+  { id: ['employee', 'emp_num'], type: 'text', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'ID' },
+  { id: ['employee', 'full_name'], type: 'text', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'First Name' },
+  { id: ['organization','name'], type: 'text', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Organization' },
+  { id: ['division','name'], type: 'text', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Division' },
+  { id: ['employee','position_held','name'], type: 'text', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Position' },
+  { id: ['employee','responsibility','name'], type: 'text', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Responsibility' },
+  { id: ['employee', 'FLG_01'], type: 'toggle', numeric: false, disablePadding: true, lengthRatio: 'Action', label: 'Active' },
 ]
 
 const formFields = [
@@ -22,7 +25,7 @@ const formFields = [
   { id: 'ATTRIB_11', type: 'number', label: 'No Of Days', inputProps: { min: '1', max: '50', step: '1' } },
 ]
 
-class EditEmployee2 extends React.Component {
+class EditEmployee extends React.Component {
   modalRef = React.createRef()
   state = {
     data: [],
@@ -256,9 +259,9 @@ class EditEmployee2 extends React.Component {
     }))
   }
 
-  // componentDidMount() {
-  //   this.getList()
-  // }
+  componentDidMount() {
+    this.getList()
+  }
 
   getList = async () => {
     let response
@@ -279,7 +282,7 @@ class EditEmployee2 extends React.Component {
           organization: this.props.organization,
         },
       })
-
+      console.log(response)
       this.setState(prevState => ({
         data: response.data.data,
         isSearching: false,
@@ -323,7 +326,6 @@ class EditEmployee2 extends React.Component {
         <DataTable
           headerTitle="Employee List"
           rows={employeeRows}
-          endpoint='/access-rights/view'
           params={{ organization: organization }}
           data={data}
           actions
@@ -339,4 +341,4 @@ class EditEmployee2 extends React.Component {
   }
 }
 
-export default connect(() => { }, { ...alertActions })(EditEmployee2)
+export default connect(() => { }, { ...alertActions })(EditEmployee)
