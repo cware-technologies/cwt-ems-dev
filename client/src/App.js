@@ -79,15 +79,15 @@ class App extends Component {
 
 	componentDidMount(){
 		this.verifyLoggedInUser()
-	  }
-	
-	  verifyLoggedInUser(){
+	}
+
+	verifyLoggedInUser(){
 		console.log("LOGGED IN: ", this.props.loggedIn)
 		if(this.props.loggedIn){
-		  console.log(this.props.user)
-		  this.props.verifyUser(this.props.user)
+			console.log(this.props.user)
+			this.props.verifyUser(this.props.user)
 		}
-	  }
+	}
 
 	render() {
 		let { match, loggedIn } = this.props

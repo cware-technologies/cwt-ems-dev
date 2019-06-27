@@ -95,6 +95,7 @@ class AddResponsibility extends React.Component {
         responsibility: null,
         view: null,
         isFetching: true,
+        isUpdating: false,
         isFetchingRespViews: false,
         success: null,
         viewData: [],
@@ -108,6 +109,7 @@ class AddResponsibility extends React.Component {
 
         },
         updates: {},
+        checkboxRefs: {},
         openedWindow: null,
     }
 
@@ -185,6 +187,7 @@ class AddResponsibility extends React.Component {
         this.setState(prevState => ({
             [entity]: primary,
             organization: organization !== null ? organization : prevState.organization,
+            checkboxRefs: {},
             // [labelField]: label,
         }), () => {
             if(entity === 'responsibility'){
@@ -377,8 +380,33 @@ class AddResponsibility extends React.Component {
         this.setState(prevState => newState)
     }
 
-    handleDelete = () => {
+    handleDelete = async (id) => {
+        let response
 
+        try{
+            response = await axios({
+                method: 'delete',
+                url: '/admin/access-rights/responsibility-view',
+                data: {
+                    id,
+                }
+            })
+
+            if(response.data.status === 200){
+                this.props.success("Action Completed Successfully")
+                let newData = this.state.data.filter(row => row.C_RESP_VIEW.row_id !== id)
+
+                this.setState(prevState => ({
+                    data: newData
+                }))
+            }
+            else{
+                this.props.error({message: "Action Could Not Be Completed"})
+            }
+        }
+        catch(err){
+            this.props.error({message: "Action Could Not Be Completed"})
+        }
     }
 
     // VIEW PERMISSIONS METHODS
@@ -420,17 +448,18 @@ class AddResponsibility extends React.Component {
                 success: true,
             }),  () => console.log("LIST VIEW STATE: ", this.state))
         }
+        else{
+            this.props.error({ message: "Could Not Load Data, Refresh To Try Again." })
+        }
     }
 
     handleCheckboxChange = (event, id, idx) => {
-        let target = event.target.id
-        let value = event.target.checked
+        let target = event.target
+        let name = target.id
+        let value = target.checked
         let data = this.state.data
-        let flag = target === 'readOnly' ? 'FLG_01' : 'FLG_02'
+        let flag = name === 'readOnly' ? 'FLG_01' : 'FLG_02'
 
-        console.log("Handle Checkbox Change")
-
-        
         let index = 0
         for(index; index < data.length; index++) {
             if(data[index].row_id === id) 
@@ -458,13 +487,24 @@ class AddResponsibility extends React.Component {
                     ...prevState.updates[idx],
                     [flag]: value,
                 }
+            },
+            checkboxRefs: {
+                ...prevState.checkboxRefs,
+                [`${name}_${id}`]: {
+                    target,
+                    initial: !prevState.checkboxRefs[`${name}_${id}`] && !value,
+                    dirty: true,
+                }
             }
-        }), () => console.log("UPDATE STATE: ", this.state))
+        }))
     }
 
     handleUpdate = async (event) => {
         let response
-        console.log("UPPPPDDDAAATTTEEE!!!")
+        this.setState(prevProps => ({
+            isUpdating: true,
+        }))
+
         try{
             response = await axios({
                 method: 'put',
@@ -475,28 +515,49 @@ class AddResponsibility extends React.Component {
             })
 
             console.log(response)
+            this.setState(prevProps => ({
+                isUpdating: false,
+            }))
+
             if(response.data.status >= 400){
                 this.props.error({ message: "Could Not Update Data, Please Try Again." })
+                this.resetCheckboxes()
             }
             else if(response.data.status == 200){
+                this.setState(prevProps => ({
+                    checkboxRefs: {},
+                }))
                 this.props.success("Data Updated Successfully!")
             }
         }
         catch(err){
-            console.log(response)
+            this.setState(prevProps => ({
+                isUpdating: false,
+            }), this.resetCheckboxes())
+
             this.props.error({ message: "Could Not Update Data, Please Try Again." })            
         }
     }
 
+    resetCheckboxes = () => {
+        let checkboxes = this.state.checkboxRefs
+        let keys = Object.keys(checkboxes)
+
+        keys.forEach(key => {
+            checkboxes[key].target.checked = checkboxes[key].initial
+        })
+    }
+
     render(){
-        let { 
-            responsibility, 
-            data, 
-            viewData, 
-            responsibilityData, 
-            responsibilityForm, 
-            viewForm, 
-            isFetchingRespViews 
+        let {
+            responsibility,
+            data,
+            viewData,
+            responsibilityData,
+            responsibilityForm,
+            viewForm,
+            isFetchingRespViews,
+            isUpdating,
         } = this.state
 
         let { editMode } = this.state
@@ -611,9 +672,11 @@ class AddResponsibility extends React.Component {
                     endpoint='/access-rights/view'
                     handleCheckboxChange={this.handleCheckboxChange}
                     handleUpdate={this.handleUpdate}
+                    handleDelete={this.handleDelete}
                     responsibility={responsibility}
                     data={data}
                     actions={[ViewAttachComp]}
+                    disabled={isUpdating}
                 />
             </Container>
         )

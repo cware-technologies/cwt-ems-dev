@@ -43,9 +43,9 @@ class NewsManager extends React.Component{
 
     getData = async () => {
         let response
-        let params = this.state.query && {
+        let params = this.state.query && this.state.query !== '' ? {
             query: this.state.query,
-        }
+        } : {}
 
         this.setState(prevState => ({
             isSearching: true,

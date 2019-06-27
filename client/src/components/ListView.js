@@ -17,7 +17,7 @@ import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
-import DeleteIcon from '@material-ui/icons/Delete';
+import DeleteIcon from '@material-ui/icons/Close';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import { lighten } from '@material-ui/core/styles/colorManipulator';
 import Container from './MainContainer';
@@ -55,6 +55,14 @@ const headStyles = theme => ({
         flexBasis: '20%',
         flexGrow: 5,
         paddingLeft: '5px',
+        color: 'white',
+    },
+    tableCellAction: {
+        width: '48px',
+        flexBasis: '48px',
+        flexGrow: 0,
+        padding: 0,
+        display: 'flex',
         color: 'white',
     },
     tableCellSmall: {
@@ -99,6 +107,12 @@ class EnhancedTableHead extends React.Component {
         return (
             <TableHead>
                 <TableRow className={classes.row}>
+                    <TableCell
+                        align='left'
+                        padding='none'
+                        classes={{ root: classes.tableCellAction }}
+                    >
+                    </TableCell>
                     {rows.map(
                         row => (
                             <TableCell
@@ -172,7 +186,7 @@ const toolbarStyles = theme => ({
 });
 
 let EnhancedTableToolbar = props => {
-    const { headerTitle, classes, actions } = props;
+    const { headerTitle, classes, actions, disabled } = props;
 
     return (
         <Toolbar
@@ -185,7 +199,7 @@ let EnhancedTableToolbar = props => {
             </div>
             <div className={classes.spacer} />
             <div className={classes.actions}>
-                <Button onClick={props.handleUpdate} variant="contained" color="primary" /* className={classNames(classes.button, classes.textField)} */>
+                <Button onClick={props.handleUpdate} disabled={disabled} variant="contained" color="primary" /* className={classNames(classes.button, classes.textField)} */>
                     Update
                 </Button>
                 { actions.map(action => action)}
@@ -240,6 +254,14 @@ const styles = theme => ({
         paddingLeft: '5px',
         display: 'flex',
         alignItems: 'center',
+    },
+    tableCellAction: {
+        width: '48px',
+        flexBasis: '48px',
+        flexGrow: 0,
+        padding: 0,
+        display: 'flex',
+        color: 'white',
     },
     tableCellSmall: {
         flexBasis: '10%',
@@ -302,6 +324,7 @@ class EnhancedDataTable extends React.Component {
         rowsPerPage: 5,
         isFetching: false,
         success: false,
+        disabled: false,
     };
 
     // componentDidMount(){
@@ -370,6 +393,16 @@ class EnhancedDataTable extends React.Component {
         this.setState({ rowsPerPage: event.target.value });
     };
 
+    handleDelete = (id) => {
+        let confirmation = window.confirm("Are You Sure You Want To Delete This Record?")
+        if(confirmation){
+            this.props.handleDelete(id)
+        }
+        else{
+            return
+        }
+    }
+
     // handleCheckboxChange = (event, id, idx) => {
     //     let target = event.target.id
     //     let value = event.target.checked
@@ -429,7 +462,7 @@ class EnhancedDataTable extends React.Component {
     // }
 
     render() {
-        const { classes, rows, data, headerTitle, handleCheckboxChange, handleUpdate, actions } = this.props;
+        const { classes, rows, data, headerTitle, handleCheckboxChange, handleUpdate, actions, disabled } = this.props;
         const { /* data, */ order, orderBy, rowsPerPage, page } = this.state;
         const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
 
@@ -439,6 +472,7 @@ class EnhancedDataTable extends React.Component {
                         headerTitle={headerTitle}
                         handleUpdate={handleUpdate}
                         actions={actions}
+                        disabled={disabled}
                     />
                     <div className={classes.tableWrapper}>
                         <Table className={classes.table} aria-labelledby="tableTitle">
@@ -469,6 +503,18 @@ class EnhancedDataTable extends React.Component {
                                                     component="th"
                                                     scope="row"
                                                     padding="none"
+                                                    classes={{ root: classes.tableCellAction }}
+                                                >
+                                                    <Tooltip title="Delete">
+                                                        <IconButton aria-label="Delete" onClick={() => this.handleDelete(n.C_RESP_VIEW.row_id)}>
+                                                            <DeleteIcon />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                </TableCell>
+                                                <TableCell
+                                                    component="th"
+                                                    scope="row"
+                                                    padding="none"
                                                     classes={{ root: classes.tableCell }}
                                                 >
                                                     {n.name}
@@ -490,7 +536,8 @@ class EnhancedDataTable extends React.Component {
                                                         id="readOnly"
                                                         name="readOnly"
                                                         type="checkbox"
-                                                        checked={!!n.C_RESP_VIEW.FLG_01}
+                                                        defaultChecked={!!n.C_RESP_VIEW.FLG_01}
+                                                        disabled={disabled}
                                                         onChange={(event) => handleCheckboxChange(event, n.row_id,  n.C_RESP_VIEW.row_id)}
                                                     />
                                                 </TableCell>
@@ -504,7 +551,8 @@ class EnhancedDataTable extends React.Component {
                                                         id="write"
                                                         name="write"
                                                         type="checkbox"
-                                                        checked={!!n.C_RESP_VIEW.FLG_02}
+                                                        defaultChecked={!!n.C_RESP_VIEW.FLG_02}
+                                                        disabled={disabled}
                                                         onChange={(event) => handleCheckboxChange(event, n.row_id, n.C_RESP_VIEW.row_id)}
                                                     />
                                                 </TableCell>

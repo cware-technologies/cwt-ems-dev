@@ -4,7 +4,7 @@ const models = require('../db/models'),
     Op = Sequelize.Op;
 
 async function getAllNews(req, res, next) {
-    let where = req.query ? 
+    let where = req.query.query ? 
         {
             [Op.or]: {
                 ATTRIB_10: {

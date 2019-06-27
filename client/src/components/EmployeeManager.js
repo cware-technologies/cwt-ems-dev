@@ -62,7 +62,6 @@ class EditEmployee extends React.Component {
   unsetEditMode = (event, reason) => {
     let formdata = {}
     employeeRows.forEach(row => formdata[row.id] = '')
-    console.log("UNSET EDIT", formdata)
 
     this.setState(prevState => ({
       formData: formdata,
@@ -77,7 +76,7 @@ class EditEmployee extends React.Component {
           ...prevState.formData,
           [property]: value,
         },
-      }), () => { console.log("STOOOT: ", this.state); resolve() })
+      }), () => { resolve() })
     })
   }
 
@@ -102,7 +101,7 @@ class EditEmployee extends React.Component {
   handleSwitchChange = async (checked, id) => {
     return new Promise(async (resolve, reject) => {
       let response
-      console.log("SWITCH HANDLER")
+
       try {
         response = await axios({
           method: 'post',
@@ -136,7 +135,6 @@ class EditEmployee extends React.Component {
     let response
 
     if (this.state.editMode) {
-      console.log("HELLLOOOO")
       this.handleUpdate()
     }
     else {
@@ -146,7 +144,7 @@ class EditEmployee extends React.Component {
 
   handleResponse = (res, err) => {
     let response = res.data ? res.data : response;
-    console.log(response)
+
     if (response === undefined) {
       this.props.error('Action Failed, Try Again')
     }
@@ -181,8 +179,6 @@ class EditEmployee extends React.Component {
         data: this.state.formData,
       })
 
-      console.log("UPDATE RESPONSE: ", response)
-
       if (response.data.status >= 200 && response.data.status < 300) {
         this.setState(prevState => ({
           data: newData,
@@ -212,11 +208,9 @@ class EditEmployee extends React.Component {
           'content-type': 'application/json',
         }
       })
-      console.log(response)
       this.handleResponse(response)
     }
     catch (err) {
-      console.log(err)
       this.handleResponse(err.response, true)
     }
   }
@@ -265,7 +259,7 @@ class EditEmployee extends React.Component {
 
   getList = async () => {
     let response
-    console.log("Hi")
+
     this.setState(prevState => ({
       isSearching: true,
     }))
@@ -282,12 +276,11 @@ class EditEmployee extends React.Component {
           organization: this.props.organization,
         },
       })
-      console.log(response)
+
       this.setState(prevState => ({
         data: response.data.data,
         isSearching: false,
-      }), () => console.log(this.state))
-      console.log("RESPONSE: ", response)
+      }))
     }
     catch (err) {
 

@@ -54,9 +54,9 @@ function getSorting(order, orderBy) {
 
 const headStyles = theme => ({
     tableCellTitle: {
-        flexBasis: '20%',
+        flexBasis: 80,
         flexGrow: 5,
-        paddingLeft: '5px',
+        paddingLeft: '10px',
         display: 'flex',
         color: 'white',
         alignItems: 'center',
@@ -74,7 +74,7 @@ const headStyles = theme => ({
         width: '48px',
         flexBasis: '48px',
         flexGrow: 0,
-        padding: 0,
+        paddingLeft: '10px',
         display: 'flex',
         color: 'white',
     },
@@ -117,7 +117,7 @@ const headStyles = theme => ({
     },
 })
 
-class EnhancedTableHead extends React.Component {
+class TableHeader extends React.Component {
     createSortHandler = property => event => {
         this.props.onRequestSort(event, property);
     };
@@ -180,7 +180,7 @@ class EnhancedTableHead extends React.Component {
     }
 }
 
-EnhancedTableHead = withStyles(headStyles)(EnhancedTableHead);
+let EnhancedTableHead = withStyles(headStyles)(TableHeader);
 
 EnhancedTableHead.propTypes = {
     // numSelected: PropTypes.number.isRequired,
@@ -303,9 +303,9 @@ const styles = theme => ({
         overflowX: 'scroll',
     },
     tableCellTitle: {
-        flexBasis: '20%',
+        flexBasis: 80,
         flexGrow: 5,
-        paddingLeft: '5px',
+        paddingLeft: '10px',
         display: 'flex',
         alignItems: 'center',
     },
@@ -460,19 +460,22 @@ class EnhancedDataTable extends React.Component {
     }
 
     getRowComponent = (type, id, data) => {
+        let defaultValue = this.getCellValue(data, id)
+        let inputId = this.getCellID(id)
+
         switch(type){
             case 'toggle':
                 return (
                     <input
-                        id={id}
+                        id={inputId}
                         type="checkbox"
                         color="primary"
-                        name={data[id]}
-                        defaultChecked={data[id] === 'active' ? true : data[id] === 'inactive' ? false : !!parseInt(this.getCellValue(data, id))}
+                        name={defaultValue}
+                        defaultChecked={defaultValue === 'active' ? true : defaultValue === 'inactive' ? false : !!parseInt(defaultValue)}
                         // checked={!!this.props.switchActive}
                         ref={node => this[`checkboxRef${data.row_id}`] = node}
                         onChange={(e) => this.handleToggleChange(e, data)}
-                        value={data[id] == '1' ? "active" : data[id] == '0' ? 'inactive' : data[id] }
+                        value={defaultValue == '1' ? "active" : defaultValue == '0' ? 'inactive' : defaultValue }
                     />
                 )
         }
@@ -499,6 +502,14 @@ class EnhancedDataTable extends React.Component {
         }
 
         return value
+    }
+
+    getCellID = (nesting) => {
+        if(typeof nesting === 'string')
+            return nesting
+        else
+            return nesting[nesting.length-1]
+
     }
 
     isSelected = (id) => {
@@ -673,6 +684,7 @@ class EnhancedDataTable extends React.Component {
                                                                     <TableCell
                                                                         key={data.row_id}
                                                                         component="th"
+                                                                        align={row.numeric ? 'right' :  row.lengthRatio === 'Small' ? 'center' : 'left'}
                                                                         scope="row"
                                                                         padding={row.disablePadding ? 'none' : 'default'}
                                                                         classes={{ root: classes[`tableCell${row.lengthRatio}`] }}

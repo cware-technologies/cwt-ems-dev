@@ -461,6 +461,22 @@ async function updateResponsibilityView(req, res, next){
     )
 }
 
+async function deleteResponsibilityView(req, res, next){
+    try{
+        let data = await ResponsibilityView.destroy({ where: { row_id: req.body.id }})
+
+        res.status(200).json({
+            status: 200,
+            data
+        })
+    }
+    catch(err){
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
 async function getHRDocs(req, res, next){
     try{
         let data = await Document.findAll({})
@@ -852,7 +868,7 @@ async function getEmployees(req, res, next){
                     },
                 }
             },
-            attributes: ['login'],
+            attributes: ['row_id', 'login'],
             include: [
                 {
                     model: Employee,
@@ -1096,6 +1112,7 @@ module.exports = {
     getResponsibilityViews,
     postResponsibilityView,
     updateResponsibilityView,
+    deleteResponsibilityView,
     getHRDocs,
     deleteHRDocs,
     uploadHRDoc,

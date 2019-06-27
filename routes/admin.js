@@ -29,10 +29,10 @@ router.post('/org-struct/responsibility', adminController.postResponsibilities)
 router.get('/access-rights/view', adminController.getViews)
 router.post('/access-rights/view', adminController.postView)
 
-
-router.post('/access-rights/responsibility-view', adminController.postResponsibilityView)
 router.get('/access-rights/responsibility-view', adminController.getResponsibilityViews)
+router.post('/access-rights/responsibility-view', adminController.postResponsibilityView)
 router.put('/access-rights/responsibility-view', adminController.updateResponsibilityView)
+router.delete('/access-rights/responsibility-view', adminController.deleteResponsibilityView)
 
 
 router.get('/hr-docs', adminController.getHRDocs)
