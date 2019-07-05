@@ -207,7 +207,7 @@ class AddResponsibility extends React.Component {
                     data: {
                         resp_id: this.state.responsibility,
                         views: this.state.view,
-                        bu_id: this.state.organization,
+                        bu_id: this.props.organization,
                     }
                 })
 

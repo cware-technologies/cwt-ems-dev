@@ -22,6 +22,7 @@ import Container from './MainContainer';
 import { formStyle } from '../styles/form';
 // import  from 'simple-react-';
 import validate from 'validate.js';
+import AsyncSelect from './AsyncSelect';
 
 Object.filter = (obj, predicate) => 
     Object.keys(obj)
@@ -115,11 +116,11 @@ class CreateAccount extends React.Component {
                 firstName: '',
                 lastName: '',
                 empNum:'',
-                organization: null,
-                division: null,
-                position: null,
-                responsibility: null,
-                reportsTo: null,
+                bu_id: { label: '', value: null },
+                div_id: { label: '', value: null },
+                postn_held_id: { label: '', value: null },
+                resp_id: null,
+                report_to_id: null,
             },
             confirmPassword: '',
             errors: {
@@ -129,170 +130,44 @@ class CreateAccount extends React.Component {
 
             },
             showPassword: false,
-
-
-            dropdown_1: {
-                disabled:true,
-                value: null,
-                data: [],
-            },
-            dropdown_2: {
-                disabled:true,
-                value: null,
-                data: [],
-            },
-            // dropdown_3: {
-            //     disabled:true,
-            //     value: null,
-            //     data: [],
-            // },
-            // dropdown_4: {
-            //     disabled:true,
-            //     value: null,
-            //     data: [],
-            // },
-            // dropdown_5: {
-            //     disabled:true,
-            //     value: null,
-            //     data: [],
-            // },
         }
 
         this.debouncedSelectChange = debounce(this.handleSelectChange, 500);
     }
 
     async componentDidMount(){
-        let response
-        
-        try{
-            response = await axios({
-                method: 'get',
-                url: '/admin/org-struct/organization',
-            })
-
-            this.handleGetResponse(response, 'dropdown_0')
-        }
-        catch(err){
-            this.handleGetResponse(err.response, 'dropdown_0')
-        }
-    }
-
-    handleGetResponse = (res, field) => {
-        let data = res.data.result;
-        let target = this.getNextDropdown(field)
-
-        if (res.data.status >= 400) {
-            this.setState(prevState => ({
-                isFetching: false,
-                success: false,
-            }))
-        }
-
-        else if (res.data.status >= 200 && res.data.status < 300) {
-            this.setState(prevState => ({
-                [target]: {
-                    ...prevState[target],
-                    data,
-                    disabled: false,
-                },
-                isFetching: false,
-                success: true,
-            }))
-        }
-    }
-
-    getNextDropdown = (prevDD) => {
-        let array = prevDD.split('_')
-        let DDNo = parseInt(array[1])
-        DDNo = DDNo + 1
-        array[1] = DDNo
-        let temp = array.join("_")
-        return temp
-    }
-
-    handleOrganizationChange = () => {
-
-    }
-
-    handleSelectChange = (event) => {
-        let name = event.target.id
-        let state = dropdowns.find((dropdown) => {
-            if(dropdown.name === name)
-                return dropdown.value
-        }).value
-        let value = event.target.value
-        let endpoint = event.target.name
-        // event.target.id = state
-        this.validate(event)
-
         this.setState(prevState => ({
-            [name] : {
-                ...prevState[name],
-                value,
-            }
-        }), () => {
-            console.log(this.state)
-            return this.props.changeHandler(state, value)
-            .then(res => this.OrgRequest(endpoint, name))
-            .catch(err => { return })
-            }
-        )
-
+            employee: this.props.employee,
+        }))
     }
 
-    OrgRequest = async(endpoint, name) => {
-
-        if(this.state[name].value === null || this.state[name].value === ""){
-            if(name === 'dropdown_1'){
-                this.setState(prevState => ({
-                    dropdown_2: {
-                        disabled : true,
-                        value : null,
-                        data : []
-                    },
-                    dropdown_3: {
-                        disabled : true,
-                        value : null,
-                        data : []
-                    },
-                    dropdown_4: {
-                        disabled : true,
-                        value : null,
-                        data : []
-                    },
-                    dropdown_5: {
-                        disabled : true,
-                        value : null,
-                        data : []
-                    },
-                }))
-            }
-            else if(name === 'dropdown_2'){
-                this.setState(prevState => ({
-                    dropdown_3: {
-                        disabled : true,
-                        value : null,
-                        data : []
-                    }
-                }))
-            }
-            return
-        }
-
-        let response        
-        try{
-            response = await axios({
-                method: 'get',
-                url: `${endpoint}`,
-                params: {
-                    bu_id: this.state.dropdown_1.value && this.state.dropdown_1.value,
-                    div_id: this.state.dropdown_2.value && this.state.dropdown_2.value,
+    handleSelectChange = (name, obj) => {
+        if(name === 'bu_id'){
+            console.log("OOOOOOOOOOOOOOOOOOOOOOOOO")
+            this.setState(prevState => ({
+                employee: {
+                    ...prevState.employee,
+                    [name] : obj,
+                    div_id: { label : '', value: null },
+                    postn_held_id: { label : '', value: null },
                 }
-            })
-            this.handleGetResponse(response, name)
+            }), () => {this.props.changeHandler(name, obj)})
         }
-        catch(err){
-            this.handleGetResponse(err.response, name)
+        else if(name === 'div_id')
+            this.setState(prevState => ({
+                employee: {
+                    ...prevState.employee,
+                    [name] : obj,
+                    postn_held_id: { label : '', value: null },
+                }
+            }), () => {this.props.changeHandler(name, obj)})
+        else {
+            this.setState(prevState => ({
+                employee: {
+                    ...prevState.employee,
+                    [name] : obj,
+                }
+            }), () => {this.props.changeHandler(name, obj)})
         }
     }
 
@@ -301,6 +176,12 @@ class CreateAccount extends React.Component {
         let value = event.target.value;
         this.validate(event)
         this.props.changeHandler(target, value)
+        .then(res => this.setState(prevState => ({
+            employee: {
+                ...prevState.employee,
+                [target] : value,
+            }
+        })))
     }
 
     handleConfirmPassChange = (event) => {
@@ -389,19 +270,6 @@ class CreateAccount extends React.Component {
         }
     }
 
-    // setStateBeforeSubmit = () => {
-    //     return new Promise((reject, resolve) => {
-    //         dropdowns.map(dropdown => {
-    //             this.setState(prevState => ({
-    //                 employee: {
-    //                     ...prevState.employee,
-    //                     [dropdown.value]: this.state[dropdown.name].value,
-    //                 }
-    //             }), resolve)
-    //         })
-    //     })   
-    // }
-
     submitForm = async() => {
         let response;
         let employee = this.state.employee
@@ -420,8 +288,8 @@ class CreateAccount extends React.Component {
     }
 
     render(){
-        let { classes, employee, editMode } = this.props;
-        let { errors, response } = this.state;
+        let { classes, editMode } = this.props;
+        let { errors, response, employee } = this.state;
 
         return(
             <React.Fragment>
@@ -593,7 +461,35 @@ class CreateAccount extends React.Component {
                             className: classes.inputLabel,
                         }}
                     />
-                    <TextField
+                    <AsyncSelect
+                        name='organization'
+                        id='bu_id'
+                        endpoint='/admin/org-struct/organization'
+                        query={{}}
+                        value={ employee.bu_id }
+                        isDisabled={false}
+                        handleSelectChange={this.handleSelectChange}
+                    />
+                    {errors.bu_id && <FormHelperText error><ul className={classes.errorList}> {errors.bu_id.map((error)=>{ return <li className={classes.errorListItem}>{error}</li>})}</ul></FormHelperText> }
+                    <AsyncSelect
+                        name='division'
+                        id='div_id'
+                        endpoint='/admin/org-struct/division'
+                        query={ { bu_id: employee.bu_id.value } }
+                        value={ employee.div_id }
+                        isDisabled={ employee.bu_id.value }
+                        handleSelectChange={ this.handleSelectChange }
+                    />
+                    <AsyncSelect
+                        name='position'
+                        id='postn_held_id'
+                        endpoint='/admin/org-struct/position'
+                        query={ { bu_id: employee.bu_id.value, div_id: employee.div_id.value } }
+                        value={ employee.postn_held_id }
+                        isDisabled={ employee.div_id.value }
+                        handleSelectChange={ this.handleSelectChange }
+                    />
+                    {/* <TextField
                         id="dropdown_1"
                         name="/admin/org-struct/division"
                         select
@@ -641,7 +537,7 @@ class CreateAccount extends React.Component {
                         label={`Division`}
                         error={errors.div_id}
                         helperText={errors.div_id && <ul className={classes.errorList}> {errors.div_id.map((error)=>{ return <li className={classes.errorListItem}>{error}</li>})}</ul>}
-                        disabled={!!this.state.dropdown_1.value}
+                        disabled={!this.state.dropdown_1.value}
                         className={classNames(classes.textField, classes.dense)}
                         value={employee.div_id}
                         onChange={this.handleSelectChange}
@@ -674,7 +570,7 @@ class CreateAccount extends React.Component {
                                 {option.name}
                             </option>
                         ))}
-                    </TextField>
+                    </TextField> */}
                     {/* <TextField
                         id="dropdown_3"
                         name="/admin/org-struct/responsibility"

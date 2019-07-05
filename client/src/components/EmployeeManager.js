@@ -12,8 +12,8 @@ import Search from './Search'
 const employeeRows = [
   { id: ['employee', 'emp_num'], type: 'text', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'ID' },
   { id: ['employee', 'full_name'], type: 'text', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'First Name' },
-  { id: ['organization','name'], type: 'text', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Organization' },
-  { id: ['division','name'], type: 'text', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Division' },
+  { id: ['employee', 'organization','name'], type: 'text', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Organization' },
+  { id: ['employee', 'division','name'], type: 'text', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Division' },
   { id: ['employee','position_held','name'], type: 'text', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Position' },
   { id: ['employee','responsibility','name'], type: 'text', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Responsibility' },
   { id: ['employee', 'FLG_01'], type: 'toggle', numeric: false, disablePadding: true, lengthRatio: 'Action', label: 'Active' },
@@ -39,20 +39,40 @@ class EditEmployee extends React.Component {
       fst_name: '',
       last_name: '',
       emp_num: '',
-      bu_id: null,
-      div_id: null,
-      post_held_id: null,
-      resp_id: null,
-      report_to_id: null,
+      bu_id: { label: '', value: null },
+      div_id: { label: '', value: null },
+      postn_held_id: { label: '', value: null },
+      resp_id: { label: '', value: null },
+      report_to_id: { label: '', value: null },
     },
     editMode: false,
   }
 
   setEditMode = (record) => {
+    let employee = record.employee
+    let newData = {
+      row_id: employee.row_id,
+      login: record.login,
+      emp_num: employee.emp_num,
+      fst_name: employee.fst_name,
+      last_name: employee.last_name,
+      bu_id: employee.organization ? { 
+        label: employee.organization.name,
+        value: employee.organization.row_id
+      } : {label:"", value:null},
+      div_id: employee.division ? { 
+        label: employee.division.name,
+        value: employee.division.row_id
+      } : {label:"", value:null},
+      postn_held_id: employee.position ? { 
+        label: employee.position.name,
+        value: employee.position.row_id
+      } : {label:"", value:null},
+    }
     this.setState(prevState => ({
       formData: {
         ...prevState.formData,
-        ...record,
+        ...newData,
         hash_pwd: 'ABCabc123.',
       },
       editMode: true,
@@ -62,6 +82,11 @@ class EditEmployee extends React.Component {
   unsetEditMode = (event, reason) => {
     let formdata = {}
     employeeRows.forEach(row => formdata[row.id] = '')
+    formdata.bu_id = { label: "", value: null }
+    formdata.div_id = { label: "", value: null }
+    formdata.postn_held_id = { label: "", value: null }
+    formdata.report_to_id = { label: "", value: null }
+    formdata.resp_id = { label: "", value: null }
 
     this.setState(prevState => ({
       formData: formdata,
@@ -94,7 +119,7 @@ class EditEmployee extends React.Component {
           ...prevState.formData,
           [target]: value,
         }
-      }), () => resolve())
+      }), () => {console.log(this.state.formData[target]);resolve()})
     })
   }
 
@@ -179,6 +204,8 @@ class EditEmployee extends React.Component {
         data: this.state.formData,
       })
 
+      console.log(response)
+
       if (response.data.status >= 200 && response.data.status < 300) {
         this.setState(prevState => ({
           data: newData,
@@ -187,7 +214,7 @@ class EditEmployee extends React.Component {
         this.props.success('User Updated Succesfully')
       }
       else {
-        this.props.error('User Update Failed')
+        this.props.error(response.data)
       }
     }
     catch (err) {

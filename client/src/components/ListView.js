@@ -186,7 +186,7 @@ const toolbarStyles = theme => ({
 });
 
 let EnhancedTableToolbar = props => {
-    const { headerTitle, classes, actions, disabled } = props;
+    const { headerTitle, classes, actions, disabled, responsibility } = props;
 
     return (
         <Toolbar
@@ -199,7 +199,7 @@ let EnhancedTableToolbar = props => {
             </div>
             <div className={classes.spacer} />
             <div className={classes.actions}>
-                <Button onClick={props.handleUpdate} disabled={disabled} variant="contained" color="primary" /* className={classNames(classes.button, classes.textField)} */>
+                <Button onClick={props.handleUpdate} disabled={!responsibility || disabled} variant="contained" color="primary" /* className={classNames(classes.button, classes.textField)} */>
                     Update
                 </Button>
                 { actions.map(action => action)}
@@ -462,7 +462,7 @@ class EnhancedDataTable extends React.Component {
     // }
 
     render() {
-        const { classes, rows, data, headerTitle, handleCheckboxChange, handleUpdate, actions, disabled } = this.props;
+        const { classes, rows, data, headerTitle, handleCheckboxChange, handleUpdate, actions, disabled, responsibility } = this.props;
         const { /* data, */ order, orderBy, rowsPerPage, page } = this.state;
         const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
 
@@ -473,6 +473,7 @@ class EnhancedDataTable extends React.Component {
                         handleUpdate={handleUpdate}
                         actions={actions}
                         disabled={disabled}
+                        responsibility={responsibility}
                     />
                     <div className={classes.tableWrapper}>
                         <Table className={classes.table} aria-labelledby="tableTitle">

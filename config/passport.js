@@ -37,6 +37,7 @@ passport.use(
                     }
                     else {
                         let user = req.body
+                        console.log(user)
                         bcrypt.hash(password, BCRYPT_SALT_ROUNDS).then(hashedPassword => {
 
                             return sequelize.transaction(t => {
@@ -44,18 +45,18 @@ passport.use(
                                     emp_num: user.emp_num,
                                     fst_name: user.fst_name,
                                     last_name: user.last_name,
-                                    bu_id: user.bu_id,
-                                    div_id: user.div_id,
-                                    postn_held_id: user.postn_held_id,
-                                    resp_id: user.resp_id,
-                                    report_to_id: user.report_to_id,
+                                    bu_id: user.bu_id.value,
+                                    div_id: user.div_id.value,
+                                    postn_held_id: user.postn_held_id.value,
+                                    resp_id: user.resp_id.value,
+                                    report_to_id: user.report_to_id.value,
                                 }, { transaction: t }).then(emp => {
                                     return User.create({
                                         login: username,
                                         hash_pwd: hashedPassword,
                                         emp_id: emp.row_id,
-                                        resp_id: user.resp_id,
-                                        bu_id: user.bu_id,
+                                        resp_id: user.resp_id.value,
+                                        bu_id: user.bu_id.value,
                                         fst_name: user.fst_name,
                                         last_name: user.last_name,
                                     }, { transaction: t });

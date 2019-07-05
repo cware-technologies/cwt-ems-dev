@@ -82,11 +82,11 @@ async function postOrganization(req, res, next){
 }
 
 async function getDivisions(req, res, next){
-    console.log(req.query)
+    console.log("DIVISION QUERY: ", req.query)
     try{
         let data = await Division.findAll({
             where:{
-                bu_id: req.query.bu_id && req.query.bu_id
+                ...req.query
             },
             include: [
                 {
@@ -875,6 +875,14 @@ async function getEmployees(req, res, next){
                     as: 'employee',
                     include: [
                         {
+                            model: Organization,
+                            as: 'organization',
+                        },
+                        {
+                            model: Division,
+                            as: 'division'
+                        },
+                        {
                             model: Position,
                             as: 'position_held',
                         },
@@ -883,14 +891,6 @@ async function getEmployees(req, res, next){
                             as: 'responsibility',
                         },
                     ]
-                },
-                {
-                    model: Organization,
-                    as: 'organization',
-                },
-                {
-                    model: Division,
-                    as: 'division'
                 },
             ]
         })
@@ -906,9 +906,12 @@ async function getEmployees(req, res, next){
 }
 
 async function updateEmployee(req, res, next){
-    let employee = (({emp_num, fst_name, last_name, bu_id, div_id, resp_id, postn_held_id, report_to_id, pr_postn_id}) => ({emp_num, fst_name, last_name, bu_id, div_id, resp_id, postn_held_id, report_to_id, pr_postn_id}))(req.body)
-    let user = (({login, fst_name, last_name, bu_id, div_id, resp_id}) => ({login, fst_name, last_name, bu_id, div_id, resp_id}))(req.body)
     console.log("UPDAAAATTTTTEEE!!!")
+    console.log(req.body)
+    
+    let employee = (({emp_num, fst_name, last_name, bu_id, div_id, resp_id, postn_held_id, report_to_id, pr_postn_id}) => ({emp_num, fst_name, last_name, bu_id: bu_id.value, div_id: div_id.value, resp_id: resp_id.value, postn_held_id: postn_held_id.value, report_to_id: report_to_id.value}))(req.body)
+    let user = (({login, fst_name, last_name, bu_id, div_id, resp_id}) => ({login, fst_name, last_name, bu_id: bu_id.value, div_id: div_id.value, resp_id: resp_id.value}))(req.body)
+    
     return sequelize.transaction(t => {
         return Employee.update(employee, { where: { row_id: req.body.row_id }}, { transaction: t })
         .then(emp => {
