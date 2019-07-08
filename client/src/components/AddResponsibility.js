@@ -22,6 +22,7 @@ const responsibilityRows = [
 const responsibilityFields = [
     { id: 'name', type:'text', label: 'Name' },
     { id: 'desc', type:'text', label: 'Description' },
+    { id: 'bu_id', name: 'organization', type:'select', label: 'Organization', indeterminate: true, requestParams: {endPoint: '/admin/org-struct/organization', selectMapping: ['name', 'row_id'], } },
 ]
 
 const responsibilitySchema = {
@@ -172,12 +173,13 @@ class AddResponsibility extends React.Component {
     }
 
     getResponsibilities = () => {
+        let params = this.props.organization === 1 ? {} : {
+            bu_id: this.props.organization
+        }
         return axios({
             method: 'get',
             url: '/admin/org-struct/responsibility',
-            params: {
-                bu_id: this.props.organization
-            }
+            params,
         })
     }
 

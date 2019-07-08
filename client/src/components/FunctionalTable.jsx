@@ -243,8 +243,33 @@ class SimpleTable extends React.Component {
         }
     }
 
-    handleDelete = (id) => {
+    handleDelete = async (id) => {
+        let response
 
+        try{
+            response = await axios({
+                method: 'delete',
+                url: this.props.endpoint,
+                data: {
+                    id,
+                }
+            })
+
+            if(response.data.status === 200){
+                this.props.success(`${this.props.title} Deleted Successfully`)
+                let newData = this.state.data.filter(row => row.row_id !== id)
+
+                this.setState(prevState => ({
+                    data: newData
+                }))
+            }
+            else{
+                this.props.error({message: `${this.props.title} Could Not Be Deleted`})
+            }
+        }
+        catch(err){
+            this.props.error({message: `${this.props.title} Could Not Be Deleted`})
+        }
     }
 
     isSelected = (id) => {

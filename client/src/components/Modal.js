@@ -11,24 +11,29 @@ const styles = theme => ({
         transform: `translate(-50%, -50%)`,
     },
     modalStyle: {
-        overflow: 'scroll',
+        overflow: 'visible',
     },
     paper: {
         position: 'relative',
         width: '80vw',
+        height: '70vh',
         maxHeight: '100vh',
+        overflow: 'auto',
         backgroundColor: theme.palette.background.paper,
         boxShadow: theme.shadows[5],
         padding: theme.spacing.unit * 4,
         outline: 'none',
-        overflow: 'scroll',
         [theme.breakpoints.down('sm')]: {
             width: '100%',
         },
     },
+    topBar: {
+        position: 'relative',
+        height: 50,
+    },
     closeButton: {
         position: 'absolute',
-        right: 10,
+        right: 0,
         height: 50,
         width: 50,
         opacity: '0.3',
@@ -38,21 +43,23 @@ const styles = theme => ({
         },
         '&:after': {
             position: 'absolute',
-            left: '15px',
+            left: '50%',
+            top: '50%',
             content: '" "',
             height: '33px',
             width: '2px',
             backgroundColor: '#333',
-            transform: 'rotate(45deg)',
+            transform: 'translateY(-50%) rotate(45deg)',
         },
         '&:before': {
             position: 'absolute',
-            left: '15px',
+            left: '50%',
+            top: '50%',
             content: '" "',
             height: '33px',
             width: '2px',
             backgroundColor: '#333',
-            transform: 'rotate(-45deg)',
+            transform: 'translateY(-50%) rotate(-45deg)',
         },
     },
 })
@@ -81,7 +88,9 @@ const Modal = ({ modalOpen, handleModalClose, data, classes, children }) => {
             className={classes.modalStyle}
         >
             <div className={classNames(classes.modal, classes.paper)}>
-                <div className={classes.closeButton} onClick={handleModalClose}></div>
+                <div className={classes.topBar}>
+                    <div className={classes.closeButton} onClick={handleModalClose}></div>
+                </div>
                 { children }
             </div>
         </MUIModal>  

@@ -3,7 +3,7 @@ import axios from 'axios'
 import Select, { components } from 'react-select'
 
 
-const { ValueContainer, Placeholder } = components;
+const { ValueContainer, Placeholder, Option } = components;
 
 const CustomValueContainer = ({ children, ...props }) => {
   return (
@@ -17,6 +17,20 @@ const CustomValueContainer = ({ children, ...props }) => {
     </ValueContainer>
   );
 };
+
+const CustomOption = props => {
+    const { data } = props
+
+    return (
+        <div>
+            <Option {...props}>
+                <p style={{ padding: '5px 0px', margin: 0, fontWeight: 400, }}>{ data.label }</p>
+                <p style={{ padding: '5px 0px', margin: 0, color: 'gray', fontSize: '0.75em', }}>{ data.subLabel }</p>
+            </Option>
+            <hr style={{ width: '90%', margin: '0px auto', }}/>
+        </div>
+    );
+  };
 
 let objectCompare = (query, prevQuery) => {
     for (let key in query) {
@@ -54,6 +68,7 @@ class AsyncSelect extends React.Component {
     getOptions = async () => {
         let response
 
+        console.log("ENDPOINT!!!: ", this.props.endpoint)
         this.setState(prevState => ({
             isLoading: true,
         }))
@@ -70,6 +85,7 @@ class AsyncSelect extends React.Component {
             ]
             let responseOptions = response.data.result.map(row => ({
                 label: row.name,
+                subLabel: row.desc,
                 value: row.row_id,
             }))
 
@@ -113,13 +129,28 @@ class AsyncSelect extends React.Component {
                 value={value}
                 onChange={this.handleChange}
                 components={{
-                    ValueContainer: CustomValueContainer
+                    ValueContainer: CustomValueContainer,
+                    Option: CustomOption,
                 }}
+                menuPortalTarget={document.body}
+                menuPosition='fixed'
+                menuPlacement='bottom'
                 placeholder={name}
                 styles={{
+                    // control: () => ({
+                    //     width: '99%',
+                    //     gridColumn: 'span 1',
+                    // }),
                     container: (provided, state) => ({
                         ...provided,
-                        marginTop: 15,
+                        marginTop: 25,
+                        gridColumns: 1 / -1,
+                        gridColumn: 'span 2',
+                    }),
+                    menuPortal: base => ({
+                        ...base,
+                        height: 500,
+                        zIndex: 9999
                     }),
                     valueContainer: (provided, state) => ({
                         ...provided,
@@ -132,7 +163,10 @@ class AsyncSelect extends React.Component {
                         top: state.hasValue || state.selectProps.inputValue ? -15 : "50%",
                         transition: "top 0.1s, font-size 0.1s",
                         fontSize: (state.hasValue || state.selectProps.inputValue) && 13,
-                    })
+                    }),
+                    option: (base) => ({
+                        ...base,
+                    }),
                 }}
             />
         )

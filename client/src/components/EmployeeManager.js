@@ -114,12 +114,33 @@ class EditEmployee extends React.Component {
 
   handleChange = (target, value) => {
     return new Promise((resolve, reject) => {
-      this.setState(prevState => ({
-        formData: {
-          ...prevState.formData,
-          [target]: value,
-        }
-      }), () => {console.log(this.state.formData[target]);resolve()})
+      if(target === 'bu_id'){
+        this.setState(prevState => ({
+            formData: {
+                ...prevState.formData,
+                [target] : value,
+                div_id: { label : '', value: null },
+                postn_held_id: { label : '', value: null },
+                resp_id: { label : '', value: null },
+            }
+        }), () => {console.log(this.state.formData[target]);resolve()})
+      }
+      else if(target === 'div_id')
+          this.setState(prevState => ({
+              formData: {
+                  ...prevState.formData,
+                  [target] : value,
+                  postn_held_id: { label : '', value: null },
+              }
+          }), () => {console.log(this.state.formData[target]);resolve()})
+      else {
+          this.setState(prevState => ({
+              formData: {
+                  ...prevState.formData,
+                  [target] : value,
+              }
+          }), () => {console.log(this.state.formData[target]);resolve()})
+      }
     })
   }
 

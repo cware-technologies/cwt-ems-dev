@@ -16,12 +16,15 @@ var upload = multer({ storage: storage });
 
 router.get('/org-struct/organization', adminController.getOrganizations)
 router.post('/org-struct/organization', adminController.postOrganization)
+router.delete('/org-struct/organization', adminController.deleteOrganization)
 
 router.get('/org-struct/division', adminController.getDivisions)
 router.post('/org-struct/division', adminController.postDivision)
+router.delete('/org-struct/division', adminController.deleteDivision)
 
 router.get('/org-struct/position', adminController.getPositions)
 router.post('/org-struct/position', adminController.postPosition)
+router.delete('/org-struct/position', adminController.deletePosition)
 
 router.get('/org-struct/responsibility', adminController.getResponsibilities)
 router.post('/org-struct/responsibility', adminController.postResponsibilities)

@@ -43,6 +43,7 @@ const styles = theme => ({
     message: {
         display: 'flex',
         alignItems: 'center',
+        textTransform: 'capitalize',
     },
     margin: {
         margin: theme.spacing.unit,

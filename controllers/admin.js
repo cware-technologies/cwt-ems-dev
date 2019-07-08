@@ -81,6 +81,22 @@ async function postOrganization(req, res, next){
     }
 }
 
+async function deleteOrganization(req, res, next){
+    try{
+        let data = await Organization.destroy({ where: { row_id: req.body.id }})
+
+        res.status(200).json({
+            status: 200,
+            data
+        })
+    }
+    catch(err){
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
 async function getDivisions(req, res, next){
     console.log("DIVISION QUERY: ", req.query)
     try{
@@ -139,6 +155,22 @@ async function postDivision(req, res, next){
                 result: data,
             })
         }
+    }
+    catch(err){
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function deleteDivision(req, res, next){
+    try{
+        let data = await Division.destroy({ where: { row_id: req.body.id }})
+
+        res.status(200).json({
+            status: 200,
+            data
+        })
     }
     catch(err){
         err.status = 400
@@ -218,6 +250,22 @@ async function postPosition(req, res, next){
     }
 }
 
+async function deletePosition(req, res,next){
+    try{
+        let data = await Position.destroy({ where: { row_id: req.body.id }})
+
+        res.status(200).json({
+            status: 200,
+            data
+        })
+    }
+    catch(err){
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
 async function getResponsibilities(req, res, next){
     let where = req.query.bu_id ?  {
         bu_id: req.query.bu_id,
@@ -251,16 +299,12 @@ async function postResponsibilities(req, res, next){
     let responsibility = req.body
 
     try{
-        let data = await Responsibility.create({
-            name: responsibility.name,
-            desc: responsibility.desc,
-            bu_id: responsibility.organization,
-        })
+        let data = await Responsibility.upsert(responsibility)
 
         try{
             let data2 = await Responsibility.findOne({
                 where: {
-                    row_id: data.row_id
+                    row_id: responsibility.row_id
                 },
                 include: [
                     {
@@ -327,21 +371,34 @@ async function getViews(req, res, next){
 
 async function postView(req, res, next){
     let view = req.body
-    console.log(view)
 
     try{
-        data = await View.create({
-            name: view.name,
-            desc: view.desc,
-            ATTRIB_01: view.path,
-            ATTRIB_02: view.location,
-            bu_id: /* view.organization */1,
-        })
+        data = await View.upsert(view)
 
-        res.status(200).json({
-            status: 200,
-            result: data,
-        })
+        try{
+            let data2 = await View.findOne({
+                where: {
+                    row_id: view.row_id
+                },
+                include: [
+                    {
+                        model: Organization,
+                        as: 'organization',
+                        attributes: ['row_id', 'name'],
+                    },
+                ]
+            })
+
+            res.status(200).json({
+                status: 200,
+                result: data2,
+            })
+        }
+        catch(err){
+            err.status = 400
+            err.message = `Database Error: ${err}`
+            next(err)
+        }
     }
     catch(err){
         err.status = 400
@@ -1104,10 +1161,13 @@ async function upsertEmployeeDetails(req, res, next){
 module.exports = {
     getOrganizations,
     postOrganization,
+    deleteOrganization,
     getDivisions,
     postDivision,
+    deleteDivision,
     getPositions,
     postPosition,
+    deletePosition,
     getResponsibilities,
     postResponsibilities,
     getViews,

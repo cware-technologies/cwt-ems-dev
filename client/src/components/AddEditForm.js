@@ -8,6 +8,9 @@ import FormHelperText from '@material-ui/core/FormHelperText'
 import Typography from '@material-ui/core/Typography'
 import classNames from 'classnames'
 import { getDateFormValue } from '../helpers/utils'
+import AsyncSelect from './AsyncSelect'
+import { Field } from 'formik';
+ 
 
 Object.filter = (obj, predicate) => 
     Object.keys(obj)
@@ -130,7 +133,16 @@ class AddEditForm extends React.Component {
                     />
                 )
             case 'select':
-                return (
+                return ( field.indeterminate ?
+                    <AsyncSelect
+                        name={field.name}
+                        id={field.id}
+                        endpoint={field.requestParams.endPoint}
+                        query={field.requestParams.query || {}}
+                        value={field.defaultValue ? field.defaultValue : object[field.id]}
+                        isDisabled={false}
+                        handleSelectChange={(e) => handleChange(e, this.field.name)}
+                    /> :
                     <TextField
                         id={field.id}
                         select

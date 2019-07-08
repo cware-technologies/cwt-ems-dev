@@ -36,9 +36,7 @@ const authentication = ( state = initialState, action ) => {
 const views = ( state = [] , action ) => {
     switch(action.type){
         case authConstants.VIEWS_REQUEST:
-            return {
-                responsibility: action.responsibility,
-            }
+            return []
         case authConstants.VIEWS_SUCCESS:
             console.log(action)
             let views = action.views.views
@@ -47,7 +45,7 @@ const views = ( state = [] , action ) => {
                 ...views,
             ]
         case authConstants.VIEWS_FAILURE:
-            return {}
+            return []
         default:
             return state
     }

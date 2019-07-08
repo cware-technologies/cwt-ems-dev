@@ -83,6 +83,7 @@ const headStyles = theme => ({
         alignContent: 'center',
         flexBasis: '70%',
         flexGrow: 10,
+        paddingLeft: '10px',
         color: 'white',
         [theme.breakpoints.down('sm')]: {
             display: 'none',
@@ -308,6 +309,11 @@ const styles = theme => ({
         paddingLeft: '10px',
         display: 'flex',
         alignItems: 'center',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'wrap',
+        overflowWrap: 'break-word',
+        // hyphens: 'auto',
+        // wordBreak: 'break-all',
     },
     tableCellSmall: {
         flexBasis: '15px',
@@ -332,6 +338,7 @@ const styles = theme => ({
         alignItems: 'center',
         flexBasis: '70%',
         flexGrow: 10,
+        paddingLeft: '10px',
         [theme.breakpoints.down('sm')]: {
             display: 'none',
         }
@@ -342,6 +349,7 @@ const styles = theme => ({
     },
     row: {
         width: '100%',
+        height: 'min-content',
         display: 'flex',
         cursor: 'pointer',
     },

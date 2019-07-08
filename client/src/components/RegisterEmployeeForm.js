@@ -69,7 +69,7 @@ let constraints = {
             message: "Is Required"
         },
     },
-    bu_id: {
+    "bu_id.value": {
         presence: {
             allowEmpty: false,
             message: "is Required"
@@ -143,13 +143,13 @@ class CreateAccount extends React.Component {
 
     handleSelectChange = (name, obj) => {
         if(name === 'bu_id'){
-            console.log("OOOOOOOOOOOOOOOOOOOOOOOOO")
             this.setState(prevState => ({
                 employee: {
                     ...prevState.employee,
                     [name] : obj,
                     div_id: { label : '', value: null },
                     postn_held_id: { label : '', value: null },
+                    resp_id: { label : '', value: null },
                 }
             }), () => {this.props.changeHandler(name, obj)})
         }
@@ -470,7 +470,7 @@ class CreateAccount extends React.Component {
                         isDisabled={false}
                         handleSelectChange={this.handleSelectChange}
                     />
-                    {errors.bu_id && <FormHelperText error><ul className={classes.errorList}> {errors.bu_id.map((error)=>{ return <li className={classes.errorListItem}>{error}</li>})}</ul></FormHelperText> }
+                    {errors["bu_id.value"] && <FormHelperText error><ul className={classes.errorList}> {errors["bu_id.value"].map((error)=>{ return <li className={classes.errorListItem}>{error}</li>})}</ul></FormHelperText> }
                     <AsyncSelect
                         name='division'
                         id='div_id'
@@ -487,6 +487,24 @@ class CreateAccount extends React.Component {
                         query={ { bu_id: employee.bu_id.value, div_id: employee.div_id.value } }
                         value={ employee.postn_held_id }
                         isDisabled={ employee.div_id.value }
+                        handleSelectChange={ this.handleSelectChange }
+                    />
+                    <AsyncSelect
+                        name='responsibility'
+                        id='resp_id'
+                        endpoint='/admin/org-struct/responsibility'
+                        query={ { bu_id: employee.bu_id.value } }
+                        value={ employee.resp_id }
+                        isDisabled={ employee.bu_id.value }
+                        handleSelectChange={ this.handleSelectChange }
+                    />
+                    <AsyncSelect
+                        name='reports to'
+                        id='report_to_id'
+                        endpoint='/admin/org-struct/position'
+                        query={ { bu_id: employee.bu_id.value, div_id: employee.div_id.value } }
+                        value={ employee.report_to_id }
+                        isDisabled={ employee.postn_held_id.value }
                         handleSelectChange={ this.handleSelectChange }
                     />
                     {/* <TextField
