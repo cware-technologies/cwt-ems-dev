@@ -103,7 +103,7 @@ async function getAnnouncements(req, res, next) {
         let data = await News.findAll({
             where: {
                 stat_cd: 'active',
-                type_cd: 'annoucements',
+                type_cd: 'announcements',
 
             },
             limit: 5,

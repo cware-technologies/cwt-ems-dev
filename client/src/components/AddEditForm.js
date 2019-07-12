@@ -35,6 +35,18 @@ class AddEditForm extends React.Component {
         errors: {},
     }
 
+    handleSelectChange = (id, value) => {
+        let e = {
+            target: {
+                id,
+                value,
+            }
+        }
+
+        console.log("OBJ:", id, value)
+        this.props.handleChange(e, this.props.headerTitle)
+    }
+
     handleSubmit = async (e, component) => {
         if(!this.props.editMode){
             // let keys = Object.keys
@@ -135,13 +147,13 @@ class AddEditForm extends React.Component {
             case 'select':
                 return ( field.indeterminate ?
                     <AsyncSelect
-                        name={field.name}
+                        name={field.label}
                         id={field.id}
                         endpoint={field.requestParams.endPoint}
                         query={field.requestParams.query || {}}
                         value={field.defaultValue ? field.defaultValue : object[field.id]}
                         isDisabled={false}
-                        handleSelectChange={(e) => handleChange(e, this.field.name)}
+                        handleSelectChange={this.handleSelectChange}
                     /> :
                     <TextField
                         id={field.id}
@@ -254,8 +266,8 @@ class AddEditForm extends React.Component {
 
         return (
             <React.Fragment>
-                <Typography variant='title' color='textPrimary'>{Title}</Typography>
                 <div className={classes.formSection}>
+                    <Typography variant='title' className={classes.heading}>{Title}</Typography>
                     {
                         fields.map(field => 
                             this.getFormElement(field, object)

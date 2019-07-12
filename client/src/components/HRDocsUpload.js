@@ -2,6 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames'
 import axios from 'axios'
+import compose from 'recompose/compose'
+import { connect } from 'react-redux'
 import { withStyles } from '@material-ui/core/styles';
 import { combineStyles } from '../helpers/utils'
 import Container from './MainContainer'
@@ -20,6 +22,7 @@ import PhotoCamera from '@material-ui/icons/PhotoCamera';
 import IconButton from '@material-ui/core/IconButton';
 import DownloadIcon from '@material-ui/icons/SaveAlt';
 import { formStyle } from '../styles/form';
+import { alertActions } from '../actions';
 
 const styles = theme => ({
     root: {
@@ -84,12 +87,14 @@ class HRDocsUpload extends React.Component {
 
     handleResponse = (res) => {
         let error = res.data.message;
-
         if (res.data.status >= 400) {
             this.setState(prevState => ({
                 isFetching: false,
                 success: false,
             }))
+
+            this.props.error({message: "Document Could Not Be Fetched!"})
+
             if (res.data.redirectURL)
                 window.location.href = `${res.data.redirectURL}`;
         }
@@ -103,26 +108,42 @@ class HRDocsUpload extends React.Component {
         }
     }
 
-    onFormSubmit = (e) => {
+    onFormSubmit = (e, formRef) => {
         e.preventDefault()
 
-        console.log("On Form Submit")
-        this.fileUpload(this.state.file, this.state.name).then((response)=>{
-            this.setState(prevState => ({
-                data: [...prevState.data, response.data.result]
-            }))
+        this.fileUpload(this.state.file, this.state.name)
+        .then((response)=>{
+
+            if(response.data.status === 200){
+                this.setState(prevState => ({
+                    data: [...prevState.data, response.data.result],
+                    name: null,
+                    file: null,
+                }))
+
+                this.props.success("Document Uploaded Successfully!")
+            }
+            else{
+                this.props.error(response.data)
+            }
+
+            formRef.reset()
+            
+        })
+        .catch(err => {
+            this.props.error({message: "Document Could Not Be Uploaded!"})
+            formRef.reset()
         })
     }
 
     fileUpload = (file, name) => {
-        console.log("File Upload")
         const formData = new FormData();
         formData.append('file', file)
         formData.append('name', name)
 
         let config = {
             headers: {
-                'content-type': 'multipart/form-data'
+                'content-type': 'multipart/form-data',
             },
         }
 
@@ -171,11 +192,6 @@ class HRDocsUpload extends React.Component {
 
     handleDelete = async() => {
         let response
-        let paths = this.state.data.filter(row => {
-            return this.state.checked.indexOf(row.row_id) !== -1
-        }).map(row => row.path );
-
-        console.log("PATHS: ", paths)
 
         try{
             response = await axios({
@@ -183,11 +199,9 @@ class HRDocsUpload extends React.Component {
                 url: '/admin/hr-docs',
                 data: {
                     documents: this.state.checked,
-                    paths,
                 }
             })
 
-            console.log('deleteResponse: ', response)
             this.handleDeleteResponse(response)
         }
         catch(err){
@@ -199,36 +213,41 @@ class HRDocsUpload extends React.Component {
         let error = res.data.message;
 
         if (res.data.status >= 400) {
+            this.props.error({message: "Document Deletion Failed"})
             if (res.data.redirectURL)
                 window.location.href = `${res.data.redirectURL}`;
         }
 
         else if (res.data.status >= 200 && res.data.status < 300) {
             let newData = this.state.data.filter(row => {
-                return this.state.checked.indexOf(row.row_id) === -1
+                return this.state.checked.filter(item => item.id === row.row_id).length <= 0
             })
-            console.log("New Data: ", newData)
             this.setState(prevState => ({
                 data: newData,
                 checked: []
             }))
+
+            this.props.success("Document(s) Deleted Successfully!")
         }
     }
 
-    handleToggle = value => () => {
+    handleToggle = (value, path) => () => {
         const { checked } = this.state;
-        const currentIndex = checked.indexOf(value);
+        const currentIndex = checked.filter(row => row.id === value);
         const newChecked = [...checked];
 
-        if (currentIndex === -1) {
-            newChecked.push(value);
+        if (currentIndex.length <= 0) {
+            newChecked.push({
+                id: value,
+                path,
+            });
         } else {
             newChecked.splice(currentIndex, 1);
         }
 
         this.setState({
             checked: newChecked,
-        }, () => console.log(this.state));
+        });
     };
 
     handleModalOpen = (e) => {
@@ -265,13 +284,14 @@ class HRDocsUpload extends React.Component {
                     </Button>
                 </div>
                 <List className={classes.root}>
-                    {data.map(row => (
+                    {data.length <= 0 ? <ListItem dense ><ListItemText primary="No Documents Found" /></ListItem> : 
+                    data.map(row => (
                         <ListItem key={row.row_id} role={undefined} dense >
                             <Checkbox
-                                checked={this.state.checked.indexOf(row.row_id) !== -1}
+                                checked={this.state.checked.filter(item => item.id === row.row_id).length > 0}
                                 tabIndex={-1}
                                 disableRipple
-                                onClick={this.handleToggle(row.row_id)}
+                                onClick={this.handleToggle(row.row_id, row.path)}
                             />
                             <ListItemText primary={row.name} />
                             <ListItemSecondaryAction>
@@ -301,6 +321,8 @@ HRDocsUpload.propTypes = {
 };
 
 const UploadModal = ({ onFormSubmit, fileName, handleChange, modalOpen, handleModalClose, classes }) => {
+    let formRef = React.createRef()
+
     return (
         <Modal
             open={modalOpen}
@@ -309,7 +331,7 @@ const UploadModal = ({ onFormSubmit, fileName, handleChange, modalOpen, handleMo
             aria-describedby="simple-modal-description"
         >
             <div className={classNames(classes.modal, classes.paper)}>
-                <form>
+                <form ref={node => formRef = node}>
                     <FormControl className={classes.formControl} style={{ marginBottom: '10px', }}>
                         <InputLabel htmlFor="file" shrink={true} style={{zIndex:'1',marginLeft:'5px',}}><PhotoCamera />Document</InputLabel>
                         <FilledInput name="file" type="file" accept="image/*" id="file" onChange={handleChange}/>
@@ -318,7 +340,7 @@ const UploadModal = ({ onFormSubmit, fileName, handleChange, modalOpen, handleMo
                         <InputLabel htmlFor="name" style={{zIndex:'1',marginLeft:'5px'}}>Name</InputLabel>
                         <FilledInput name="name" type="text" id="name" value={fileName} onChange={handleChange}/>
                     </FormControl>
-                    <Button onClick={onFormSubmit} variant="contained" color="primary" className={classNames(classes.button, classes.textField)}>
+                    <Button onClick={(e) => onFormSubmit(e, formRef)} variant="contained" color="primary" className={classNames(classes.button, classes.textField)}>
                         Upload
                     </Button>
                 </form>
@@ -330,4 +352,7 @@ const UploadModal = ({ onFormSubmit, fileName, handleChange, modalOpen, handleMo
 let combinedStyles = combineStyles(styles, formStyle)
 const EnhancedUploadModal = withStyles(combinedStyles)(UploadModal);
 
-export default withStyles(styles)(HRDocsUpload);
+export default compose(
+    withStyles(styles),
+    connect(() => {}, { ...alertActions })
+)(HRDocsUpload);

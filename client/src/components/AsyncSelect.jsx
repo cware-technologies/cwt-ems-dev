@@ -24,10 +24,10 @@ const CustomOption = props => {
     return (
         <div>
             <Option {...props}>
-                <p style={{ padding: '5px 0px', margin: 0, fontWeight: 400, }}>{ data.label }</p>
-                <p style={{ padding: '5px 0px', margin: 0, color: 'gray', fontSize: '0.75em', }}>{ data.subLabel }</p>
+                <p style={{ padding: '5px 0px', margin: 0, fontWeight: 400, fontSize: '0.8em' }}>{ data.label }</p>
+                <p style={{ padding: '5px 0px', margin: 0, color: 'gray', fontSize: '0.7em', }}>{ data.subLabel }</p>
             </Option>
-            <hr style={{ width: '90%', margin: '0px auto', }}/>
+            {/* <hr style={{ width: '90%', margin: '0px auto', }}/> */}
         </div>
     );
   };
@@ -53,6 +53,11 @@ class AsyncSelect extends React.Component {
     componentDidMount() {
         if (this.props.query)
             this.getOptions()
+        else if(this.props.options){
+            this.setState(prevState => ({
+                options: this.props.options,
+            }))
+        }
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
@@ -80,23 +85,15 @@ class AsyncSelect extends React.Component {
                 params: this.props.query
             })
 
-            let options = [
-                {label: "None", value:null}
-            ]
             let responseOptions = response.data.result.map(row => ({
                 label: row.name,
                 subLabel: row.desc,
                 value: row.row_id,
             }))
 
-            options = [
-                ...options,
-                ...responseOptions
-            ]
-
             if (response.data.status === 200) {
                 this.setState(prevState => ({
-                    options,
+                    options: responseOptions,
                     disabled: false,
                     isLoading: false,
                 }))
@@ -122,7 +119,10 @@ class AsyncSelect extends React.Component {
         console.log(name, value)
         return (
             <Select
-                options={options}
+                options={[
+                    {label: "None", value:null},
+                    ...options
+                ]}
                 isDisabled={ isDisabled === false ? false : isDisabled === true? true : !isDisabled || isLoading }
                 isLoading={isLoading}
                 isClearable={false}
@@ -144,8 +144,10 @@ class AsyncSelect extends React.Component {
                     container: (provided, state) => ({
                         ...provided,
                         marginTop: 25,
-                        gridColumns: 1 / -1,
-                        gridColumn: 'span 2',
+                        '@media (max-width: 960px)': {
+                            gridColumn: '1 / -1',
+                          }
+                        // gridColumns: 1 / -1,
                     }),
                     menuPortal: base => ({
                         ...base,
@@ -164,8 +166,17 @@ class AsyncSelect extends React.Component {
                         transition: "top 0.1s, font-size 0.1s",
                         fontSize: (state.hasValue || state.selectProps.inputValue) && 13,
                     }),
+                    groupHeading: (provided, state) => ({
+                        ...provided,
+                        background: 'lightgray',
+                        fontSize: '1.25em',
+                        textAlign: 'center',
+                        color: 'white',
+                    }),
                     option: (base) => ({
                         ...base,
+                        borderTop: '1px solid lightgray',
+                        borderBottom: '1px solid lightgray',
                     }),
                 }}
             />

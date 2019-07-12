@@ -65,9 +65,13 @@ const theme = createMuiTheme(
 			MuiFormHelperText: {
 				root: {
 					margin: 0,
-				}
-				
+				}	
 			},
+			MuiTextField: {
+				root: {
+					margin: 0,
+				}
+			}
 		},
 		drawerWidth: 240,
 	}

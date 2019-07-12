@@ -36,6 +36,7 @@ const styles = theme => ({
         height: '100%',
         width: theme.spacing.unit * 9,
         position: 'absolute',
+        boxSizing: 'border-box',
         right: 0,
         top: 0,
         display: 'flex',
@@ -102,7 +103,7 @@ class SearchBar extends React.Component {
                             {
                                 isSearching ? <div ><LoadingSpinner className={classes.icon}/></div> : 
                             
-                                <IconButton type='submit' key="search" aria-label="Search" color="inherit">
+                                <IconButton type='submit' key="search" aria-label="Search" color="inherit" style={{boxSizing: 'border-box'}}>
                                     <SearchIcon />
                                 </IconButton>
                             }

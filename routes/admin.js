@@ -1,18 +1,5 @@
 const router = require('express').Router();
 const { adminController } = require('../controllers')
-var multer = require('multer')
-
-var storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'public/uploads/documents')
-    },
-    filename: (req, file, cb) => {
-        var fileExtension = file.originalname.split('.')
-        cb(null, `${file.fieldname}-${Date.now()}.${fileExtension[fileExtension.length - 1]}`);
-    }
-});
-
-var upload = multer({ storage: storage });
 
 router.get('/org-struct/organization', adminController.getOrganizations)
 router.post('/org-struct/organization', adminController.postOrganization)
@@ -41,9 +28,10 @@ router.delete('/access-rights/responsibility-view', adminController.deleteRespon
 router.get('/hr-docs', adminController.getHRDocs)
 router.delete('/hr-docs', adminController.deleteHRDocs)
 router.get('/hr-docs/download', adminController.downloadHRDoc)
-router.post('/hr-docs/upload', upload.single('file'), adminController.uploadHRDoc)
+router.post('/hr-docs/upload', adminController.uploadHRDoc)
 
-router.post('/news/add', adminController.postNews)
+router.post('/news', adminController.postNews)
+router.put('/news', adminController.updateNews)
 router.post('/news/changeStatus', adminController.changeNewsStatus)
 
 router.get('/induction-lovs', adminController.getInductionExitLOVS)

@@ -12,6 +12,8 @@ import Search from './Search';
 import Tooltip from '@material-ui/core/Tooltip'
 import IconButton from '@material-ui/core/IconButton'
 import AddIcon from '@material-ui/icons/Add'
+import { capitalize, getFormDataFromObject, objectToFormData } from '../helpers/utils' 
+import { getUserOrganization } from '../reducers/authReducer';
 
 const rows = [
     { id: 'type_cd', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Type' },
@@ -25,14 +27,61 @@ const fields = [
     { id: 'type', type:'select', label: 'Type', selectOptions: [{value: 'induction_checklist', name: 'Induction'}, {value: 'exit_checklist', name: 'Exit'}] },
 ]
 
-const schema = {}
+const externalFeedTypes = [
+    {
+        value: "Local",
+        label: "Local",
+    },
+    {
+        value: "Technology",
+        label: "Technology",
+    },
+    {
+        value: "Economy",
+        label: "Economy",
+    },
+]
+
+const schema = {
+    'type_cd.value': {
+        presence: {
+            allowEmpty: false,
+            message: "Is Required"
+        },
+    },
+    ATTRIB_10: {
+        presence: {
+            allowEmpty: false,
+            message: "Is Required"
+        },
+    },
+    ATTRIB_02: {
+        equality: {
+            attribute: "type_cd",
+            message: "is required",
+            comparator: function(v1, v2) {
+                console.log("SAOIDJAOSIDJOASIJOIJSDIOASJDOISA: ", v1, v2)
+                return true
+                // if(externalFeedTypes.filter(item => item.value === v2.value).length <= 0){
+                //     if(v1 === null || v1 === ""){ return false }
+                //     else{ return true }
+                // }
+                // else{
+                //     return true
+                // }
+            }
+          }
+    }
+}
 
 class NewsManager extends React.Component{
     modalRef = React.createRef()
     state = {
         data: [],
         editMode: false,
-        formData: {},
+        formData: {
+            type_cd: { label: "", value: null},
+        },
         query: '',
         isSearching: false,
     }
@@ -62,6 +111,8 @@ class NewsManager extends React.Component{
                 isSearching: false,
             }))
 
+            console.log(response)
+
             if(response.data.status === 200){
                 this.setState(prevState => ({
                     data: response.data.data,
@@ -81,10 +132,15 @@ class NewsManager extends React.Component{
     }
 
     setEditMode = (record) => {
+        let news = record
+        let newData = {
+            ...news,
+            type_cd: { label: capitalize(record.type_cd), value: record.type_cd}
+        }
         this.setState(prevState => ({
             formData: {
                 ...prevState.formData,
-                ...record,
+                ...newData,
             },
             editMode: true,
         }), () => {console.log(this.state);this.modalRef.handleModalOpen()})
@@ -101,16 +157,17 @@ class NewsManager extends React.Component{
         }))
     }
 
-    handleChange = (e) => {
-        let target = e.target.id
-        let value = e.target.value
-
-        this.setState(prevState => ({
-            formData: {
-                ...prevState.formData,
-                [target]: value,
-            }
-        }))
+    handleChange = (target, value) => {
+        return new Promise((resolve, reject) => {
+            
+                this.setState(prevState => ({
+                    formData: {
+                        ...prevState.formData,
+                        [target] : value,
+                    }
+                }), () => {console.log("SATELLITE: ", this.state.formData);resolve()})
+            
+        })
     }
 
     onSearchChange = (e) => {
@@ -153,61 +210,120 @@ class NewsManager extends React.Component{
         })
       }
 
-    handleSubmit = async() => {
+    handleSubmit = async(e, formRef) => {
         let response
 
+        // let formData = getFormDataFromObject(this.state.formData)
+        let formData = objectToFormData(this.state.formData, '')
+
         if(this.state.editMode){
-            this.handleUpdate()
+            this.handleUpdate(formData, formRef)
         }
         else{
-            this.handleAdd()
+            this.handleAdd(formData, formRef)
         }
     }
 
-    handleUpdate = async() => {
+    handleUpdate = async(formData, formRef) => {
         let response
         let id = this.state.formData.row_id
         let newData = this.state.data.filter(row => {
             return row.row_id !== id
         })
+        
+        let newRecord = this.state.formData
+        console.log(newRecord)
+        newRecord.type_cd = newRecord.type_cd.value
 
-        newData.push(this.state.formData)
+        newData.unshift(newRecord)
+
+        for(let pair of formData.entries()){
+            console.log(pair[0], pair[1])
+        }
 
         try{
-            response = await axios({
-                method: 'put',
-                url: '/admin/induction-lovs',
-                headers: {
-                    'content-type': 'application/json',
-                },
-                data: this.state.formData,
-            })
+            let config 
+            
+            if(this.state.formData.file){
+                config = {
+                    headers: {
+                        'content-type': 'multipart/form-data',
+                        'contains-file': true,
+                    },
+                }
+            }
+            else {
+                config = {
+                    headers: {
+                        'content-type': 'application/json',
+                        'contains-file': false,
+                    },
+                }
+            }
 
-            this.setState(prevState => ({
-                data: newData,
-            }))
-            console.log("UPDATE RESPONSE: ", response)
+            
+
+            response = await axios.put(
+                '/admin/news',
+                formData,
+                config,
+            )
+
+            console.log(this.state.formData)
+            console.log(response)
+
+            if(response.data.status === 200){
+                this.setState(prevState => ({
+                    data: newData,
+                }), ()=>console.log(this.state.data))
+                this.props.success("News Updated Successfully!")
+            }
+            else{
+                this.props.error(response.data.message ? response.data : {message:"There Was An Error Updating The News!"})                
+            }
         }
         catch(err){
-            
+            this.props.error("There Was An Error Updating The News!")
         }
     }
 
-    handleAdd = async() => {
+    handleAdd = async(formData, formRef) => {
         let response
-        let data = this.state.formData
-        data.bu_id = this.props.organization
-        console.log("HANDLE ADD")
+            console.log("ORG: ", this.props)
+        formData.append('bu_id', this.props.organization)
+
+        for(let pair of formData.entries()){
+            console.log(pair[0], pair[1])
+        }
 
         try{
-            response = await axios({
-                method: 'post',
-                url: '/admin/news/add',
-                headers: {
-                    'content-type': 'application/json',
-                },
-                data: data,
-            })
+            let config 
+            
+            if(this.state.formData.file){
+                config = {
+                    headers: {
+                        'content-type': 'multipart/form-data',
+                        'contains-file': true,
+                    },
+                }
+            }
+            else {
+                config = {
+                    headers: {
+                        'content-type': 'application/json',
+                        'contains-file': false,
+                    },
+                }
+            }
+
+            console.log('CONFIG: ', config)
+    
+            response = await axios.post(
+                '/admin/news',
+                formData,
+                config,
+            )
+            console.log(response)
 
             if(response.data.status === 200){
                 this.setState(prevState => ({
@@ -218,10 +334,11 @@ class NewsManager extends React.Component{
                     formData: {},
                 }))
 
+                formRef.reset()
                 this.props.success("News Posted Successfully!")
             }
             else{
-                this.props.error("There Was An Error Posting The News!")                
+                this.props.error(response.data)                
             }
         }
         catch(err){
@@ -280,6 +397,7 @@ class NewsManager extends React.Component{
                             >
                                 <PostUpdateForm
                                     data={formData}
+                                    schema={schema}
                                     changeHandler={this.handleChange}
                                     submitHandler={this.handleSubmit}
                                     editMode={editMode}
@@ -314,4 +432,10 @@ class NewsManager extends React.Component{
     }
 }
 
-export default connect(()=>{}, {...alertActions})(NewsManager)
+const mapStateToProps = (state) => {
+    return {
+        organization: getUserOrganization(state),
+    }
+}
+
+export default connect(mapStateToProps, {...alertActions})(NewsManager)

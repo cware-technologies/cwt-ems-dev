@@ -19,11 +19,17 @@ module.exports = (sequelize, DataTypes) => {
     stat_cd: {
       type: DataTypes.STRING(30),
       allowNull: false,
-      defaultValue: 'Active',
+      defaultValue: 'active',
     }, 
     type_cd: {
       type: DataTypes.STRING(30), 
       allowNull: false,
+    },
+    div_id: {
+      type: DataTypes.INTEGER(11),
+    },
+    img_pth: {
+      type: DataTypes.STRING(1000),
     },
     ATTRIB_01: {
       type: DataTypes.STRING(1000),
@@ -115,12 +121,6 @@ module.exports = (sequelize, DataTypes) => {
     },
     FLG_10: {
       type: DataTypes.CHAR,
-    },
-    DIV_ID: {
-      type: DataTypes.INTEGER(11),
-    },
-    IMG_PTH: {
-      type: DataTypes.STRING(100),
     },
   },
   {

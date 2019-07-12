@@ -38,8 +38,8 @@ export const formStyle = theme => ({
     },
     heading: {
         width: '100%',
-        gridColumn: 'span 2',
-        textAlign: 'left',
+        gridColumn: '1 / -1',
+        textAlign: 'center',
         margin: 'auto',
     },
     input: {
@@ -83,20 +83,22 @@ export const formStyle = theme => ({
         gridColumn: 1 / -1,
     },
     errorList: {
-        backgroundColor: 'lightgray',
+        // backgroundColor: 'lightgray',
         color: 'indianred',
         padding: '10px',
-        border: '1px solid indianred',
-        borderRadius: '2px',
+        margin: 0,
+        borderBottom: '1px solid indianred',
+        // borderRadius: '2px',
     },
     errorListItem: {
         marginLeft: '5px',
     },
     successList: {
-        backgroundColor: 'lightgray',
+        // backgroundColor: 'lightgray',
         color: 'green',
         padding: '10px',
-        border: '1px solid green',
-        borderRadius: '2px',
+        margin: 0,
+        borderBottom: '1px solid green',
+        // borderRadius: '2px',
     },
 });

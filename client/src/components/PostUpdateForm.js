@@ -2,6 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import validate from 'validate.js'
 import classNames from 'classnames';
+import debounce from 'lodash.debounce'
 import { connect } from 'react-redux';
 import compose from 'recompose/compose';
 import { withStyles } from '@material-ui/core/styles';
@@ -10,9 +11,19 @@ import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import FormHelperText from '@material-ui/core/FormHelperText'
+import FormControl from '@material-ui/core/FormControl'
+import InputLabel from '@material-ui/core/InputLabel'
+import OutlinedInput from '@material-ui/core/OutlinedInput';
+import PhotoCamera from '@material-ui/icons/PhotoCamera'
 import Container from './MainContainer';
 import TextEditor from './TextEditor';
 import { getUserOrganization } from '../reducers/authReducer';
+import AsyncSelect from './AsyncSelect'
+
+Object.filter = (obj, predicate) => 
+    Object.keys(obj)
+          .filter( key => predicate(obj[key]) )
+          .reduce( (res, key) => (res[key] = obj[key], res), {} );
 
 const updateTypes = [
     {
@@ -20,68 +31,67 @@ const updateTypes = [
         label: "Company News",
     },
     {
-        value: "Announcement",
-        label: "Announcement",
+        value: "Announcements",
+        label: "Announcements",
     },
     {
         value: "Employees",
         label: "Employees",
     },
-    {
-        value: "external_feeds",
-        label: "External Feeds",
-    },
 ]
 
 const externalFeedTypes = [
     {
-        value: "local",
+        value: "Local",
         label: "Local",
     },
     {
-        value: "technology",
+        value: "Technology",
         label: "Technology",
     },
     {
-        value: "economy",
+        value: "Economy",
         label: "Economy",
     },
 ]
 
-let dropdowns = [
-    { name: 'dropdown_1', value: 'type_cd' },
-    { name: 'dropdown_2', value: 'type_cd' },
-]
+const options = [
+    {
+      label: 'Company News',
+      options: updateTypes,
+    },
+    {
+      label: 'External Feed',
+      options: externalFeedTypes,
+    },
+];
 
 class PostUpdateForm extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             news: {
-                type: null,
-                category: null,
-                title: '',
-                body: '',
-                link: null,
-                status: 'active',
+                type_cd: { label: '', value: null },
+                category: { label: '', value: null },
+                ATTRIB_10: '',
+                ATTRIB_01: '',
+                ATTRIB_02: '',
+                status_cd: 'active',
+                file: null,
                 organization: null,
             },
-            dropdown_1: {
-                disabled: false,
-                value: null,
-                data: [],
-            },
-            dropdown_2: {
-                disabled: true,
-                value: null,
-                data: [],
-            },
-            textField_1: {
-                disabled: true,
-                value: null,
-            },
+            errors:{},
             response: {},
         };
+
+        this.formRef = React.createRef()
+        this.debouncedSelectChange = debounce(this.handleSelectChange, 500);
+    }
+
+    componentDidMount(){
+        this.setState(prevState => ({
+            news: this.props.data,
+        }))
     }
 
     validate = (event) => {
@@ -104,7 +114,7 @@ class PostUpdateForm extends React.Component {
     validateAll = async () => {
         return new Promise(async(resolve, reject) => {
         
-            let val_errors = await validate(this.props.object, this.props.schema)
+            let val_errors = await validate(this.state.news, this.props.schema)
 
             let errors = val_errors ? Object.filter(val_errors, property => property !== undefined) : {}
             this.setState(prevState => ({
@@ -121,9 +131,8 @@ class PostUpdateForm extends React.Component {
         // else
         //     localConstraints = constraints
         
-        await this.validateAll(this.props.object, this.props.schema)
+        await this.validateAll()
 
-        console.log("VAL ERRORS", this.state.errors,Object.keys(this.state.errors).length)
 
         if(Object.keys(this.state.errors.constructor === Object && this.state.errors).length === 0 ){
             this.setState(prevState => ({
@@ -144,249 +153,107 @@ class PostUpdateForm extends React.Component {
         }
     }
 
-    handleSelectChange = (e) => {
-        let target = e.target.id
-        let value = e.target.value
-        let state = dropdowns.find((dropdown) => {
-            if (dropdown.name === target)
-                return dropdown.value
-        }).value
-
-        if (target === 'dropdown_1' && value !== 'external_feeds') {
-            this.setState(prevState => ({
-                news: {
-                    ...prevState.news,
-                    [state]: value,
-                    link: null,
-                },
-                dropdown_2: {
-                    ...prevState.dropdown_2,
-                    disabled: true,
-                    value: null,
-                },
-                textField_1: {
-                    disabled: true,
-                    value: '',
-                },
-                [target]: {
-                    ...prevState[target],
-                    value: value,
-                },
-            }))
-        }
-        else if (target === 'dropdown_1') {
-            this.setState(prevState => ({
-                news: {
-                    ...prevState.news,
-                    [state]: value,
-                    body: null,
-                },
-                dropdown_1: {
-                    ...prevState.dropdown_2,
-                    disabled: false,
-                    value: value,
-                },
-                dropdown_2: {
-                    ...prevState.dropdown_2,
-                    disabled: false,
-                    value: value,
-                },
-                textField_1: {
-                    disabled: false,
-                    value: '',
-                },
-            }))
-        }
-        else if (target === 'dropdown_2') {
-            this.setState(prevState => ({
-                news: {
-                    ...prevState.news,
-                    [state]: value,
-                    body: null,
-                },
-                dropdown_2: {
-                    ...prevState.dropdown_2,
-                    disabled: false,
-                    value: value,
-                },
-                textField_1: {
-                    disabled: false,
-                    value: '',
-                },
-            }))
-        }
+    handleSelectChange = (name, obj) => {
+        this.setState(prevState => ({
+            news: {
+                ...prevState.news,
+                [name] : obj,
+            }
+        }), () => {this.props.changeHandler(name, obj)})
 
     }
 
     handleTextChange = (e) => {
-        let target = e.target.id
-        let value = e.target.value
+        let target = e.target
+        let id = target.id
+        let value
+        if(id === 'file'){
+            value = target.files[0]
+        }
+        else { value = target.value }
+
         this.validate(e)
-        this.props.changeHandler(target, value)
+        this.props.changeHandler(id, value)
+        .then(res => this.setState(prevState => ({
+            news: {
+                ...prevState.news,
+                [id] : value,
+            }
+        })))
     }
 
     handleSubmit = async (e) => {
+        e.preventDefault()
+
         if(await this.allValid()){
-            this.props.handleSubmit(e)
+            this.props.submitHandler(e, this.formRef)
         }
     }
 
     render() {
         const { data, classes, changeHandler } = this.props;
-        const { response } = this.state;
+        const { errors, response, news } = this.state;
 
         return (
-            <Container>
+            <form ref={node => this.formRef = node}>
                 <div className={classes.formSection}>
-                    <Typography variant="h6" gutterBottom component="h6" className={classes.heading}>
+                    <Typography variant="h6" gutterBottom paragraph component="h6" align="center" display="block" className={classes.heading}>
                         Post Update
                     </Typography>
-                    <TextField
-                        id="dropdown_1"
-                        select
-                        label="Type of Update"
-                        className={classNames(classes.textField, classes.dense)}
-                        disabled={this.state.dropdown_1.disabled}
-                        value={data.type_cd}
-                        onChange={this.handleSelectChange}
-                        SelectProps={{
-                            native: true,
-                            MenuProps: {
-                                className: classes.menu,
-                            },
-                        }}
-                        // helperText="Please select your currency"
-                        margin="dense"
-                        variant="filled"
-                        classes={{
-                            root: classes.inputRoot,
-                        }}
-                        InputProps={{
-                            className: classes.input,
-                        }}
-                        InputLabelProps={{
-                            className: classes.inputLabel,
-                            shrink: true,
-                        }}
-                    >
-                        <option value={null}>
-                            {''}
-                        </option>
-                        {updateTypes.map(option => (
-                            <option key={option.value} value={option.value}>
-                                {option.label}
-                            </option>
-                        ))}
-                    </TextField>
-                    <TextField
-                        id="dropdown_2"
-                        select
-                        label="External Feed Type"
-                        className={classNames(classes.textField, classes.dense, classes.singleSpanInput)}
-                        disabled={this.state.dropdown_2.disabled}
-                        value={data.type_cd}
-                        onChange={this.handleSelectChange}
-                        SelectProps={{
-                            native: true,
-                            MenuProps: {
-                                className: classes.menu,
-                            },
-                        }}
-                        // helperText="Please select your currency"
-                        margin="dense"
-                        variant="filled"
-                        classes={{
-                            root: classes.inputRoot,
-                        }}
-                        InputProps={{
-                            className: classes.input,
-                        }}
-                        InputLabelProps={{
-                            className: classes.inputLabel,
-                            shrink: true,
-                        }}
-                    >
-                        <option value={null}>
-                            {''}
-                        </option>
-                        {externalFeedTypes.map(option => (
-                            <option key={option.value} value={option.value}>
-                                {option.label}
-                            </option>
-                        ))}
-                    </TextField>
+                    <AsyncSelect
+                        name='update type'
+                        id='type_cd'
+                        options={options}
+                        value={news.type_cd}
+                        isDisabled={false}
+                        handleSelectChange={this.handleSelectChange}
+                    />
+                    {errors["type_cd.value"] && <FormHelperText error><ul className={classes.errorList}> {errors["type_cd.value"].map((error)=>{ return <li className={classes.errorListItem}>{error}</li>})}</ul></FormHelperText> }
                     <TextField
                         id="ATTRIB_02"
                         label="Link"
-                        classes={{
-                            root: classes.inputRoot,
-                        }}
                         className={classNames(classes.textField, classes.dense, classes.singleSpanInput)}
                         margin="dense"
-                        variant="filled"
-                        disabled={this.state.textField_1.disabled}
-                        value={data.ATTRIB_02}
+                        variant="outlined"
+                        disabled={externalFeedTypes.filter(item => item.value === news.type_cd.value).length <= 0}
+                        value={news.ATTRIB_02}
                         onChange={this.handleTextChange}
-                        InputProps={{
-                            className: classes.input,
-                        }}
-                        InputLabelProps={{
-                            className: classes.inputLabel,
-                        }}
-                        InputLabelProps={{
-                            className: classes.inputLabel,
-                        }}
+                        error={errors.ATTRIB_02}
+                        helperText={errors.ATTRIB_02 && <ul className={classes.errorList}> {errors.ATTRIB_02.map((error)=>{ return <li className={classes.errorListItem}>{error}</li>})}</ul>}
                     />
                     <TextField
                         id="ATTRIB_10"
                         label="Title"
-                        classes={{
-                            root: classes.inputRoot,
-                        }}
                         className={classNames(classes.textField, classes.dense, classes.singleSpanInput)}
                         margin="dense"
-                        variant="filled"
-                        value={data.ATTRIB_10}
+                        variant="outlined"
+                        value={news.ATTRIB_10}
                         onChange={this.handleTextChange}
-                        InputProps={{
-                            className: classes.input,
-                        }}
-                        InputLabelProps={{
-                            className: classes.inputLabel,
-                        }}
-                        InputLabelProps={{
-                            className: classes.inputLabel,
-                        }}
+                        error={errors.ATTRIB_10}
+                        helperText={errors.ATTRIB_10 && <ul className={classes.errorList}> {errors.ATTRIB_10.map((error)=>{ return <li className={classes.errorListItem}>{error}</li>})}</ul>}
                     />
+                    <FormControl className={classNames(classes.textField, classes.dense, classes.singleSpanInput)}>
+                        <InputLabel htmlFor="file" shrink={true} style={{zIndex:'1',marginLeft:'5px',}}><PhotoCamera />Image</InputLabel>
+                        <OutlinedInput name="file" type="file" accept="image/*" id="file" disabled={updateTypes.filter(item => item.value === news.type_cd.value).length <= 0} onChange={this.handleTextChange}/>
+                    </FormControl>
                     <TextField
                         id="ATTRIB_01"
                         label="Body"
-                        classes={{
-                            root: classes.inputRoot,
-                        }}
                         className={classNames(classes.textField, classes.dense, classes.fullSpanInput)}
                         multiline
                         rows={5}
-                        disabled={!this.state.dropdown_2.disabled}
+                        disabled={updateTypes.filter(item => item.value === news.type_cd.value).length <= 0}
                         margin="dense"
-                        variant="filled"
-                        value={data.ATTRIB_01}
+                        variant="outlined"
+                        value={news.ATTRIB_01}
                         onChange={this.handleTextChange}
-                        InputProps={{
-                            className: classes.input,
-                        }}
-                        InputLabelProps={{
-                            className: classes.inputLabel,
-                        }}
-                        InputLabelProps={{
-                            className: classes.inputLabel,
-                        }}
+                        error={errors.ATTRIB_01}
+                        helperText={errors.ATTRIB_01 && <ul className={classes.errorList}> {errors.ATTRIB_01.map((error)=>{ return <li className={classes.errorListItem}>{error}</li>})}</ul>}
                     />
                     {/* <TextEditor /> */}
                     <FormHelperText>{response.status && <ul className={response.status<300?classes.successList:classes.errorList}><li className={classes.errorListItem}>{response.message}</li></ul>}</FormHelperText>
                     <Button 
                         className={classes.fullSpanInput}
-                        style={{width: 100, position: 'absolute', right: '4%', bottom: '4%'}}
                         onClick={this.handleSubmit}
                         variant="contained"
                         color="primary"
@@ -394,9 +261,13 @@ class PostUpdateForm extends React.Component {
                         Post
                     </Button>
                 </div>
-            </Container>
+            </form>
         )
     }
+}
+
+PostUpdateForm.defaultProps = {
+    schema: {},
 }
 
 const mapStateToProps = (state) => {

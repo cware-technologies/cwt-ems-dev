@@ -20,11 +20,17 @@ module.exports = {
       stat_cd: {
         type: Sequelize.STRING(30),
         allowNull: false,
-        defaultValue: 'Active',
+        defaultValue: 'active',
       }, 
       type_cd: {
         type: Sequelize.STRING(30), 
         allowNull: false,
+      },
+      div_id: {
+        type: Sequelize.INTEGER(11),
+      },
+      img_pth: {
+        type: Sequelize.STRING(1000),
       },
       ATTRIB_01: {
         type: Sequelize.STRING(1000),
@@ -116,12 +122,6 @@ module.exports = {
       },
       FLG_10: {
         type: Sequelize.CHAR,
-      },
-      DIV_ID: {
-        type: Sequelize.INTEGER(11),
-      },
-      IMG_PTH: {
-        type: Sequelize.STRING(100),
       },
       created: {
         allowNull: false,

@@ -11,6 +11,7 @@ import Container from './MainContainer'
 import { getUserOrganization } from '../reducers/authReducer'
 import DataTable from './DataTable'
 import AddEditForm from './AddEditForm'
+import { alertActions } from '../actions';
 
 const viewRows = [
     { id: 'val', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Value' },
@@ -110,13 +111,19 @@ class InductionChecklist extends React.Component{
                 data: this.state.formData,
             })
 
-            this.setState(prevState => ({
-                data: newData,
-            }))
-            console.log("UPDATE RESPONSE: ", response)
+            if(response.data.status === 200){
+                this.setState(prevState => ({
+                    data: newData,
+                }))
+
+                this.props.success("Record Updated Successfully!")
+            }
+            else{
+                this.props.error({message: "Record Could Not be Updated!"})
+            }
         }
         catch(err){
-            
+            this.props.error({message: "Record Could Not be Updated!"})            
         }
     }
 
@@ -124,7 +131,6 @@ class InductionChecklist extends React.Component{
         let response
         let data = this.state.formData
         data.bu_id = this.props.organization
-        console.log("HANDLE ADD")
 
         try{
             response = await axios({
@@ -136,16 +142,25 @@ class InductionChecklist extends React.Component{
                 data: data,
             })
 
-            this.setState(prevState => ({
-                data: [
-                    ...prevState.data,
-                    response.data.data
-                ],
-                formData: {},
-            }))
+            if(response.data.status === 200){
+                this.setState(prevState => ({
+                    data: [
+                        ...prevState.data,
+                        response.data.data
+                    ],
+                }))
+
+                this.props.success("Record Added Successfully!")
+            }
+            else{
+                this.props.error({message: "Record Could Not be Added!"})                
+                
+            }
+
+            this.unsetEditMode()
         }
         catch(err){
-
+            this.props.error({message: "Record Could Not be Added!"})                
         }
     }
 
@@ -167,14 +182,18 @@ class InductionChecklist extends React.Component{
                 },
             })
 
-            this.setState(prevState => ({
-                data: newData,
-            }))
-
-            console.log("ADD RESPONSE: ", response)
+            if(response.data.status === 200){
+                this.setState(prevState => ({
+                    data: newData,
+                }))
+                this.props.success("Record Deleted Successfully!")                
+            }
+            else{
+                this.props.error({message: "Could Not Delete The Record"})
+            }
         }
         catch(err){
-
+            this.props.error({message: "Could Not Delete The Record"})
         }
     }
 
@@ -196,19 +215,24 @@ class InductionChecklist extends React.Component{
                     organization: this.props.organization,
                 },
             })
-            this.setState(prevState => ({
-                data: response.data.data,
-            }))
-            console.log("RESPONSE: ", response)
+
+            if(response.data.status === 200)
+                this.setState(prevState => ({
+                    data: response.data.data,
+                }))
+            else
+                this.props.error({message: "Could Not Load The Induction/Exit Records"})                
         }
         catch(err){
-            
+            this.props.error({message: "Could Not Load The Induction/Exit Records"})
         }
     }
 
     render(){
         let { organization } = this.props
         let { data, formData, editMode } = this.state
+
+        console.log('ORG: ', this.props.organization)
 
         let addComponent =  <ModalTrigger
                                 IconButton={
@@ -259,4 +283,4 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps, {})(InductionChecklist)
+export default connect(mapStateToProps, {...alertActions})(InductionChecklist)

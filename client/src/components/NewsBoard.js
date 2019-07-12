@@ -23,7 +23,7 @@ const styles = theme => ({
         gridTemplateRows: '50px repeat(3, 1fr) 50px',
         gridTemplateAreas: '"heading heading" "billboard news1" "billboard news2" "billboard news3" "button button"',
         padding: theme.spacing.unit,
-        [theme.breakpoints.down('sm')]: {
+        [theme.breakpoints.down('md')]: {
             display: 'flex',
             flexDirection: 'column',
             height: 'auto',
@@ -35,7 +35,7 @@ const styles = theme => ({
     },
     billboard: {
         gridArea: 'billboard',
-        [theme.breakpoints.down('sm')]: {
+        [theme.breakpoints.down('md')]: {
             display: 'none',
         },
     },
@@ -46,21 +46,6 @@ const styles = theme => ({
         gridArea: 'button',
     },
 })
-
-const data = [
-    {
-        title: '',
-        body: 'Happy birthday Ehsan.',
-    },
-    {
-        title: '',
-        body: 'Employee of the year: Sajeel Waien',
-    },
-    {
-        title: '',
-        body: 'Lorem ipsum, blah blah blah blah blah blah blah blah blah blah',
-    }
-]
 
 class NewsBoard extends React.Component {
     state = {
@@ -104,6 +89,8 @@ class NewsBoard extends React.Component {
                 url: '/homepage/news',
             })
             this.handleResponse(response)
+
+            console.log(response)
         }
         catch (err) {
             this.handleResponse(err.response)
@@ -162,7 +149,7 @@ class NewsBoard extends React.Component {
                             _className={classes.billboard}
                             title={news[newsNo].ATTRIB_10}
                             date={news[newsNo].created}
-                            img={news[newsNo].IMG_PTH}
+                            img={news[newsNo].img_pth}
                             data={this.getDetails(newsNo)}
                             current={true}
                             big={true}
@@ -173,7 +160,7 @@ class NewsBoard extends React.Component {
                             key={item.row_id}
                             title={item.ATTRIB_10}
                             date={item.created}
-                            img={item.IMG_PTH}
+                            img={item.img_pth}
                             data={this.getDetails(index)}
                             current={this.getCurrentSlide(index)}
                         />

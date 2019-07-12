@@ -30,6 +30,7 @@ const styles = theme => ({
     topBar: {
         position: 'relative',
         height: 50,
+        borderBottom: '1px solid gray',
     },
     closeButton: {
         position: 'absolute',

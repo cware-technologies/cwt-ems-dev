@@ -20,7 +20,7 @@ const styles = theme => ({
         // display: 'inline-block',
         margin: theme.spacing.unit,
         // backgroundColor: theme.palette.grey[500],
-        [theme.breakpoints.down('sm')]: {
+        [theme.breakpoints.down('md')]: {
             height: '200px',
         },
     },
@@ -36,7 +36,7 @@ const styles = theme => ({
         padding: '0px',
         boxShadow: '2px 2px 5px 2px black',
         backgroundColor: 'lightgray',
-        [theme.breakpoints.down('sm')]: {
+        [theme.breakpoints.down('md')]: {
             height: '18%',
         },
     },
@@ -145,7 +145,8 @@ function SimpleCard(props) {
                     image={props.img}
                     title={props.title}
                     classes={{ root: classes.mediaRoot }}
-                >
+                >   
+                    {/* <img src={props.img} alt="Hell"/> */}
                     <div className={classes.title}>
                         <Typography variant={getTitleVariant()} color="inherit" align='center' classes={{ root: classes.newsHeading }} classes={{ root: classes.titleRoot }}>
                             {props.title}

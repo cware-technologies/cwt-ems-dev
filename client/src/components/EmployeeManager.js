@@ -123,7 +123,7 @@ class EditEmployee extends React.Component {
                 postn_held_id: { label : '', value: null },
                 resp_id: { label : '', value: null },
             }
-        }), () => {console.log(this.state.formData[target]);resolve()})
+        }), () => {resolve()})
       }
       else if(target === 'div_id')
           this.setState(prevState => ({
@@ -132,14 +132,14 @@ class EditEmployee extends React.Component {
                   [target] : value,
                   postn_held_id: { label : '', value: null },
               }
-          }), () => {console.log(this.state.formData[target]);resolve()})
+          }), () => {resolve()})
       else {
           this.setState(prevState => ({
               formData: {
                   ...prevState.formData,
                   [target] : value,
               }
-          }), () => {console.log(this.state.formData[target]);resolve()})
+          }), () => {resolve()})
       }
     })
   }

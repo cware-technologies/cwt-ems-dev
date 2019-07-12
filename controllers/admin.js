@@ -14,8 +14,10 @@ const models = require('../db/models'),
     Sequelize = require('sequelize'),
     sequelize = require('../db/models').sequelize,
     Op = Sequelize.Op,
-    fs = require('fs')
-    
+    fs = require('fs'),
+    path = require('path'),
+    url = require('url'),
+    multer = require('multer')
 
 async function getOrganizations(req, res, next){
     try{
@@ -550,32 +552,70 @@ async function getHRDocs(req, res, next){
     }
 }
 
-function deleteDocFromStorage(path){
+function deleteDocFromStorage(document){
     return new Promise((resolve, reject) => {
-        fs.unlink(path, error => {
+        fs.unlink(document.path, async(error) => {
             if(error)
                 reject('Cannot delete files')
-            else(
-                resolve('resolved')
-            )
+            else{
+                try{
+                    let data = await Document.destroy({
+                        where: {
+                            row_id: document.id
+                        }
+                    })
+
+                    resolve('resolved')
+                }
+                catch(err){
+                    reject('Cannot delete files')
+                }
+            }
         })
     })
     
 }
 
 async function deleteHRDocs(req, res, next){
-    let documents = req.body.documents
-    let paths = req.body.paths
+    let { documents } = req.body
 
-    console.log(documents, "     ", paths)
+    console.log(documents)
 
-    Promise.all(paths.map(path => deleteDocFromStorage(path)))
-    .then(async results => {
+    Promise.all(documents.map(document => deleteDocFromStorage(document)))
+    .then(results => {
+        res.status(200).json({
+            status: 200,
+            results,
+        })
+    })
+    .catch(err => {
+        err.status = 404
+        err.message = 'err'
+        next(err)
+    })
+}
+
+async function uploadHRDoc(req, res, next){
+    var storage = multer.diskStorage({
+        destination: (req, file, cb) => {
+            cb(null, 'public/uploads/documents')
+        },
+        filename: (req, file, cb) => {
+            var fileExtension = file.originalname.split('.')
+            cb(null, `${file.fieldname}-${Date.now()}.${fileExtension[fileExtension.length - 1]}`);
+        }
+    });
+
+    var upload = multer({ storage: storage });
+    upload.single('file')(req, res, async (err) => {
+        if(err){
+            return res.status(400).json({ status: 400, message: "Upload Failed" });
+        }
+
         try{
-            let data = await Document.destroy({
-                where: {
-                    row_id: documents
-                }
+            let data = await Document.create({
+                name: req.body.name,
+                path: req.file.path,
             })
     
             res.status(200).json({
@@ -586,35 +626,13 @@ async function deleteHRDocs(req, res, next){
         catch(err){
             err.status = 400
             err.message = `Database Error: ${err}`
-            next(err)
+            fs.unlink(req.file.path, error => {
+                next(err)
+            })
         }
-    })
-    .catch(err => {
-        err.status = 404
-        err.message = ''
-        next(err)
-    })
-}
 
-async function uploadHRDoc(req, res, next){
-    try{
-        let data = await Document.create({
-            name: req.body.name,
-            path: req.file.path,
-        })
+    })
 
-        res.status(200).json({
-            status: 200,
-            result: data,
-        })
-    }
-    catch(err){
-        err.status = 400
-        err.message = `Database Error: ${err}`
-        fs.unlink(req.file.path, error => {
-            next(err)
-        })
-    }
 }
 
 async function downloadHRDoc(req, res, next){
@@ -624,28 +642,190 @@ async function downloadHRDoc(req, res, next){
 }
 
 async function postNews(req, res, next){
-    let news = req.body
+    let message = ''
+    let upload
+    console.log(req.headers)
+    if(req.header('contains-file') === 'true'){
+        var storage = multer.diskStorage({
+            destination: (req, file, cb) => {
+                cb(null, 'public/uploads/images/news/covers')
+            },
+            filename: (req, file, cb) => {
+                var fileExtension = file.originalname.split('.')
+                cb(null, `${file.fieldname}-${Date.now()}.${fileExtension[fileExtension.length - 1]}`);
+            }
+        });
 
-    try{
-        let data = await News.create({
-            ATTRIB_10: news.title,
-            ATTRIB_01: news.body ? news.body : '',
-            type_cd: news.type,
-            status: news.status,
-            ATTRIB_02: news.link ? news.link : '',
-            bu_id: news.organization
-        })
+        upload = multer({ storage: storage });
 
-        res.status(200).json({
-            status: 200,
-            result: data,
+        upload.single('file')(req, res, async (err) => {
+            if(err){
+                return res.status(200).json({ status: 400, data: {}, message: `News Creation Failed : ${err}` });
+            }
+
+            let news = req.body
+            // let filePath = path.relative('/public', req.file.destination) + "/" + req.file.filename
+            let fileURL = req.file.path.replace(/\\/g, "/").substring("public".length);
+            console.log('PATH: ', fileURL)
+
+
+            try{
+                let data = await News.create({
+                    ATTRIB_10: news.ATTRIB_10,
+                    ATTRIB_01: news.ATTRIB_01 ? news.ATTRIB_01 : null,
+                    type_cd: news['type_cd.value'],
+                    ATTRIB_02: news.ATTRIB_02 ? news.ATTRIB_02 : null,
+                    bu_id: news.bu_id,
+                    img_pth: fileURL,
+                })
+        
+                res.status(200).json({
+                    status: 200,
+                    data,
+                })
+            }
+            catch(err){
+                err.status = 400
+                err.message = `Database Error: ${err}`
+                fs.unlink(req.file.path, error => {
+                    if(error)
+                        next(error)
+                    next(err)
+                })
+            }
         })
     }
-    catch(err){
-        err.status = 400
-        err.message = `Database Error: ${err}`
-        fs.unlink(req.file.path, error => {
-            next(err)
+    else {
+        upload = multer()
+
+        upload.none()(req, res, async (err) => {
+            if(err){
+                return res.status(200).json({ status: 400, data: {}, message: `News Creation Failed : ${err}` });
+            }
+
+            let news = req.body
+            console.log(news)
+            try{
+                let data = await News.create({
+                    ATTRIB_10: news.ATTRIB_10,
+                    ATTRIB_01: news.ATTRIB_01 ? news.ATTRIB_01 : null,
+                    type_cd: news['type_cd.value'],
+                    ATTRIB_02: news.ATTRIB_02 ? news.ATTRIB_02 : null,
+                    bu_id: news.bu_id,
+                })
+        
+                res.status(200).json({
+                    status: 200,
+                    data,
+                })
+            }
+            catch(err){
+                err.status = 400
+                err.message = `Database Error: ${err}`
+                next(err)
+            }
+        })
+    }
+}
+
+async function updateNews(req, res, next){
+    if(req.header('contains-file') === 'true'){
+        var storage = multer.diskStorage({
+            destination: (req, file, cb) => {
+                cb(null, 'public/uploads/images/news/covers')
+            },
+            filename: (req, file, cb) => {
+                var fileExtension = file.originalname.split('.')
+                cb(null, `${file.fieldname}-${Date.now()}.${fileExtension[fileExtension.length - 1]}`);
+            }
+        });
+
+        upload = multer({ storage: storage });
+
+        upload.single('file')(req, res, async (err) => {
+            if(err){
+                return res.status(200).json({ status: 400, data: {}, message: `News Update Failed : ${err}` });
+            }
+
+            let news = req.body
+
+            try{
+                let data = await News.findOne({
+                    where: { row_id: news.row_id },
+                    attributes: ['img_pth'],
+                })
+
+                let path = data.img_pth
+                path = "public" + path
+
+                fs.unlink(path, error => {
+                    
+                })
+            }
+            catch(err){
+                err.status = 400
+                next(err)
+            }
+
+            
+            // let filePath = path.relative('/public', req.file.destination) + "/" + req.file.filename
+            let fileURL = req.file.path.replace(/\\/g, "/").substring("public".length);
+
+            try{
+                let data = await News.update({
+                    ...news,
+                    type_cd: news['type_cd.value'],
+                    img_pth: fileURL,
+                },{
+                    where: {
+                        row_id: news.row_id,
+                    }
+                })
+        
+                res.status(200).json({
+                    status: 200,
+                    data,
+                })
+            }
+            catch(err){
+                err.status = 400
+                err.message = `Database Error: ${err}`
+                fs.unlink(req.file.path, error => {
+                    next(error)
+                })
+            }
+        })
+    }
+    else {
+        upload = multer()
+
+        upload.none()(req, res, async (err) => {
+            if(err){
+                return res.status(200).json({ status: 400, data: {}, message: `News Update Failed : ${err}` });
+            }
+
+            let news = req.body
+            console.log(news)
+            try{
+                let data = await News.update({
+                    ...news,
+                    type_cd: news['type_cd.value']
+                }, {
+                    where: {
+                        row_id: news.row_id
+                    }
+                })
+        
+                res.status(200).json({
+                    status: 200,
+                    data,
+                })
+            }
+            catch(err){
+                err.status = 400
+                err.message = `Database Error: ${err}`
+                next(err)
+            }
         })
     }
 }
@@ -1181,6 +1361,7 @@ module.exports = {
     uploadHRDoc,
     downloadHRDoc,
     postNews,
+    updateNews,
     changeNewsStatus,
     getInductionExitLOVS,
     postInductionExitLOVS,

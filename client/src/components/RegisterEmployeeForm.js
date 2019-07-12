@@ -98,24 +98,16 @@ let constraints = {
     // },
 };
 
-let dropdowns = [
-    {name:'dropdown_1', value: 'bu_id'},
-    {name:'dropdown_2', value: 'div_id'},
-    {name:'dropdown_3', value:'postn_held_id'},
-    // {name:'dropdown_4', value:'resp_id'},
-    // {name:'dropdown_5', value:'report_to_id'},
-]
-
 class CreateAccount extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             employee: {
                 login:'',
-                password: '',
-                firstName: '',
-                lastName: '',
-                empNum:'',
+                hash_pwd: '',
+                fst_name: '',
+                last_name: '',
+                emp_num:'',
                 bu_id: { label: '', value: null },
                 div_id: { label: '', value: null },
                 postn_held_id: { label: '', value: null },
@@ -302,22 +294,14 @@ class CreateAccount extends React.Component {
                         error={errors.login}
                         helperText={errors.login && <ul className={classes.errorList}> {errors.login.map((error)=>{ return <li className={classes.errorListItem}>{error}</li>})}</ul>}
                         id="login"
-                        label="Login *"
+                        label="Login"
+                        required={true}
                         value={employee.login}
                         onChange={this.handleTextChange}
                         onBlur={this.validate}
-                        classes={{
-                            root: classes.inputRoot,
-                        }}
                         className={classNames(classes.textField, classes.dense)}
                         margin="dense"
-                        variant="filled"
-                        InputProps={{
-                            className: classes.input,
-                        }}
-                        InputLabelProps={{
-                            className: classes.inputLabel,
-                        }}
+                        variant="outlined"
                     />
  
                     {!editMode && 
@@ -332,14 +316,10 @@ class CreateAccount extends React.Component {
                             onBlur={this.validate}
                             onChange={this.handleTextChange}
                             type={this.state.showPassword ? 'text' : 'password'}
-                            classes={{
-                                root: classes.inputRoot,
-                            }}
                             className={classNames(classes.textField, classes.dense, classes.singleSpanInput)}
                             margin="dense"
-                            variant="filled"
+                            variant="outlined"
                             InputProps={{
-                                className: classes.input,
                                 endAdornment: <InputAdornment tabIndex={-1} position="end">
                                                 <IconButton
                                                     aria-label="Toggle password visibility"
@@ -349,9 +329,6 @@ class CreateAccount extends React.Component {
                                                     {this.state.showPassword ? <Visibility /> : <VisibilityOff />}
                                                 </IconButton>
                                             </InputAdornment>
-                            }}
-                            InputLabelProps={{
-                                className: classes.inputLabel,
                             }}
                         />
                         <TextField
@@ -363,14 +340,10 @@ class CreateAccount extends React.Component {
                             value={this.state.confirmPassword}
                             onBlur={this.validate}
                             onChange={this.handleConfirmPassChange}
-                            classes={{
-                                root: classes.inputRoot,
-                            }}
                             className={classNames(classes.textField, classes.dense, classes.singleSpanInput)}
                             margin="dense"
-                            variant="filled"
+                            variant="outlined"
                             InputProps={{
-                                className: classes.input,
                                 endAdornment: <InputAdornment tabIndex={-1} position="end">
                                                 <IconButton
                                                     aria-label="Toggle password visibility"
@@ -381,56 +354,32 @@ class CreateAccount extends React.Component {
                                                 </IconButton>
                                             </InputAdornment>
                             }}
-                            InputLabelProps={{
-                                className: classes.inputLabel,
-                            }}
                         />
                     </React.Fragment>
                     }
                     <TextField
                         id="fst_name"
                         label="First Name *"
-                        classes={{
-                            root: classes.inputRoot,
-                        }}
                         className={classNames(classes.textField, classes.dense, classes.singleSpanInput)}
                         margin="dense"
-                        variant="filled"
+                        variant="outlined"
                         error={errors.fst_name}
                         helperText={errors.fst_name && <ul className={classes.errorList}> {errors.fst_name.map((error)=>{ return <li className={classes.errorListItem}>{error}</li>})}</ul>}
                         value={employee.fst_name}
                         onChange={this.handleTextChange}
                         onBlur={this.validate}
-                        InputProps={{
-                            className: classes.input,
-                        }}
-                        InputLabelProps={{
-                            className: classes.inputLabel,
-                        }}
-                        InputLabelProps={{
-                            className: classes.inputLabel,
-                        }}
                     />
                     <TextField
                         id="last_name"
                         label="Last Name *"
-                        classes={{
-                            root: classes.inputRoot,
-                        }}
                         className={classNames(classes.textField, classes.dense, classes.singleSpanInput)}
                         margin="dense"
-                        variant="filled"
+                        variant="outlined"
                         error={errors.last_name}
                         helperText={errors.last_name && <ul className={classes.errorList}> {errors.last_name.map((error)=>{ return <li className={classes.errorListItem}>{error}</li>})}</ul>}
                         value={employee.last_name}
                         onChange={this.handleTextChange}
                         onBlur={this.validate}
-                        InputProps={{
-                            className: classes.input,
-                        }}
-                        InputLabelProps={{
-                            className: classes.inputLabel,
-                        }}
                     />
                 </div>
                 <div className={classes.formSection}>
@@ -440,26 +389,14 @@ class CreateAccount extends React.Component {
                     <TextField
                         id="emp_num"
                         label="Employee ID *"
-                        classes={{
-                            root: classes.inputRoot,
-                        }}
                         className={classNames(classes.textField, classes.dense, classes.singleSpanInput)}
                         margin="dense"
-                        variant="filled"
+                        variant="outlined"
                         value={employee.emp_num}
                         error={errors.emp_num}
                         helperText={errors.emp_num && <ul className={classes.errorList}> {errors.emp_num.map((error)=>{ return <li className={classes.errorListItem}>{error}</li>})}</ul>}
                         onChange={this.handleTextChange}
                         onBlur={this.validate}
-                        InputProps={{
-                            className: classes.input,
-                        }}
-                        InputLabelProps={{
-                            className: classes.inputLabel,
-                        }}
-                        InputLabelProps={{
-                            className: classes.inputLabel,
-                        }}
                     />
                     <AsyncSelect
                         name='organization'
@@ -468,7 +405,7 @@ class CreateAccount extends React.Component {
                         query={{}}
                         value={ employee.bu_id }
                         isDisabled={false}
-                        handleSelectChange={this.handleSelectChange}
+                        handleSelectChange={this.debouncedSelectChange}
                     />
                     {errors["bu_id.value"] && <FormHelperText error><ul className={classes.errorList}> {errors["bu_id.value"].map((error)=>{ return <li className={classes.errorListItem}>{error}</li>})}</ul></FormHelperText> }
                     <AsyncSelect
@@ -478,7 +415,7 @@ class CreateAccount extends React.Component {
                         query={ { bu_id: employee.bu_id.value } }
                         value={ employee.div_id }
                         isDisabled={ employee.bu_id.value }
-                        handleSelectChange={ this.handleSelectChange }
+                        handleSelectChange={ this.debouncedSelectChange }
                     />
                     <AsyncSelect
                         name='position'
@@ -487,7 +424,7 @@ class CreateAccount extends React.Component {
                         query={ { bu_id: employee.bu_id.value, div_id: employee.div_id.value } }
                         value={ employee.postn_held_id }
                         isDisabled={ employee.div_id.value }
-                        handleSelectChange={ this.handleSelectChange }
+                        handleSelectChange={ this.debouncedSelectChange }
                     />
                     <AsyncSelect
                         name='responsibility'
@@ -496,7 +433,7 @@ class CreateAccount extends React.Component {
                         query={ { bu_id: employee.bu_id.value } }
                         value={ employee.resp_id }
                         isDisabled={ employee.bu_id.value }
-                        handleSelectChange={ this.handleSelectChange }
+                        handleSelectChange={ this.debouncedSelectChange }
                     />
                     <AsyncSelect
                         name='reports to'
@@ -505,7 +442,7 @@ class CreateAccount extends React.Component {
                         query={ { bu_id: employee.bu_id.value, div_id: employee.div_id.value } }
                         value={ employee.report_to_id }
                         isDisabled={ employee.postn_held_id.value }
-                        handleSelectChange={ this.handleSelectChange }
+                        handleSelectChange={ this.debouncedSelectChange }
                     />
                     {/* <TextField
                         id="dropdown_1"

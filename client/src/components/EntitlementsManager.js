@@ -11,6 +11,7 @@ import { getUserOrganization } from '../reducers/authReducer'
 import DataTable from './DataTable'
 import AddEditForm from './AddEditForm'
 import ModalTrigger from './ModalTrigger';
+import { alertActions } from '../actions';
 
 const viewRows = [
     { id: 'val', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Name' },
@@ -67,7 +68,7 @@ class EntitlementsManager extends React.Component{
 
     unsetEditMode = () => {
         let formdata = {}
-        viewRows.forEach(row => formdata[row.id] = '')
+        formFields.forEach(row => row.id !== 'type' ? formdata[row.id] = '' : formdata.type = 'leave_type')
         console.log(formdata)
 
         this.setState(prevState => ({
@@ -118,14 +119,19 @@ class EntitlementsManager extends React.Component{
                 data: this.state.formData,
             })
 
-            if (response.data.status >= 200 && response.data.status < 300){
+            if(response.data.status === 200){
                 this.setState(prevState => ({
                     data: newData,
                 }))
+
+                this.props.success("Record Updated Successfully!")
+            }
+            else{
+                this.props.error({message: "Record Could Not be Updated!"})
             }
         }
         catch(err){
-            
+            this.props.error({message: "Record Could Not be Updated!"})            
         }
     }
 
@@ -145,18 +151,25 @@ class EntitlementsManager extends React.Component{
                 data: data,
             })
                
-            if (response.data.status >= 200 && response.data.status < 300){            
-                this.setState(prevState => ({    
+            if(response.data.status === 200){
+                this.setState(prevState => ({
                     data: [
                         ...prevState.data,
                         response.data.data
                     ],
-                    formData: {},
                 }))
+
+                this.props.success("Record Added Successfully!")
             }
+            else{
+                this.props.error({message: "Record Could Not be Added!"})                
+                
+            }
+
+            this.unsetEditMode()
         }
         catch(err){
-
+            this.props.error({message: "Record Could Not be Added!"})                
         }
     }
 
@@ -178,14 +191,18 @@ class EntitlementsManager extends React.Component{
                 },
             })
 
-            this.setState(prevState => ({
-                data: newData,
-            }))
-
-            console.log("ADD RESPONSE: ", response)
+            if(response.data.status === 200){
+                this.setState(prevState => ({
+                    data: newData,
+                }))
+                this.props.success("Record Deleted Successfully!")                
+            }
+            else{
+                this.props.error({message: "Could Not Delete The Record"})
+            }
         }
         catch(err){
-
+            this.props.error({message: "Could Not Delete The Record"})
         }
     }
 
@@ -207,13 +224,18 @@ class EntitlementsManager extends React.Component{
                     organization: this.props.organization,
                 },
             })
-            this.setState(prevState => ({
-                data: response.data.data,
-            }))
-            console.log("RESPONSE: ", response)
+            
+            if(response.data.status === 200){
+                this.setState(prevState => ({
+                    data: response.data.data,
+                }))
+            }
+            else{
+                this.props.error({message: "Could Not Load The Leave Type Records"})                
+            }
         }
         catch(err){
-            
+            this.props.error({message: "Could Not Load The Leave Type Records"})
         }
     }
 
@@ -269,4 +291,4 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps, {})(EntitlementsManager)
+export default connect(mapStateToProps, {...alertActions})(EntitlementsManager)
