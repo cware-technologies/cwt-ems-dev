@@ -12,6 +12,7 @@ import ModalTrigger from './ModalTrigger'
 import { Button } from '@material-ui/core';
 import { getUserOrganization } from '../reducers/authReducer';
 import { alertActions } from '../actions';
+import { flattenObject } from '../helpers/utils';
 
 const responsibilityRows = [
     { id: 'name', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Name' },
@@ -310,33 +311,40 @@ class AddResponsibility extends React.Component {
     }
 
     postResponsibility = async(event, element) => {
+        let method = this.state.editMode ? 'put' : 'post'
+
         this.setState(prevState => ({
             [`${element}Form`]: {
                 ...prevState[`${element}Form`],
                 organization: this.props.organization,
             }
-        }), () => { this.sendPostRequest(element, '/admin/org-struct/responsibility') })
+        }), () => { this.sendPostRequest(element, '/admin/org-struct/responsibility', method) })
 
     }
 
     postView = async(event, element) => {
+        let method = this.state.editMode ? 'put' : 'post'
+
         this.setState(prevState => ({
             [`${element}Form`]: {
                 ...prevState[`${element}Form`],
                 organization: this.props.organization,
             }
-        }), () => { this.sendPostRequest(element, '/admin/access-rights/view') })
+        }), () => { this.sendPostRequest(element, '/admin/access-rights/view', method) })
 
     }
 
-    sendPostRequest = async (element, endpoint) => {
+    sendPostRequest = async (element, endpoint, method) => {
         let response;
+        console.log(this.state[`${element}Form`])
+        let data = flattenObject(this.state[`${element}Form`], '')
+        console.log(data)
 
         try{
             response = await axios({
-                method: 'post',
+                method: method,
                 url: `${endpoint}`,
-                data: this.state[`${element}Form`],
+                data,
             })
             console.log(response)
             this.handlePostResponse(response, element)

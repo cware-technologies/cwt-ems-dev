@@ -404,6 +404,7 @@ class CreateAccount extends React.Component {
                         endpoint='/admin/org-struct/organization'
                         query={{}}
                         value={ employee.bu_id }
+                        mapping={['name', 'row_id', 'desc']}
                         isDisabled={false}
                         handleSelectChange={this.debouncedSelectChange}
                     />
@@ -414,6 +415,7 @@ class CreateAccount extends React.Component {
                         endpoint='/admin/org-struct/division'
                         query={ { bu_id: employee.bu_id.value } }
                         value={ employee.div_id }
+                        mapping={['name', 'row_id', 'desc']}
                         isDisabled={ employee.bu_id.value }
                         handleSelectChange={ this.debouncedSelectChange }
                     />
@@ -423,6 +425,7 @@ class CreateAccount extends React.Component {
                         endpoint='/admin/org-struct/position'
                         query={ { bu_id: employee.bu_id.value, div_id: employee.div_id.value } }
                         value={ employee.postn_held_id }
+                        mapping={['name', 'row_id', 'desc']}
                         isDisabled={ employee.div_id.value }
                         handleSelectChange={ this.debouncedSelectChange }
                     />
@@ -432,6 +435,7 @@ class CreateAccount extends React.Component {
                         endpoint='/admin/org-struct/responsibility'
                         query={ { bu_id: employee.bu_id.value } }
                         value={ employee.resp_id }
+                        mapping={['name', 'row_id', 'desc']}
                         isDisabled={ employee.bu_id.value }
                         handleSelectChange={ this.debouncedSelectChange }
                     />
@@ -441,6 +445,7 @@ class CreateAccount extends React.Component {
                         endpoint='/admin/org-struct/position'
                         query={ { bu_id: employee.bu_id.value, div_id: employee.div_id.value } }
                         value={ employee.report_to_id }
+                        mapping={['name', 'row_id', 'desc']}
                         isDisabled={ employee.postn_held_id.value }
                         handleSelectChange={ this.debouncedSelectChange }
                     />

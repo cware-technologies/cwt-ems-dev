@@ -148,6 +148,8 @@ class EmployeeDetails extends React.PureComponent{
                         headerTitle="Official Details"
                         detailType='official_details'
                         rows={officialRows}
+                        link={'/employee-manager'}
+                        search={`?id=${object.row_id}`}
                         schema={officialSchema}
                         data={data.filter(row => row.type === 'official_details')}
                         handleSubmit={this.handleSubmit}

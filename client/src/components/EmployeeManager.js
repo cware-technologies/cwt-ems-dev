@@ -48,6 +48,16 @@ class EditEmployee extends React.Component {
     editMode: false,
   }
 
+  componentDidMount() {
+    let params = new URLSearchParams(this.props.location.search);
+    if(params.get("id")){
+      this.getList({ row_id: params.get("id") })
+    }
+    else{
+      this.getList()
+    }
+  }
+
   setEditMode = (record) => {
     let employee = record.employee
     let newData = {
@@ -64,9 +74,17 @@ class EditEmployee extends React.Component {
         label: employee.division.name,
         value: employee.division.row_id
       } : {label:"", value:null},
-      postn_held_id: employee.position ? { 
-        label: employee.position.name,
-        value: employee.position.row_id
+      postn_held_id: employee.position_held ? { 
+        label: employee.position_held.name,
+        value: employee.position_held.row_id
+      } : {label:"", value:null},
+      resp_id: employee.responsibility ? { 
+        label: employee.responsibility.name,
+        value: employee.responsibility.row_id
+      } : {label:"", value:null},
+      report_to_id: employee.manager ? { 
+        label: employee.manager.name,
+        value: employee.manager.row_id
       } : {label:"", value:null},
     }
     this.setState(prevState => ({
@@ -122,6 +140,7 @@ class EditEmployee extends React.Component {
                 div_id: { label : '', value: null },
                 postn_held_id: { label : '', value: null },
                 resp_id: { label : '', value: null },
+                report_to_id: { label : '', value: null },
             }
         }), () => {resolve()})
       }
@@ -131,6 +150,7 @@ class EditEmployee extends React.Component {
                   ...prevState.formData,
                   [target] : value,
                   postn_held_id: { label : '', value: null },
+                  report_to_id: { label : '', value: null },
               }
           }), () => {resolve()})
       else {
@@ -301,11 +321,7 @@ class EditEmployee extends React.Component {
     }))
   }
 
-  componentDidMount() {
-    this.getList()
-  }
-
-  getList = async () => {
+  getList = async (searchQuery) => {
     let response
 
     this.setState(prevState => ({
@@ -320,7 +336,7 @@ class EditEmployee extends React.Component {
           'content-type': 'application/json',
         },
         params: {
-          query: this.state.query,
+          query: searchQuery || this.state.query,
           organization: this.props.organization,
         },
       })

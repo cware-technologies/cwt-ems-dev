@@ -25,7 +25,7 @@ const ProfileEditForm = lazy(() => import('./ProfileEditForm'));
 const Attendance = lazy(() => import('./Attendance'));
 const Notifications = lazy(() => import('./Notifications'));
 const PasswordReset = lazy(() => import('./PasswordReset'));
-const RegisterOrganization = lazy(() => import('./RegisterOrganization'));
+const OrganizationStructure = lazy(() => import('./OrganizationStructure'));
 const AddResponsibility = lazy(() => import('./AddResponsibility'))
 const HRDocsUpload = lazy(() => import('./HRDocsUpload'))
 const InductionChecklist = lazy(() => import('./InductionChecklist'));
@@ -106,7 +106,7 @@ class Portal extends React.Component {
           <Switch>
             <Route path={`${match.path}dashboard`} component={Dashboard} />
             <Route path={`${match.path}register-user`} component={RegisterEmployeeForm} />
-            <Route path={`${match.path}organization-structure`} component={RegisterOrganization} />
+            <Route path={`${match.path}organization-structure`} component={OrganizationStructure} />
             <Route path={`${match.path}leaves`} component={LeaveManager} />
             <Route path={`${match.path}manage-leaves`} component={AdminLeaves} />
             <Route path={`${match.path}apply-leave`} component={LeaveForm} />

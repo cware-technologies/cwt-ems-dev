@@ -15,6 +15,7 @@ router.delete('/org-struct/position', adminController.deletePosition)
 
 router.get('/org-struct/responsibility', adminController.getResponsibilities)
 router.post('/org-struct/responsibility', adminController.postResponsibilities)
+router.put('/org-struct/responsibility', adminController.updateResponsibilities)
 
 router.get('/access-rights/view', adminController.getViews)
 router.post('/access-rights/view', adminController.postView)
@@ -32,6 +33,7 @@ router.post('/hr-docs/upload', adminController.uploadHRDoc)
 
 router.post('/news', adminController.postNews)
 router.put('/news', adminController.updateNews)
+router.delete('/news', adminController.deleteNews);
 router.post('/news/changeStatus', adminController.changeNewsStatus)
 
 router.get('/induction-lovs', adminController.getInductionExitLOVS)

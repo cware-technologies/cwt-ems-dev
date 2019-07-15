@@ -12,6 +12,7 @@ import AddEditForm from './AddEditForm'
 import ModalTrigger from './ModalTrigger'
 
 import { alertActions } from "../actions";
+import { flattenObject } from "../helpers/utils";
 
 class SimpleTable extends React.Component {
     modalRef = React.createRef()
@@ -32,74 +33,75 @@ class SimpleTable extends React.Component {
 
     async componentDidMount(){
         this.getData()
-        this.getSelectData()
+        // this.getSelectData()
     }
 
-    getSelectData = () => {
-        let indeterminates = []
-        let others = []
+    // getSelectData = () => {
+    //     let indeterminates = []
+    //     let others = []
 
-        this.props.fields.forEach(row => {
-            if(row.indeterminate)
-                indeterminates.push(row)
-            else
-                others.push(row)
-        })
+    //     this.props.fields.forEach(row => {
+    //         if(row.indeterminate)
+    //             indeterminates.push(row)
+    //         else
+    //             others.push(row)
+    //     })
 
-        console.log(indeterminates)
+    //     console.log(indeterminates)
 
-        if(indeterminates.length > 0){
-            console.log("true")
-            let promises = indeterminates.map((row, index) => {
-                return axios({
-                    method: 'get',
-                    url: `${row.requestParams.endPoint}`,
-                    params: row.requestParams.params || {},
-                })
-            })
+    //     if(indeterminates.length > 0){
+    //         console.log("true")
+    //         let promises = indeterminates.map((row, index) => {
+    //             console.log("PARAMS: ", row.requestParams.params)
+    //             return axios({
+    //                 method: 'get',
+    //                 url: `${row.requestParams.endPoint}`,
+    //                 params: row.requestParams.params || {},
+    //             })
+    //         })
 
-            console.log(promises)
+    //         console.log(promises)
 
-            Promise.all(promises)
-            .then(result => {
-                for(let i = 0; i < result.length; i++){
-                    console.log("SSEL RES: ", result)
-                    let selectMapping = indeterminates[i].requestParams.selectMapping
-                    let mapping = result[i].data.result.map(row =>
-                        ({
-                            name: row[selectMapping[0]],
-                            value: row[selectMapping[1]]
-                        })
-                    )
+    //         Promise.all(promises)
+    //         .then(result => {
+    //             for(let i = 0; i < result.length; i++){
+    //                 console.log("SSEL RES: ", result)
+    //                 let selectMapping = indeterminates[i].requestParams.selectMapping
+    //                 let mapping = result[i].data.result.map(row =>
+    //                     ({
+    //                         name: row[selectMapping[0]],
+    //                         value: row[selectMapping[1]]
+    //                     })
+    //                 )
                     
-                    console.log("MAPPING: ", mapping)
-                    indeterminates[i].selectOptions = mapping
-                }
+    //                 console.log("MAPPING: ", mapping)
+    //                 indeterminates[i].selectOptions = mapping
+    //             }
 
-                let fields = [
-                    ...others,
-                    ...indeterminates,
-                ]
+    //             let fields = [
+    //                 ...others,
+    //                 ...indeterminates,
+    //             ]
 
-                this.setState(prevState => ({
-                    fields,
-                }), () => console.log('FIELDS: ', this.state.fields))
+    //             this.setState(prevState => ({
+    //                 fields,
+    //             }), () => console.log('FIELDS: ', this.state.fields))
 
-                console.log(indeterminates)
-            })
-            .catch(err => {
-                this.setState(prevState => ({
-                    fields: this.props.fields
-                }))
-            })
-        }
-        else{
-            console.log("false")
-            this.setState(prevState => ({
-                fields: this.props.fields,
-            }))
-        }
-    }
+    //             console.log(indeterminates)
+    //         })
+    //         .catch(err => {
+    //             this.setState(prevState => ({
+    //                 fields: this.props.fields
+    //             }))
+    //         })
+    //     }
+    //     else{
+    //         console.log("false")
+    //         this.setState(prevState => ({
+    //             fields: this.props.fields,
+    //         }))
+    //     }
+    // }
 
     getData = async () => {
         let response
@@ -185,11 +187,13 @@ class SimpleTable extends React.Component {
     sendPostRequest = async () => {
         let response;
 
+        let data = flattenObject(this.state.entity)
+
         try{
             response = await axios({
                 method: 'post',
                 url: `${this.props.endpoint}`,
-                data: this.state.entity,
+                data,
             })
 
             this.handlePostResponse(response)
@@ -310,8 +314,8 @@ class SimpleTable extends React.Component {
     // }
 
     render(){
-        let {classes, title, headers, schema, clearSelection} = this.props
-        let {entity, data, editMode, fields} = this.state
+        let {classes, title, headers, schema, clearSelection, fields} = this.props
+        let {entity, data, editMode} = this.state
 
         let addComponent = <ModalTrigger
                                 IconButton={

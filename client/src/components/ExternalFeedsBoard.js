@@ -137,9 +137,9 @@ class ExternalFeedsBoard extends React.Component {
             <Tab icon={<LocalIcon />} label="Local" classes={{ labelIcon: classes.tabLabel, }} />
           </Tabs>
           <TabContainer>
-            {value === 0 && <div><List>{news.filter(item => item.type_cd === 'Economy').map(item => <ListItem><Link href={item.ATTRIB_02}>{item.ATTRIB_10}</Link></ListItem>)}</List></div>}
-            {value === 1 && <div><List>{news.filter(item => item.type_cd === 'Technology').map(item => <ListItem><Link href={item.ATTRIB_02}>{item.ATTRIB_10}</Link></ListItem>)}</List></div>}
-            {value === 2 && <div><List>{news.filter(item => item.type_cd === 'Local').map(item => <ListItem><Link href={item.ATTRIB_02}>{item.ATTRIB_10}</Link></ListItem>)}</List></div>}
+            {value === 0 && <div><List>{news.filter(item => item.type_cd === 'Economy').map(item => <ListItem><Link href={item.ATTRIB_02} target="_blank">{item.ATTRIB_10}</Link></ListItem>)}</List></div>}
+            {value === 1 && <div><List>{news.filter(item => item.type_cd === 'Technology').map(item => <ListItem><Link href={item.ATTRIB_02} target="_blank">{item.ATTRIB_10}</Link></ListItem>)}</List></div>}
+            {value === 2 && <div><List>{news.filter(item => item.type_cd === 'Local').map(item => <ListItem><Link href={item.ATTRIB_02} target="_blank">{item.ATTRIB_10}</Link></ListItem>)}</List></div>}
           </TabContainer>
         </Paper>
       </div>

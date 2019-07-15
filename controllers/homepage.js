@@ -38,17 +38,6 @@ async function getAllNews(req, res, next) {
     
 }
 
-async function deleteNews(req, res, next) {
-    try{
-        let data = News.destroy({ where: { row_id: req.body.row_id }})
-    }
-    catch(err){
-        err.status = 400
-        err.message = `Database Error: ${err}`
-        next(err)
-    }
-}
-
 async function getNews(req, res, next) {
     try{
         let data = await News.findAll({
@@ -151,7 +140,6 @@ async function getExternalFeeds(req, res, next) {
 
 module.exports = {
     getAllNews,
-    deleteNews,
     getNews,
     getEmployeeNews,
     getAnnouncements,

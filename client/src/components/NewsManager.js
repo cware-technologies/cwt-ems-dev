@@ -355,7 +355,7 @@ class NewsManager extends React.Component{
         try{
             response = await axios({
                 method: 'delete',
-                url: '/homepage/news',
+                url: '/admin/news',
                 headers: {
                     'content-type': 'application/json',
                 },

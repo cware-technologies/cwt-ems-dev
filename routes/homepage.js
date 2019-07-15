@@ -8,7 +8,5 @@ router.get('/news', jwtAuthenticate, homepageController.getNews);
 router.get('/employee-news', jwtAuthenticate, homepageController.getEmployeeNews);
 router.get('/announcements', jwtAuthenticate, homepageController.getAnnouncements);
 router.get('/external-feeds', jwtAuthenticate, homepageController.getExternalFeeds);
-router.delete('/news', jwtAuthenticate, homepageController.deleteNews);
-
 
 module.exports = router;

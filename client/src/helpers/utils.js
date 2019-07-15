@@ -56,18 +56,43 @@ export const capitalize = (string) => {
   return sentence;
 }
 
-export const getFormDataFromObject = object =>
-  Object.keys(object).reduce((formData, key) => {
-    formData.append(key, object[key]);
-    return formData;
-  }, new FormData());
+function dive(currentKey, into, target) {
+  for (var i in into) {
+      if (into.hasOwnProperty(i)) {
+          var newKey = i;
+          var newVal = into[i];
+          
+          if (currentKey.length > 0) {
+            newKey = currentKey + '.' + i;
+          }
+          
+          if(newVal === null){
+            target[newKey] = newVal;
+          }
+          else if (typeof newVal === "object") {
+            dive(newKey, newVal, target);
+          } else {
+            target[newKey] = newVal;
+          }
+      }
+  }
+}
+
+ export function flattenObject(arr) {
+  var newObj = {};
+  dive("", arr, newObj);
+  return newObj;
+}
 
 
 export function objectToFormData(obj, rootName, ignoreList) {
     var formData = new FormData();
 
+    console.log("OBJECTTOFORMDATA")
+
     function appendFormData(data, root) {
         if (!ignore(root)) {
+          console.log(root, data)
             root = root || '';
             if (data instanceof File) {
                 formData.append(root, data);
@@ -88,6 +113,7 @@ export function objectToFormData(obj, rootName, ignoreList) {
             } else {
                 if (data !== null && typeof data !== 'undefined') {
                     formData.append(root, data);
+                    console.log(formData)
                 }
             }
         }
@@ -100,5 +126,6 @@ export function objectToFormData(obj, rootName, ignoreList) {
 
     appendFormData(obj, rootName);
 
+    console.log(formData)
     return formData;
 }

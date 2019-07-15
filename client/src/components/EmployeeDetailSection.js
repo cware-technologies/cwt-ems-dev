@@ -1,5 +1,6 @@
 import React from 'react'
 import { Formik, FormikProps, Form, Field, ErrorMessage } from 'formik';
+import { withRouter, Link } from 'react-router-dom'
 import { withStyles } from '@material-ui/core/styles'
 import { Typography } from '@material-ui/core';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
@@ -146,15 +147,16 @@ class EmployeeDetailSection extends React.Component {
     }
 
     render() {
-        let { data, rows, classes, headerTitle, detailType, expanded, defaultExpanded } = this.props
-        
+        let { data, rows, classes, headerTitle, detailType, match, link, search, expanded, defaultExpanded } = this.props
+        console.log("MATCH: ", match)
         return (
             <ExpansionPanel expanded={expanded} defaultExpanded={defaultExpanded} >
                 <ExpansionPanelSummary classes={{ content: classes.division }} expandIcon={expanded || <ExpandMoreIcon />}>
                     <Typography variant="h6" gutterBottom component="h2" className={classes.headerTitle}>
                         {headerTitle}
                     </Typography>
-                    <ModalTrigger
+                    {link ? <Link to={{ pathname: `/portal/employee-manager`, search: search }} >Edit</Link>
+                    : <ModalTrigger
                         title="Edit"
                         button
                     >
@@ -182,6 +184,7 @@ class EmployeeDetailSection extends React.Component {
                             }
                         />
                     </ModalTrigger>
+                    }
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
                     <div className={classes.infoContainer}>
@@ -205,4 +208,4 @@ class EmployeeDetailSection extends React.Component {
     }
 }
 
-export default withStyles(styles)(EmployeeDetailSection)
+export default withRouter(withStyles(styles)(EmployeeDetailSection))

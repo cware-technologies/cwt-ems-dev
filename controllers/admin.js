@@ -50,17 +50,29 @@ async function getOrganizations(req, res, next){
 async function postOrganization(req, res, next){
     let organization = req.body
 
+    console.log(organization)
+
     if(!organization.par_row_id){
         organization.par_row_id = 1
     }
 
     try{
-        let data = await Organization.upsert(organization)
+        let data = await Organization.upsert({
+            ...organization,
+            par_row_id: organization['par_row_id.value'],
+        })
         try{
             let data2 = await Organization.findOne({
                 where: { 
                     name: organization.name
-                }
+                },
+                include: [
+                    {
+                        model: Organization,
+                        as: 'parent',
+                        attributes: ['row_id', 'name'],
+                    }
+                ]
             })
             res.status(200).json({
                 status: 200,
@@ -136,13 +148,28 @@ async function postDivision(req, res, next){
     let division = req.body
 
     try{
-        let data = await Division.upsert(division)
+        let data = await Division.upsert({
+            ...division,
+            par_row_id: division['par_row_id.value']
+        })
         
         try{
             let data2 = await Division.findOne({
                 where: { 
                     name: division.name
-                }
+                },
+                include: [
+                    {
+                        model: Organization,
+                        as: 'organization',
+                        attributes: ['row_id', 'name'],
+                    },
+                    {
+                        model: Division,
+                        as: 'parent',
+                        attributes: ['row_id', 'name'],
+                    },
+                ]
             })
             res.status(200).json({
                 status: 200,
@@ -223,13 +250,33 @@ async function postPosition(req, res, next){
     let position = req.body
 
     try{
-        let data = await Position.upsert(position)
+        let data = await Position.upsert({
+            ...position,
+            par_row_id: position['par_row_id.value'],
+        })
 
         try{
             let data2 = await Position.findOne({
                 where: {
                     name: position.name,
-                }
+                },
+                include: [
+                    {
+                        model: Organization,
+                        as: 'organization',
+                        attributes: ['row_id', 'name'],
+                    },
+                    {
+                        model: Division,
+                        as: 'division',
+                        attributes: ['row_id', 'name'],
+                    },
+                    {
+                        model: Position,
+                        as: 'parent',
+                        attributes: ['row_id', 'name'],
+                    },
+                ]
             })
 
             res.status(200).json({
@@ -300,8 +347,60 @@ async function getResponsibilities(req, res, next){
 async function postResponsibilities(req, res, next){
     let responsibility = req.body
 
+    console.log(responsibility)
+
     try{
-        let data = await Responsibility.upsert(responsibility)
+        let data = await Responsibility.create({
+            ...responsibility,
+            bu_id: responsibility['bu_id.value'],
+        })
+
+        try{
+            let data2 = await Responsibility.findOne({
+                where: {
+                    row_id: data.row_id
+                },
+                include: [
+                    {
+                        model: Organization,
+                        as: 'organization',
+                        attributes: ['row_id', 'name'],
+                    },
+                ]
+            })
+
+            res.status(200).json({
+                status: 200,
+                result: data2,
+            })
+        }
+        catch(err){
+            err.status = 400
+            err.message = `Database Error: ${err}`
+            next(err)
+        }
+    }
+    catch(err){
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function updateResponsibilities(req, res, next){
+    let responsibility = req.body
+
+    console.log(responsibility)
+
+    try{
+        let data = await Responsibility.update({
+            ...responsibility,
+            bu_id: responsibility['bu_id.value'],
+        }, {
+            where: {
+                row_id: responsibility.row_id,
+            }
+        })
 
         try{
             let data2 = await Responsibility.findOne({
@@ -830,6 +929,23 @@ async function updateNews(req, res, next){
     }
 }
 
+async function deleteNews(req, res, next) {
+    try{
+        let data = News.destroy({ where: { row_id: req.body.row_id }})
+
+        res.status(200).json({
+            status: 200,
+            message: "Post Successfully Deleted.",
+            data,
+        })
+    }
+    catch(err){
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
 async function changeNewsStatus(req, res, next){
     let checked = req.body.checked
     let news = req.body.news
@@ -1350,6 +1466,7 @@ module.exports = {
     deletePosition,
     getResponsibilities,
     postResponsibilities,
+    updateResponsibilities,
     getViews,
     postView,
     getResponsibilityViews,
@@ -1362,6 +1479,7 @@ module.exports = {
     downloadHRDoc,
     postNews,
     updateNews,
+    deleteNews,
     changeNewsStatus,
     getInductionExitLOVS,
     postInductionExitLOVS,

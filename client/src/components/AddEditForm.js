@@ -150,8 +150,9 @@ class AddEditForm extends React.Component {
                         name={field.label}
                         id={field.id}
                         endpoint={field.requestParams.endPoint}
-                        query={field.requestParams.query || {}}
-                        value={field.defaultValue ? field.defaultValue : object[field.id]}
+                        query={field.requestParams.params || {}}
+                        value={field.defaultValue ? field.defaultValue : object[field.id] }
+                        mapping={field.requestParams.selectMapping}
                         isDisabled={false}
                         handleSelectChange={this.handleSelectChange}
                     /> :

@@ -72,6 +72,7 @@ class AsyncSelect extends React.Component {
 
     getOptions = async () => {
         let response
+        let selectMapping = this.props.mapping
 
         console.log("ENDPOINT!!!: ", this.props.endpoint)
         this.setState(prevState => ({
@@ -86,9 +87,9 @@ class AsyncSelect extends React.Component {
             })
 
             let responseOptions = response.data.result.map(row => ({
-                label: row.name,
-                subLabel: row.desc,
-                value: row.row_id,
+                label: row[selectMapping[0]],
+                subLabel: row[selectMapping[2]],
+                value: row[selectMapping[1]],
             }))
 
             if (response.data.status === 200) {
@@ -113,6 +114,10 @@ class AsyncSelect extends React.Component {
         }
     }
 
+    getValue = (value) => {
+        return typeof value === 'object' ? value : this.state.options.filter(ele => ele.value === value)
+    }
+
     render() {
         let { options, isLoading } = this.state
         let { isDisabled, name, value } = this.props
@@ -126,7 +131,7 @@ class AsyncSelect extends React.Component {
                 isDisabled={ isDisabled === false ? false : isDisabled === true? true : !isDisabled || isLoading }
                 isLoading={isLoading}
                 isClearable={false}
-                value={value}
+                value={this.getValue(value)}
                 onChange={this.handleChange}
                 components={{
                     ValueContainer: CustomValueContainer,
