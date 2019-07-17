@@ -23,7 +23,7 @@ const responsibilityRows = [
 const responsibilityFields = [
     { id: 'name', type:'text', label: 'Name' },
     { id: 'desc', type:'text', label: 'Description' },
-    { id: 'bu_id', name: 'organization', type:'select', label: 'Organization', indeterminate: true, requestParams: {endPoint: '/admin/org-struct/organization', selectMapping: ['name', 'row_id'], } },
+    { id: 'bu_id', name: 'organization', type:'select', label: 'Organization', indeterminate: true, requestParams: {endPoint: '/admin/org-struct/organization', selectMapping: ['name', 'row_id', 'desc'], } },
 ]
 
 const responsibilitySchema = {
@@ -328,7 +328,7 @@ class AddResponsibility extends React.Component {
         this.setState(prevState => ({
             [`${element}Form`]: {
                 ...prevState[`${element}Form`],
-                organization: this.props.organization,
+                bu_id: this.props.organization,
             }
         }), () => { this.sendPostRequest(element, '/admin/access-rights/view', method) })
 
@@ -366,14 +366,20 @@ class AddResponsibility extends React.Component {
         }
 
         else if (res.data.status >= 200 && res.data.status < 300) {
-            this.setState(prevState => ({
-                [`${element}Data`]: [
-                    ...prevState[`${element}Data`],
-                    res.data.result,
-                ]
-            }))
 
-            this.props.success("Action Successful!")
+            if(res.data.inserted){
+                this.props.success("Action Successfull!")
+
+                this.setState(prevState => ({
+                    [`${element}Data`]: [
+                        ...prevState[`${element}Data`],
+                        res.data.result,
+                    ]
+                }))
+            }
+            else if(!res.data.inserted){
+                this.props.warning("View Already Exists.")
+            }
         }
     }
 

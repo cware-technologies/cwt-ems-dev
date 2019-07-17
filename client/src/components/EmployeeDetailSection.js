@@ -1,15 +1,18 @@
 import React from 'react'
+import axios from 'axios';
+import compose from 'recompose/compose'
 import { Formik, FormikProps, Form, Field, ErrorMessage } from 'formik';
+import { connect } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom'
 import { withStyles } from '@material-ui/core/styles'
-import { Typography } from '@material-ui/core';
+import { Typography, Button } from '@material-ui/core';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ModalTrigger from './ModalTrigger'
-import { getDate } from '../helpers/utils'
-import { getDateFormValue } from '../helpers/utils'
+import { getCellValue, getDate, getDateFormValue } from '../helpers/utils'
+import { getUserOrganization } from '../reducers/authReducer';
 
 const styles = theme => ({
     container: {
@@ -130,6 +133,46 @@ const getFormElement = (row, values) => {
 }
 
 class EmployeeDetailSection extends React.Component {
+    state = {
+        rows: [],
+    }
+
+    componentDidMount(){
+        if(this.props.indeterminate)
+            this.getRows()
+        else
+            this.setState(prevState => ({
+                rows: this.props.rows,
+            }))
+    }
+
+    getRows = async () => {
+        let response
+        let associations = {}
+        let rows
+
+        try{
+            response = await axios({
+                method: 'get',
+                url: this.props.endpoint,
+                params: {
+                    bu_id: this.props.organization,
+                }
+            })
+
+            console.log(response)
+            rows = response.data.result.map(ele => ({ label: ele.val, title: ele.val, id: 'ATTRIB_01', type: 'text'}))
+            response.data.result.forEach(ele => associations[ele.val] = ele.row_id )
+
+            this.setState(prevState => ({
+                rows,
+                associations,
+            }), () => console.log("STOOT: ",this.state))
+        }
+        catch(err){
+            console.log("EXCEPTION!!!", err)
+        }
+    }
     
     getInitialValues = () => {
         let {data} = this.props
@@ -139,7 +182,7 @@ class EmployeeDetailSection extends React.Component {
             return data
         }
 
-        this.props.rows.forEach(row => {
+        this.state.rows.forEach(row => {
             let value = data.filter(element => element.name === row.label )[0]
             initialValues[row.label] = value && value.ATTRIB_01
         });
@@ -147,57 +190,72 @@ class EmployeeDetailSection extends React.Component {
     }
 
     render() {
-        let { data, rows, classes, headerTitle, detailType, match, link, search, expanded, defaultExpanded } = this.props
-        console.log("MATCH: ", match)
+        let { rows, associations } = this.state
+        let { data, classes, headerTitle, detailType, link, search, expanded, defaultExpanded, indeterminate } = this.props
+        // rows = indeterminate ? this.state.rows : this.props.rows
+        console.log(this.props.headerTitle, '  ROWWWWWWSSSSSSSSSSSSSS', rows)
         return (
             <ExpansionPanel expanded={expanded} defaultExpanded={defaultExpanded} >
                 <ExpansionPanelSummary classes={{ content: classes.division }} expandIcon={expanded || <ExpandMoreIcon />}>
                     <Typography variant="h6" gutterBottom component="h2" className={classes.headerTitle}>
                         {headerTitle}
                     </Typography>
-                    {link ? <Link to={{ pathname: `/portal/employee-manager`, search: search }} >Edit</Link>
-                    : <ModalTrigger
-                        title="Edit"
-                        button
-                    >
-                        <Formik
-                            initialValues={this.getInitialValues()}
-                            validate={this.props.schema}
-                            onSubmit={(values, formikBag) => this.props.handleSubmit(values, formikBag, detailType)}
+                    {link ? 
+                        <Link to={{ pathname: `/portal/employee-manager`, search: search }} style={{ textDecoration: 'none' }}>
+                            <Button
+                                component="button"
+                                variant="outlined"
+                                color='primary'
+                            >Edit</Button>
+                        </Link>
+                    : 
+                    <div>
+                        <ModalTrigger
+                            title="Edit"
+                            button
+                        >
+                            <Formik
+                                initialValues={this.getInitialValues()}
+                                validate={this.props.schema}
+                                onSubmit={(values, formikBag) => this.props.handleSubmit(values, formikBag, detailType, associations || null)}
 
-                            render={formProps => {
-                                return (
-                                    <Form>
-                                        {
-                                            rows.map(row => getFormElement(row, formProps.values))
-                                        }
-                                        <button
-                                            type="submit"
-                                            disabled={formProps.isSubmitting}
-                                            style={{ display: 'block', marginTop: '10px' }}
-                                        >
-                                            Save
-                                       </button>
-                                    </Form>
-                                )
-                            }
-                            }
-                        />
-                    </ModalTrigger>
+                                render={formProps => {
+                                    return (
+                                        <Form>
+                                            {
+                                                rows.map(row => getFormElement(row, formProps.values))
+                                            }
+                                            <button
+                                                type="submit"
+                                                disabled={formProps.isSubmitting}
+                                                style={{ display: 'block', marginTop: '10px' }}
+                                            >
+                                                Save
+                                            </button>
+                                        </Form>
+                                    )
+                                }
+                                }
+                            />
+                        </ModalTrigger>
+                    </div>
                     }
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
                     <div className={classes.infoContainer}>
                         {rows.map(row => {
+                            console.log('DATA: ', data)
                             let value = Array.isArray(data) ? data.filter(item => {
                                 return item.name === row.label
-                            })[0] : data
+                            })[0] || {} : data
+                            console.log(value)
+                            value = getCellValue(value, row.id)
                             console.log("VALUE RENDER: ", value)
                             console.log(row.id)
                             return (
                                 <React.Fragment>
                                     <Typography variant="body2" component="h5" color='default' className={classes.infoAttribute}>{row.title}</Typography>
-                                    <Typography variant="body2" component="h6" color='secondary' className={classes.infoValue}>{value ? row.type === 'date' && value[row.id] ? getDate(value[row.id]).toDateString() : value[row.id] : ""}</Typography>
+                                    <Typography variant="body2" component="h6" color='secondary' className={classes.infoValue}>{value ? row.type === 'date' && value ? getDate(value).toDateString() : value : ""}</Typography>
                                 </React.Fragment>
                             )
                         })}
@@ -208,4 +266,11 @@ class EmployeeDetailSection extends React.Component {
     }
 }
 
-export default withRouter(withStyles(styles)(EmployeeDetailSection))
+const mapStateToProps = (state) => ({
+    organization: getUserOrganization(state),
+})
+
+export default compose(
+    withStyles(styles),
+    connect(mapStateToProps, {})
+)(EmployeeDetailSection)

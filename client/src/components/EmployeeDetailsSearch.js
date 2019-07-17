@@ -68,7 +68,7 @@ class EmployeeDetailsSearch extends React.Component {
 
     clearSuggestions = () => {
         this.setState({
-            suggestions: []
+            suggestions: [],
         });
     }
 

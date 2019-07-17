@@ -55,6 +55,11 @@ router.delete('/leave-types', adminController.deleteLeaveTypeLOVS)
 router.get('/employee/entitlements', adminController.getEmployeeEntitlements)
 router.delete('/employee/entitlements', adminController.deleteEmployeeEntitlements)
 
+router.get('/employee/assets', adminController.getAssetLOVS)
+router.post('/employee/assets', adminController.postAssetLOVS)
+router.put('/employee/assets', adminController.updateAssetLOVS)
+router.delete('/employee/assets', adminController.deleteAssetLOVS)
+
 router.get('/employee/details', adminController.searchEmployeeDetails)
 router.post('/employee/details', adminController.upsertEmployeeDetails)
 

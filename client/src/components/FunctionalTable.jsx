@@ -206,6 +206,7 @@ class SimpleTable extends React.Component {
     }
 
     handlePostResponse = (res) => {
+        console.log(res)
         if (res.data.status >= 400) {
             this.setState(prevState => ({
                 

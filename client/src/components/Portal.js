@@ -26,7 +26,7 @@ const Attendance = lazy(() => import('./Attendance'));
 const Notifications = lazy(() => import('./Notifications'));
 const PasswordReset = lazy(() => import('./PasswordReset'));
 const OrganizationStructure = lazy(() => import('./OrganizationStructure'));
-const AddResponsibility = lazy(() => import('./AddResponsibility'))
+const AccessRights = lazy(() => import('./AccessRights'))
 const HRDocsUpload = lazy(() => import('./HRDocsUpload'))
 const InductionChecklist = lazy(() => import('./InductionChecklist'));
 const EmployeeInductionExit = lazy(() => import('./EmployeeInductionExit'));
@@ -36,6 +36,7 @@ const EmployeeAttendanceList = lazy(() => import('./EmployeeAttendanceList'));
 const EmployeeDetailsSearch = lazy(() => import('./EmployeeDetailsSearch'));
 const EmployeeManager = lazy(() => import('./EmployeeManager'));
 const NewsManager = lazy(() => import('./NewsManager'));
+const AssetManager = lazy(() => import('./AssetManager'));
 
 const styles = theme => ({
   root: {
@@ -119,7 +120,7 @@ class Portal extends React.Component {
             <Route path={`${match.path}attendance`} component={Attendance} />
             <Route path={`${match.path}notifications`} component={Notifications} />
             <Route path={`${match.path}password-reset`} component={PasswordReset} />
-            <Route path={`${match.path}access-rights`} component={AddResponsibility} />
+            <Route path={`${match.path}access-rights`} component={AccessRights} />
             <Route path={`${match.path}hr-documents`} component={HRDocsUpload} />
             <Route path={`${match.path}induction-list-admin`} component={InductionChecklist} />
             <Route path={`${match.path}employee-induction-exit`} component={EmployeeInductionExit} />
@@ -128,6 +129,7 @@ class Portal extends React.Component {
             <Route path={`${match.path}attendance-list`} component={EmployeeAttendanceList} />
             <Route path={`${match.path}employee-details`} component={EmployeeDetailsSearch} />
             <Route path={`${match.path}employee-manager`} component={EmployeeManager} />
+            <Route path={`${match.path}asset-manager`} component={AssetManager} />
             <Redirect from='/' to='/portal/dashboard' />
           </Switch>
         </Suspense>

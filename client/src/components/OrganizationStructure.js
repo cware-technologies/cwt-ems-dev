@@ -87,7 +87,7 @@ class RegisterOrganization extends React.Component {
                         fields={[
                             { id: 'name', type:'text', label: 'Name' },
                             { id: 'desc', type:'text', label: 'Description' },
-                            { id: 'par_row_id', type:'select', label: 'Parent', indeterminate: true, requestParams: {endPoint: '/admin/org-struct/organization', selectMapping: ['name', 'row_id'], } },
+                            { id: 'par_row_id', type:'select', label: 'Parent', indeterminate: true, requestParams: {endPoint: '/admin/org-struct/organization', selectMapping: ['name', 'row_id', 'desc'], } },
                         ]}
                         const schema = {{}}
                         selectEntity={this.selectEntity}
@@ -117,7 +117,7 @@ class RegisterOrganization extends React.Component {
                                 indeterminate: true,
                                 requestParams: {
                                     endPoint: '/admin/org-struct/division',
-                                    selectMapping: ['name', 'row_id'],
+                                    selectMapping: ['name', 'row_id', 'desc'],
                                     params: {
                                         bu_id: this.state.organization
                                     }
@@ -154,7 +154,7 @@ class RegisterOrganization extends React.Component {
                                 indeterminate: true,
                                 requestParams: {
                                     endPoint: '/admin/org-struct/position',
-                                    selectMapping: ['name', 'row_id'],
+                                    selectMapping: ['name', 'row_id', 'desc'],
                                     params: {
                                         bu_id: this.state.organization,
                                         div_id: this.state.division,

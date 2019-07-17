@@ -479,7 +479,7 @@ async function postView(req, res, next){
         try{
             let data2 = await View.findOne({
                 where: {
-                    row_id: view.row_id
+                    name: view.name
                 },
                 include: [
                     {
@@ -492,6 +492,7 @@ async function postView(req, res, next){
 
             res.status(200).json({
                 status: 200,
+                inserted: data,
                 result: data2,
             })
         }
@@ -1202,25 +1203,153 @@ async function deleteLeaveTypeLOVS(req, res, next){
     }
 }
 
+async function getAssetLOVS(req, res, next){
+    let entity = req.query
+    console.log("ASSET: ", entity)
+
+    try{
+        let data = await ListOfValues.findAll({
+            where: {
+                bu_id: entity.bu_id,
+                type: 'asset',
+            },
+        })
+        res.status(200).json({
+            status: 200,
+            result: data,
+        })
+    }
+    catch(err){
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function postAssetLOVS(req, res, next){
+    let entity = req.body
+    console.log("POST ASSET: ", entity)
+
+    try{
+        let data = await ListOfValues.upsert({
+            ...entity,
+            type: 'asset',
+        })
+        try{
+            let data2 = await ListOfValues.findOne({
+                where: { 
+                    val: entity.val
+                },
+            })
+            res.status(200).json({
+                status: 200,
+                result: data2,
+                updated: !data,
+            })
+
+        }
+        catch(err){
+            res.status(200).json({
+                status: 200,
+                result: data,
+            })
+        }
+    }
+    catch(err){
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+
+    // try{
+    //     let data = await ListOfValues.create({
+    //         ...entity,
+    //         type: 'asset',
+    //     })
+
+    //     res.status(200).json({
+    //         status: 200,
+    //         result: data,
+    //     })
+    // }
+    // catch(err){
+    //     err.status = 400
+    //     err.message = `Database Error: ${err}`
+    //     next(err)
+    // }
+}
+
+async function updateAssetLOVS(req, res, next){
+    let entity = req.body
+
+    try{
+        let data = await ListOfValues.update(entity, { where: {row_id: entity.row_id }})
+
+        res.status(200).json({
+            status: 200,
+            result: data,
+        })
+    }
+    catch(err){
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function deleteAssetLOVS(req, res, next){
+    let entity = req.body
+
+    try{
+        let data = await ListOfValues.destroy({ where: {row_id: entity.row_id }})
+
+        res.status(200).json({
+            status: 200,
+            data,
+        })
+    }
+    catch(err){
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
 async function getEmployees(req, res, next){
     let search = req.query
-    let query = search.query.split(' ')
+    let where
+
+    console.log(search)
+
+    if(search.id){
+        where = {
+            bu_id: {
+                [Op.not]: 1,
+            },
+            row_id: search.id,
+        }
+    }
+    else if(search.query){
+        let query = search.query.split(' ')
+        where = {
+            bu_id: {
+                [Op.not]: 1,
+            },
+            [Op.or]: { 
+                fst_name: {
+                    [Op.substring]: query[0],
+                },
+                last_name: {
+                    [Op.substring]: query[1] || query[0],
+                },
+            }
+        }
+    }
+    console.log(where)
 
     try{
         let data = await User.findAll({
-            where: {
-                bu_id: {
-                    [Op.not]: 1,
-                },
-                [Op.or]: { 
-                    fst_name: {
-                        [Op.substring]: query[0],
-                    },
-                    last_name: {
-                        [Op.substring]: query[1] || query[0],
-                    },
-                }
-            },
+            where,
             attributes: ['row_id', 'login'],
             include: [
                 {
@@ -1404,11 +1533,18 @@ async function searchEmployeeDetails(req, res, next){
                 emp_id: employee.employee,
                 [Op.or]: [
                     {type: 'official_details'},
-                    {type: 'payroll_details'},
+                    {type: 'bank_details'},
                     {type: 'assets_details'},
                     {type: 'insurance_details'},
                 ]
-            }
+            },
+            include: [
+                {
+                    model: ListOfValues,
+                    as: 'function',
+                    attributes: ['row_id', 'val'],
+                }
+            ]
         })
 
         res.status(200).json({
@@ -1485,6 +1621,10 @@ module.exports = {
     postInductionExitLOVS,
     updateInductionExitLOVS,
     deleteInductionExitLOVS,
+    getAssetLOVS,
+    postAssetLOVS,
+    updateAssetLOVS,
+    deleteAssetLOVS,
     applyForInductionExit,
     getInductionExit,
     updateInductionExit,

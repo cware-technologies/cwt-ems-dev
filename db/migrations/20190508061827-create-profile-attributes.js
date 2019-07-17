@@ -20,7 +20,9 @@ module.exports = {
         references: {
           'model': 'c_emp',
           'key' : 'row_id',
-        }
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
       },
       created: {
         allowNull: false,

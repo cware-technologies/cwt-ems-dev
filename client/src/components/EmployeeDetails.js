@@ -1,19 +1,13 @@
 import React from 'react'
 import axios from 'axios'
 import * as yup from 'yup'
-import { withStyles } from '@material-ui/core/styles'
+import { connect } from 'react-redux'
 import EmployeeDetailSection from './EmployeeDetailSection'
-
-const styles = theme => ({
-    container: {
-        width: '100%',
-    }
-})
+import { alertActions } from '../actions';
 
 const officialRows = [
-    { label: 'Department',  title: 'Department', id: 'ATTRIB_01', type: 'text'},
-    { label: 'Location', title: 'Location', id: 'ATTRIB_01', type: 'text'},
-    { label: 'Manager', title: 'Manager', id: 'ATTRIB_01', type: 'text'},
+    { label: 'Department',  title: 'Department', id: ['division', 'name'], type: 'text'},
+    { label: 'Manager', title: 'Manager', id: ['manager', 'full_name'], type: 'text'},
 ]
 
 const officialSchema = yup.object().shape({
@@ -29,6 +23,18 @@ const payrollRows = [
 ]
 
 const payrollSchema = yup.object().shape({
+    
+});
+
+const bankRows = [
+    { label: 'Bank Name', title: 'Bank Name', id: 'ATTRIB_01', type: 'text'},
+    { label: 'Branch Name/Code', title: 'Branch Name/Code', id: 'ATTRIB_01', type: 'text'},
+    { label: 'City', title: 'City', id: 'ATTRIB_01', type: 'text'},
+    { label: 'Account Number', title: 'Account Number', id: 'ATTRIB_01', type: 'text'},
+    { label: 'IBAN Number', title: 'IBAN Number', id: 'ATTRIB_01', type: 'text'},
+]
+
+const bankSchema = yup.object().shape({
     
 });
 
@@ -50,7 +56,7 @@ const insuranceSchema = yup.object().shape({
     
 });
 
-class EmployeeDetails extends React.PureComponent{
+class EmployeeDetails extends React.Component{
     state = {
         selected: null,
         data: [],
@@ -61,6 +67,11 @@ class EmployeeDetails extends React.PureComponent{
         // console.log(this.props.object.row_id, "      ", prevProps.object.row_id)
         let emp_id = this.props.object && this.props.object.row_id
 
+        if(this.props.object === null){
+            this.setState(prevState => ({
+                data: [],
+            }))
+        }
         if(prevProps.object === null){
             this.getEmployeeDetails()
         }
@@ -88,11 +99,13 @@ class EmployeeDetails extends React.PureComponent{
             }))
         }
         catch(err){
-
+            this.props.error(err)
         }
     }
 
-    handleSubmit = async (values, { setSubmitting }, detailType) => {
+    handleSubmit = async (values, { setSubmitting }, detailType, associations) => {
+        console.log("VALUES: ", values)
+        console.log("ASSOCIATIONS: ", associations)
         let keys = Object.keys(values)
         let newData = keys.map(key => {
             if(values[key] === undefined){
@@ -105,6 +118,7 @@ class EmployeeDetails extends React.PureComponent{
                     name: key,
                     type: detailType,
                     ATTRIB_01: values[key],
+                    ATTRIB_11: associations ? associations[key] : null,
                     emp_id: this.props.object.row_id,
                 }
             }
@@ -112,6 +126,7 @@ class EmployeeDetails extends React.PureComponent{
                 return {
                     ...value,
                     ATTRIB_01: values[key],
+                    ATTRIB_11: associations ? associations[key] : null,
                 }
             }
         }).filter(element => !!element)
@@ -127,13 +142,19 @@ class EmployeeDetails extends React.PureComponent{
                 },
             })
 
+            if(response.data.status === 200){
+                this.props.success("Employee Updated Successfully.")
+            }
+            else{
+                this.props.error(response.data)
+            }
             setSubmitting(false);
             this.getEmployeeDetails()
             console.log("UPSERT RESPONSE: ", response)
 
         }
         catch(err){
-            console.log("UPSERT ERROR: ", err)
+            this.props.error(err)
         }
     }
 
@@ -141,9 +162,11 @@ class EmployeeDetails extends React.PureComponent{
         let { classes, object } = this.props
         let { data } = this.state
 
+        console.log("OAIJODISJODIJASOIDJSAOIDJOS", data)
+
         return(
             object &&
-                <div className={classes.container}>
+                <React.Fragment>
                     <EmployeeDetailSection
                         headerTitle="Official Details"
                         detailType='official_details'
@@ -151,23 +174,24 @@ class EmployeeDetails extends React.PureComponent{
                         link={'/employee-manager'}
                         search={`?id=${object.row_id}`}
                         schema={officialSchema}
-                        data={data.filter(row => row.type === 'official_details')}
+                        data={object}
                         handleSubmit={this.handleSubmit}
                     />
                     <EmployeeDetailSection
-                        headerTitle="PayRoll Details"
-                        detailType='payroll_details'
-                        rows={payrollRows}
-                        schema={payrollSchema}
-                        data={data.filter(row => row.type === 'payroll_details')}
+                        headerTitle="Bank Details"
+                        detailType='bank_details'
+                        rows={bankRows}
+                        schema={bankSchema}
+                        data={data.filter(row => row.type === 'bank_details')}
                         handleSubmit={this.handleSubmit}
                     />
                     <EmployeeDetailSection
                         headerTitle="Assets Details"
                         detailType='assets_details'
-                        rows={assetsRows}
+                        indeterminate={true}
+                        endpoint="/admin/employee/assets"
                         schema={assetsSchema}                    
-                        data={data.filter(row => row.type === 'assets_details')}
+                        data={data.filter(row => row.type === 'assets_details').map(ele => ({ ...ele, name: ele.function && ele.function.val}))}
                         handleSubmit={this.handleSubmit}
                     />
                     <EmployeeDetailSection
@@ -178,10 +202,9 @@ class EmployeeDetails extends React.PureComponent{
                         data={data.filter(row => row.type === 'insurance_details')}
                         handleSubmit={this.handleSubmit}
                     />
-                </div>
-            
+                </React.Fragment>
         )
     }
 }
 
-export default withStyles(styles)(EmployeeDetails)
+export default connect(()=>{}, {...alertActions})(EmployeeDetails)

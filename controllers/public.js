@@ -3,6 +3,7 @@
 const Op = require('sequelize').Op,
     models = require('../db/models'),
     Employee = models.C_EMP,
+    Division = models.C_DIV,
     Position = models.C_POSTN
 
 async function searchEmployee(req, res, next){
@@ -23,6 +24,11 @@ async function searchEmployee(req, res, next){
                 }
             },
             include: [
+                {
+                    model: Division,
+                    as: 'division',
+                    attributes: ['row_id', 'name', 'desc', 'par_row_id']
+                },
                 {
                     model: Position,
                     as: 'position_held',

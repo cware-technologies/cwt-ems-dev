@@ -163,7 +163,7 @@ class Announcements extends React.Component {
                     <div className={classes.content}>
                         <div className={classes.bubbles}>
                             {news.map((item, index) => 
-                                <ModalTrigger title={item.ATTRIB_10}>
+                                <ModalTrigger title={item.ATTRIB_10} fullWidthButton={true}>
                                     <React.Fragment>
                                         <Typography variant='title' align='center' color='textSecondary'>{item.ATTRIB_10}</Typography>
                                         <Typography variant='body1' align='center' color='textPrimary'>{item.ATTRIB_01}</Typography>

@@ -11,7 +11,7 @@ import Search from './Search'
 
 const employeeRows = [
   { id: ['employee', 'emp_num'], type: 'text', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'ID' },
-  { id: ['employee', 'full_name'], type: 'text', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'First Name' },
+  { id: ['employee', 'full_name'], type: 'text', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Name' },
   { id: ['employee', 'organization','name'], type: 'text', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Organization' },
   { id: ['employee', 'division','name'], type: 'text', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Division' },
   { id: ['employee','position_held','name'], type: 'text', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Position' },
@@ -51,10 +51,53 @@ class EditEmployee extends React.Component {
   componentDidMount() {
     let params = new URLSearchParams(this.props.location.search);
     if(params.get("id")){
-      this.getList({ row_id: params.get("id") })
+      console.log("ID: ", params.get("id"))
+      this.getList(params.get("id"))
     }
     else{
       this.getList()
+    }
+  }
+
+  getList = async (searchQuery) => {
+    let response
+    let params
+
+    if(searchQuery){
+      params = {
+        id: searchQuery,
+        organization: this.props.organization,
+      }
+    }
+    else{
+      params = {
+        query: this.state.query,
+        organization: this.props.organization,
+      }
+    }
+
+    this.setState(prevState => ({
+      isSearching: true,
+    }))
+
+    try {
+      console.log("Search Query: ", searchQuery)
+      response = await axios({
+        method: 'get',
+        url: '/admin/employees',
+        headers: {
+          'content-type': 'application/json',
+        },
+        params,
+      })
+
+      this.setState(prevState => ({
+        data: response.data.data,
+        isSearching: false,
+      }))
+    }
+    catch (err) {
+
     }
   }
 
@@ -319,36 +362,6 @@ class EditEmployee extends React.Component {
     this.setState(prevState => ({
       selected,
     }))
-  }
-
-  getList = async (searchQuery) => {
-    let response
-
-    this.setState(prevState => ({
-      isSearching: true,
-    }))
-
-    try {
-      response = await axios({
-        method: 'get',
-        url: '/admin/employees',
-        headers: {
-          'content-type': 'application/json',
-        },
-        params: {
-          query: searchQuery || this.state.query,
-          organization: this.props.organization,
-        },
-      })
-
-      this.setState(prevState => ({
-        data: response.data.data,
-        isSearching: false,
-      }))
-    }
-    catch (err) {
-
-    }
   }
 
   render() {

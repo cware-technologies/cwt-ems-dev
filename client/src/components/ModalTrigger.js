@@ -52,6 +52,8 @@ class ModalTrigger extends React.Component {
                         className={classes.readMore}
                         onClick={this.handleModalOpen}
                         disabled={disabled ? true : false}
+                        fullWidth={this.props.fullWidthButton}
+                        mini={this.props.miniButton}
                     >
                         {title}
                     </Button>

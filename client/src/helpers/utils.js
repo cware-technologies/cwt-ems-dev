@@ -9,19 +9,42 @@ export const getAuthToken = () => {
 }
 
 export const combineStyles = (...styles) => {
-    return function CombineStyles(theme) {
-      const outStyles = styles.map((arg) => {
-        // Apply the "theme" object for style functions.
-        if (typeof arg === 'function') {
-          return arg(theme);
-        }
-        // Objects need no change.
-        return arg;
-      });
-  
-      return outStyles.reduce((acc, val) => Object.assign(acc, val));
-    };
+  return function CombineStyles(theme) {
+    const outStyles = styles.map((arg) => {
+      // Apply the "theme" object for style functions.
+      if (typeof arg === 'function') {
+        return arg(theme);
+      }
+      // Objects need no change.
+      return arg;
+    });
+
+    return outStyles.reduce((acc, val) => Object.assign(acc, val));
+  };
+}
+
+export const getCellValue = (obj, nesting) => {
+
+  if(typeof nesting === 'string')
+      return obj[nesting]
+
+  let value = obj
+
+  try{
+      nesting.forEach(field => {
+          if(value[field] !== null || value[field] !== undefined)
+              value = value[field]
+          else{
+              throw 'null Value'
+          }
+      })
   }
+  catch(err) {
+      return null
+  }
+
+  return value
+}
 
 export const getDate = (datetime) => {
   var t, result = null;
