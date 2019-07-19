@@ -244,18 +244,14 @@ class EmployeeDetailSection extends React.Component {
                 <ExpansionPanelDetails>
                     <div className={classes.infoContainer}>
                         {rows.map(row => {
-                            console.log('DATA: ', data)
                             let value = Array.isArray(data) ? data.filter(item => {
                                 return item.name === row.label
                             })[0] || {} : data
-                            console.log(value)
                             value = getCellValue(value, row.id)
-                            console.log("VALUE RENDER: ", value)
-                            console.log(row.id)
                             return (
                                 <React.Fragment>
-                                    <Typography variant="body2" component="h5" color='default' className={classes.infoAttribute}>{row.title}</Typography>
-                                    <Typography variant="body2" component="h6" color='secondary' className={classes.infoValue}>{value ? row.type === 'date' && value ? getDate(value).toDateString() : value : ""}</Typography>
+                                    <Typography variant="body2" component="h5" color='default' noWrap={true} className={classes.infoAttribute}>{row.title}</Typography>
+                                    <Typography variant="body2" component="h6" color='secondary' noWrap={true} className={classes.infoValue}>{value ? row.type === 'date' && value ? getDate(value).toDateString() : value : ""}</Typography>
                                 </React.Fragment>
                             )
                         })}

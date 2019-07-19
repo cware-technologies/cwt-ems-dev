@@ -57,8 +57,10 @@ class Profile extends React.Component {
                             <img src={ProfilePic} className={classes.profilePic}></img>
                         </div>
                         <div className={classes.titleContainer}>
-                            <Typography variant="subtitle1" component="h5" className={classes.title}>{data.full_name}</Typography>
-                            <Typography variant="subtitle2" component="h6" color='secondary' className={classes.title}>{data.position_held && data.position_held.name}</Typography>
+                            <Typography variant="subtitle1" component="h5" color='secondary' className={classes.title}>{data.full_name}</Typography>
+                            <Typography variant="subtitle2" component="h6" className={classes.title}><b>ID:</b>  {data.emp_num}</Typography>
+                            <Typography variant="subtitle2" component="h6" className={classes.title}><b>Position:</b>  {data.position_held && data.position_held.name}</Typography>
+                            <Typography variant="subtitle2" component="h6" className={classes.title}><b>Manager:</b>  {data.report_to_id && data.report_to_id.name}</Typography>
                         </div>
                     </div>
                 }

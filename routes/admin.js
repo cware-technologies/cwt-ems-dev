@@ -60,8 +60,24 @@ router.post('/employee/assets', adminController.postAssetLOVS)
 router.put('/employee/assets', adminController.updateAssetLOVS)
 router.delete('/employee/assets', adminController.deleteAssetLOVS)
 
+router.get('/employee/eligibility', adminController.getEligibilityLOVS)
+router.post('/employee/eligibility', adminController.postEligibilityLOVS)
+router.put('/employee/eligibility', adminController.updateEligibilityLOVS)
+router.delete('/employee/eligibility', adminController.deleteEligibilityLOVS)
+
 router.get('/employee/details', adminController.searchEmployeeDetails)
 router.post('/employee/details', adminController.upsertEmployeeDetails)
+router.put('/employee/details', adminController.updateEmployeeDetails)
+
+router.get('/employee/details/dependants', adminController.searchEmployeeDependants)
+router.post('/employee/details/dependants', adminController.addEmployeeDependant)
+router.delete('/employee/details/dependants', adminController.deleteEmployeeDependant)
+router.put('/employee/details/dependants', adminController.updateEmployeeDependant)
+
+router.get('/employee/details/designation', adminController.searchEmployeeDesignations)
+router.post('/employee/details/designation', adminController.addEmployeeDesignation)
+router.delete('/employee/details/designation', adminController.deleteEmployeeDesignation)
+router.put('/employee/details/designation', adminController.updateEmployeeDesignation)
 
 router.get('/employees', adminController.getEmployees)
 router.put('/employees', adminController.updateEmployee)

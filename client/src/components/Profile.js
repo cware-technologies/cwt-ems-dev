@@ -92,7 +92,7 @@ const skillsRows = [
 
 const skillsFields = [
     { id: 'name', type: 'text', label: 'Skill' },
-    { id: 'ATTRIB_11', type: 'number', label: 'Proficiency'},
+    { id: 'ATTRIB_11', type: 'number', label: 'Proficiency', inputProps: { min: '1', max: '5', step: '1' }},
     { id: 'ATTRIB_03', type: 'text', label: 'Description'},
 ]
 
@@ -104,7 +104,7 @@ const profAttributesRows = [
 
 const profAttributesFields = [
     { id: 'name', type: 'text', label: 'Professional Attribute' },
-    { id: 'ATTRIB_11', type: 'number', label: 'Proficiency'},
+    { id: 'ATTRIB_11', type: 'number', label: 'Proficiency', inputProps: { min: '1', max: '5', step: '1' }},
     { id: 'ATTRIB_03', type: 'text', label: 'Description'},
 ]
 

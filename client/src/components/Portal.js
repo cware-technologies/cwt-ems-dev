@@ -37,6 +37,8 @@ const EmployeeDetailsSearch = lazy(() => import('./EmployeeDetailsSearch'));
 const EmployeeManager = lazy(() => import('./EmployeeManager'));
 const NewsManager = lazy(() => import('./NewsManager'));
 const AssetManager = lazy(() => import('./AssetManager'));
+const EligibilityManager = lazy(() => import('./EligibilityManager'));
+const ContractsPortal = lazy(() => import('./ContractsPortal'));
 
 const styles = theme => ({
   root: {
@@ -130,6 +132,8 @@ class Portal extends React.Component {
             <Route path={`${match.path}employee-details`} component={EmployeeDetailsSearch} />
             <Route path={`${match.path}employee-manager`} component={EmployeeManager} />
             <Route path={`${match.path}asset-manager`} component={AssetManager} />
+            <Route path={`${match.path}eligibility-manager`} component={EligibilityManager} />
+            <Route path={`${match.path}contracts`} component={ContractsPortal} />
             <Redirect from='/' to='/portal/dashboard' />
           </Switch>
         </Suspense>

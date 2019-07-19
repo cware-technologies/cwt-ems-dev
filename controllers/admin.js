@@ -1260,23 +1260,6 @@ async function postAssetLOVS(req, res, next){
         err.message = `Database Error: ${err}`
         next(err)
     }
-
-    // try{
-    //     let data = await ListOfValues.create({
-    //         ...entity,
-    //         type: 'asset',
-    //     })
-
-    //     res.status(200).json({
-    //         status: 200,
-    //         result: data,
-    //     })
-    // }
-    // catch(err){
-    //     err.status = 400
-    //     err.message = `Database Error: ${err}`
-    //     next(err)
-    // }
 }
 
 async function updateAssetLOVS(req, res, next){
@@ -1301,7 +1284,102 @@ async function deleteAssetLOVS(req, res, next){
     let entity = req.body
 
     try{
-        let data = await ListOfValues.destroy({ where: {row_id: entity.row_id }})
+        let data = await ListOfValues.destroy({ where: {row_id: entity.id }})
+
+        res.status(200).json({
+            status: 200,
+            data,
+        })
+    }
+    catch(err){
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function getEligibilityLOVS(req, res, next){
+    let entity = req.query
+    console.log("ASSET: ", entity)
+
+    try{
+        let data = await ListOfValues.findAll({
+            where: {
+                bu_id: entity.bu_id,
+                type: 'eligibility',
+            },
+        })
+        res.status(200).json({
+            status: 200,
+            result: data,
+        })
+    }
+    catch(err){
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function postEligibilityLOVS(req, res, next){
+    let entity = req.body
+    console.log("POST ASSET: ", entity)
+
+    try{
+        let data = await ListOfValues.upsert({
+            ...entity,
+            type: 'eligibility',
+        })
+        try{
+            let data2 = await ListOfValues.findOne({
+                where: { 
+                    val: entity.val
+                },
+            })
+            res.status(200).json({
+                status: 200,
+                result: data2,
+                updated: !data,
+            })
+
+        }
+        catch(err){
+            res.status(200).json({
+                status: 200,
+                result: data,
+            })
+        }
+    }
+    catch(err){
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function updateEligibilityLOVS(req, res, next){
+    let entity = req.body
+
+    try{
+        let data = await ListOfValues.update(entity, { where: {row_id: entity.row_id }})
+
+        res.status(200).json({
+            status: 200,
+            result: data,
+        })
+    }
+    catch(err){
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function deleteEligibilityLOVS(req, res, next){
+    let entity = req.body
+
+    try{
+        let data = await ListOfValues.destroy({ where: {row_id: entity.id }})
 
         res.status(200).json({
             status: 200,
@@ -1569,7 +1647,7 @@ async function upsertEmployeeDetail(record){
         catch(err){
             reject(err)
         }
-    })    
+    })
 }
 
 async function upsertEmployeeDetails(req, res, next){
@@ -1577,6 +1655,37 @@ async function upsertEmployeeDetails(req, res, next){
     console.log("Record: ", Details)
 
     Promise.all(Details.records.map(record => upsertEmployeeDetail(record)))
+    .then(results =>
+        res.status(200).json({
+            status: 200,
+            result: results,
+        })
+    )
+    .catch(err => {
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    })
+}
+
+async function updateEmployeeDetail(record){
+    return new Promise(async (resolve, reject) => {
+        try{
+            let data = await ProfileAttribute.update(record, { where: { ATTRIB_11: record.ATTRIB_11} })
+            console.log(data)
+            resolve(data)
+        }
+        catch(err){
+            reject(err)
+        }
+    })
+}
+
+async function updateEmployeeDetails(req, res, next){
+    let Details = req.body
+    console.log("Record: ", Details)
+
+    Promise.all(Details.records.map(record => updateEmployeeDetail(record)))
     .then(results => 
         res.status(200).json({
             status: 200,
@@ -1588,6 +1697,181 @@ async function upsertEmployeeDetails(req, res, next){
         err.message = `Database Error: ${err}`
         next(err)
     })
+}
+
+async function searchEmployeeDependants(req, res, next){
+    let employee = req.query
+
+    try{
+        let data = await ProfileAttribute.findAll({
+            where: {
+                emp_id: employee.employee,
+                type: 'dependant_details'
+            }
+        })
+
+        res.status(200).json({
+            status: 200,
+            result: data,
+        })
+    }
+    catch(err){
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function addEmployeeDependant(req, res, next){
+    let dependant = req.body
+
+    try{
+        let data = await ProfileAttribute.create({
+            ...dependant,
+            type: 'dependant_details',
+        })
+
+        res.status(200).json({
+            status: 200,
+            data,
+        })
+    }
+    catch(err){
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function deleteEmployeeDependant(req, res, next){
+    let dependant = req.body
+
+    try{
+        let data = await ProfileAttribute.destroy({
+            where: {
+                row_id: dependant.row_id
+            }
+        })
+
+        res.status(200).json({
+            status: 200,
+            data,
+        })
+    }
+    catch(err){
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function updateEmployeeDependant(req, res, next){
+    let dependant = req.body
+
+    try{
+        let data = await ProfileAttribute.update(dependant, { where: {row_id: certificate.row_id }})
+
+        res.status(200).json({
+            status: 200,
+            data,
+        })
+    }
+    catch(err){
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function searchEmployeeDesignations(req, res, next){
+    let employee = req.query
+    console.log("APPLICATION: ", employee)
+
+    try{
+        let data = await ProfileAttribute.findAll({
+            where: {
+                emp_id: employee.employee,
+                type: 'designation_details'
+            }
+        })
+
+        res.status(200).json({
+            status: 200,
+            result: data,
+        })
+    }
+    catch(err){
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function addEmployeeDesignation(req, res, next){
+    let designation = req.body
+
+    try{
+        let data = await ProfileAttribute.create({
+            ...designation,
+            ATTRIB_01: designation.ATTRIB_01.value,
+            ATTRIB_02: designation.ATTRIB_02.value,
+            type: 'designation_details',
+        })
+
+        res.status(200).json({
+            status: 200,
+            data,
+        })
+    }
+    catch(err){
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function deleteEmployeeDesignation(req, res, next){
+    let designation = req.body
+
+    try{
+        let data = await ProfileAttribute.destroy({
+            where: {
+                row_id: designation.row_id
+            }
+        })
+
+        res.status(200).json({
+            status: 200,
+            data,
+        })
+    }
+    catch(err){
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function updateEmployeeDesignation(req, res, next){
+    let designation = req.body
+
+    try{
+        let data = await ProfileAttribute.update({
+            ...designation,
+            ATTRIB_01: designation.ATTRIB_01.value,
+            ATTRIB_02: designation.ATTRIB_02.value,
+        }, { where: {row_id: designation.row_id }})
+
+        res.status(200).json({
+            status: 200,
+            data,
+        })
+    }
+    catch(err){
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
 }
 
 module.exports = {
@@ -1625,6 +1909,10 @@ module.exports = {
     postAssetLOVS,
     updateAssetLOVS,
     deleteAssetLOVS,
+    getEligibilityLOVS,
+    postEligibilityLOVS,
+    updateEligibilityLOVS,
+    deleteEligibilityLOVS,
     applyForInductionExit,
     getInductionExit,
     updateInductionExit,
@@ -1637,6 +1925,15 @@ module.exports = {
     applyForEntitlement,
     searchEmployeeDetails,
     upsertEmployeeDetails,
+    updateEmployeeDetails,
+    searchEmployeeDependants,
+    addEmployeeDependant,
+    deleteEmployeeDependant,
+    updateEmployeeDependant,
+    searchEmployeeDesignations,
+    addEmployeeDesignation,
+    deleteEmployeeDesignation,
+    updateEmployeeDesignation,
     getEmployees,
     updateEmployee,
     deleteEmployee,

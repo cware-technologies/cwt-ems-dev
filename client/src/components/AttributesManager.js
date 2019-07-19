@@ -4,11 +4,15 @@ import { connect } from 'react-redux'
 import { withStyles } from '@material-ui/core/styles'
 import { formStyle } from '../styles/form'
 import Typography from '@material-ui/core/Typography'
+import Tooltip from '@material-ui/core/Tooltip'
+import IconButton from '@material-ui/core/IconButton'
+import AddIcon from '@material-ui/icons/Add'
 import Container from './MainContainer'
 import { getUser } from '../reducers/authReducer'
 import DataTable from './DataTable'
 import AddEditForm from './AddEditForm'
 import ModalTrigger from './ModalTrigger';
+import { alertActions } from '../actions';
 
 class AttributesManager extends React.Component{
     modalRef = React.createRef()
@@ -83,21 +87,27 @@ class AttributesManager extends React.Component{
                 data: this.state.formData,
             })
 
-            this.setState(prevState => ({
-                data: newData,
-            }))
+            if(response.data.status === 200){
+                this.setState(prevState => ({
+                    data: newData,
+                }))
+                this.props.success(`${this.props.headerTitle} successfully updated!`)
+            }
+            else{
+                this.props.error({message: `${this.props.headerTitle} could not be updated!`})
+            }
+
             console.log("UPDATE RESPONSE: ", response)
         }
         catch(err){
-            
+            this.props.error({message: `${this.props.headerTitle} could not be updated!`})            
         }
     }
 
     handleAdd = async() => {
         let response
         let data = this.state.formData
-        data.emp_id = this.props.userId
-        console.log(data)
+        data.emp_id = this.props.entity || this.props.userId
 
         try{
             response = await axios({
@@ -108,16 +118,24 @@ class AttributesManager extends React.Component{
                 },
                 data: data,
             })
+            console.log(response)
+            if(response.data.status === 200){
+                this.setState(prevState => ({
+                    data: [
+                        ...prevState.data,
+                        response.data.data
+                    ]
+                }))
 
-            this.setState(prevState => ({
-                data: [
-                    ...prevState.data,
-                    response.data.data
-                ]
-            }))
+                this.props.success(`${this.props.headerTitle} successfully added!`)
+            }
+            else{
+                this.props.error({message: `${this.props.headerTitle} could not be added!`})
+            }
         }
         catch(err){
-
+            this.props.error({message: `${this.props.headerTitle} could not be added!`})
+            console.log(response)
         }
     }
 
@@ -139,19 +157,28 @@ class AttributesManager extends React.Component{
                 },
             })
 
-            this.setState(prevState => ({
-                data: newData,
-            }))
-
-            console.log("ADD RESPONSE: ", response)
+            if(response.data.status === 200){
+                this.setState(prevState => ({
+                    data: newData,
+                }))
+                this.props.success(`${this.props.headerTitle} Deleted Successfully!`)
+            }
+            else{
+                this.props.error({message: `${this.props.headerTitle} could not be deleted!`})
+            }
         }
         catch(err){
-
+            this.props.error({message: `${this.props.headerTitle} could not be deleted!`})
         }
     }
 
     componentDidMount(){
         this.getList()
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot){
+        if(this.props.entity && this.props.entity !== prevProps.entity)
+            this.getList()
     }
 
     getList = async() => {
@@ -165,7 +192,7 @@ class AttributesManager extends React.Component{
                     'content-type': 'application/json',
                 },
                 params: {
-                    employee: this.props.userId,
+                    employee: this.props.entity || this.props.userId,
                 },
             })
             this.setState(prevState => ({
@@ -174,36 +201,40 @@ class AttributesManager extends React.Component{
             console.log("RESPONSE: ", response)
         }
         catch(err){
-            
+            this.props.error(`Couldn't fetch ${this.props.headerTitle}`)
         }
     }
 
     render(){
         let { organization, rows, fields, headerTitle } = this.props
         let { data, formData, editMode } = this.state
-         console.log("ORG: ", this.props.organization)
+
+        let addComponent = <ModalTrigger
+                                IconButton={
+                                    <Tooltip title="Add">
+                                        <IconButton aria-label="Add">
+                                            <AddIcon />
+                                        </IconButton>
+                                    </Tooltip>
+                                }
+                                innerRef={node => this.modalRef = node}
+                                disabled={editMode}
+                            >
+                                <AddEditForm
+                                    headerTitle={headerTitle}
+                                    fields={fields}
+                                    object={formData}
+                                    handleChange={this.handleChange}
+                                    handleSubmit={this.handleSubmit}
+                                    editMode={editMode}
+                                />
+                            </ModalTrigger>
+
         return(
             <Container contained>
-                <Typography variant='title' color='textPrimary'>{headerTitle}</Typography>
-                <ModalTrigger
-                    title="Add"
-                    button
-                    innerRef={node => this.modalRef = node}
-                    disabled={editMode}
-                >
-                    <AddEditForm
-                        headerTitle={headerTitle}
-                        fields={fields}
-                        object={formData}
-                        handleChange={this.handleChange}
-                        handleSubmit={this.handleSubmit}
-                        editMode={editMode}
-                    />
-                </ModalTrigger>
                 <DataTable
                     headerTitle={headerTitle}
                     rows={rows}
-                    endpoint='/access-rights/view'
                     params={{ organization: organization }}
                     data={data}
                     actions
@@ -211,6 +242,7 @@ class AttributesManager extends React.Component{
                     unsetEditMode={this.unsetEditMode}
                     handleDelete={this.handleDelete}
                     editMode={editMode}
+                    AddComponent={addComponent}
                 />
             </Container>
         )
@@ -223,4 +255,4 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps, {})(AttributesManager)
+export default connect(mapStateToProps, {...alertActions})(AttributesManager)

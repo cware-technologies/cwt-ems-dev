@@ -16,6 +16,8 @@ module.exports = {
       {"row_id":11, "name":"Entitlements Manager", "desc":"ef wef w wef we", "bu_id":1, "created":"2019-03-31 22:55:19", "ATTRIB_01":"entitlements-manager", "ATTRIB_02":"navbar", "ATTRIB_03":"", "ATTRIB_04":0, "ATTRIB_05":0, "ATTRIB_06":0, "ATTRIB_07":null, "FLG_01":"", "FLG_02":"", "FLG_03":""},
       {"row_id":12, "name":"Attach Entitilements", "desc":"smdoiasjdoiajsoidjaoisdj", "bu_id":1, "created":"2019-05-06 11:59:18", "ATTRIB_01":"attach-entitlements", "ATTRIB_02":"navbar", "ATTRIB_03":"", "ATTRIB_04":0, "ATTRIB_05":0, "ATTRIB_06":0, "ATTRIB_07":null, "FLG_01":"", "FLG_02":"", "FLG_03":""},
       {"row_id":13, "name":"Employee Details (Admin)", "desc":"smdoiasjdoiajsoidjaoisdj", "bu_id":1, "created":"2019-05-06 11:59:18", "ATTRIB_01":"employee-details", "ATTRIB_02":"navbar", "ATTRIB_03":"", "ATTRIB_04":0, "ATTRIB_05":0, "ATTRIB_06":0, "ATTRIB_07":null, "FLG_01":"", "FLG_02":"", "FLG_03":""},
+      {"row_id":14, "name":"Assets Manager", "desc":"smdoiasjdoiajsoidjaoisdj", "bu_id":1, "created":"2019-05-06 11:59:18", "ATTRIB_01":"asset-manager", "ATTRIB_02":"navbar", "ATTRIB_03":"", "ATTRIB_04":0, "ATTRIB_05":0, "ATTRIB_06":0, "ATTRIB_07":null, "FLG_01":"", "FLG_02":"", "FLG_03":""},
+      {"row_id":15, "name":"Eligibility Manager", "desc":"smdoiasjdoiajsoidjaoisdj", "bu_id":1, "created":"2019-05-06 11:59:18", "ATTRIB_01":"eligibility-manager", "ATTRIB_02":"navbar", "ATTRIB_03":"", "ATTRIB_04":0, "ATTRIB_05":0, "ATTRIB_06":0, "ATTRIB_07":null, "FLG_01":"", "FLG_02":"", "FLG_03":""},
     ], {})
   },
 
