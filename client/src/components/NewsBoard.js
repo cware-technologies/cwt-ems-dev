@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom'
+import { Link, withRouter } from 'react-router-dom'
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import axios from 'axios';
@@ -56,7 +56,7 @@ class NewsBoard extends React.Component {
     };
 
     getNextNews = () => {
-        if(this.state.newsNo >= 2)
+        if (this.state.newsNo >= 2)
             return 0
         else
             return this.state.newsNo + 1
@@ -65,14 +65,14 @@ class NewsBoard extends React.Component {
     getCurrentSlide = (index) => {
         return index === this.state.newsNo;
     }
-    
+
     changeSlide = () => {
         this.setState(prevState => ({
             newsNo: this.getNextNews()
         }))
     }
 
-    startSlideshow = async() => {
+    startSlideshow = async () => {
         this.slideShow = setInterval(() => {
             this.changeSlide()
         }, 5000)
@@ -97,7 +97,7 @@ class NewsBoard extends React.Component {
         }
     }
 
-    async componentWillUnmount(){
+    async componentWillUnmount() {
         clearInterval(this.slideShow)
     }
 
@@ -129,7 +129,7 @@ class NewsBoard extends React.Component {
     }
 
     render() {
-        const { classes } = this.props;
+        const { classes, match } = this.props;
         const { isFetching, success, news, newsNo } = this.state;
 
         if (isFetching) {
@@ -144,7 +144,7 @@ class NewsBoard extends React.Component {
                     <Typography variant="h6" gutterBottom component="h2" className={classes.heading}>
                         News And Updates
                     </Typography>
-                    {news.length > 0 && 
+                    {news.length > 0 &&
                         <NewsCard
                             _className={classes.billboard}
                             title={news[newsNo].ATTRIB_10}
@@ -166,7 +166,15 @@ class NewsBoard extends React.Component {
                         />
                     })}
 
-                    <Button component={Link} to="news_and_updates" className={classes.button}>
+                    {/* <Link to={{ pathname: `/portal/news_and_updates` }} style={{ textDecoration: 'none' }}>
+                        <Button
+                            component="button"
+                            variant="outlined"
+                            color='primary'
+                            className={classes.button}
+                        >Edit</Button>
+                    </Link> */}
+                    <Button component={Link} to={`/portal/news_and_updates`} className={classes.button}>
                         Show All
                     </Button>
                 </Paper>
@@ -179,4 +187,4 @@ NewsBoard.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(NewsBoard);
+export default withRouter(withStyles(styles)(NewsBoard));

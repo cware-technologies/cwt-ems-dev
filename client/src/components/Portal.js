@@ -85,6 +85,7 @@ class Portal extends React.Component {
     const { classes, match, alert } = this.props;
     const { alertOpen } = this.state
 
+    console.log("APP RE RENDER: ", match);
     return (
       <div className={classes.root}>
         <AlertSnackbars
@@ -115,7 +116,7 @@ class Portal extends React.Component {
             <Route path={`${match.path}apply-leave`} component={LeaveForm} />
             <Route path={`${match.path}pay-slips`} component={PaySlipTabs} />
             <Route path={`${match.path}it-tickets`} component={ITTicketTabs} />
-            <Route path={`${match.path}news-and-updates`} component={NewsAndUpdates} />
+            <Route path={`${match.path}news-and-updates`} component={Profile} />
             <Route path={`${match.path}post-update`} component={NewsManager} />
             <Route path={`${match.path}edit-profile`} component={ProfileEditForm} />
             <Route path={`${match.path}my-profile`} component={Profile} />
@@ -133,8 +134,8 @@ class Portal extends React.Component {
             <Route path={`${match.path}employee-manager`} component={EmployeeManager} />
             <Route path={`${match.path}asset-manager`} component={AssetManager} />
             <Route path={`${match.path}eligibility-manager`} component={EligibilityManager} />
-            <Route path={`${match.path}contracts`} component={ContractsPortal} />
-            <Redirect from='/' to='/portal/dashboard' />
+            <Route path={`${match.path}my-contracts`} component={ContractsPortal} />
+            {/* <Redirect from='/' to='/portal/dashboard' /> */}
           </Switch>
         </Suspense>
       </div>

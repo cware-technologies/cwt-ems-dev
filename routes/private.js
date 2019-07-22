@@ -29,5 +29,8 @@ router.post('/employee/leaves', privateController.addEmployeeProfessionalAttribu
 router.delete('/employee/leaves', privateController.deleteEmployeeProfessionalAttribute)
 router.put('/employee/leaves', privateController.updateEmployeeProfessionalAttribute)
 
+router.get('/employee/contracts', privateController.getContracts)
+router.get('/employee/contracts/accept', privateController.acceptContract)
+router.get('/employee/contracts/reject', privateController.rejectContract)
 
 module.exports = router

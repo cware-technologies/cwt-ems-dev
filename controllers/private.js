@@ -409,6 +409,88 @@ async function applyForLeave(req, res, next){
 
 }
 
+async function getContracts(req, res, next){
+    let employee = req.query
+    console.log("APPLICATION: ", employee)
+
+    try{
+        let data = await ProfileAttribute.findAll({
+            where: {
+                emp_id: employee.employee,
+                type: 'contract',
+                ATTRIB_02: 'pending',
+            }
+        })
+
+        res.status(200).json({
+            status: 200,
+            result: data,
+        })
+    }
+    catch(err){
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function acceptContract(req, res, next){
+    let contract = req.query
+    console.log("APPLICATION: ", contract)
+
+    try{
+        let data = await ProfileAttribute.update(
+        {
+            ATTRIB_02: 'accepted',
+        },
+        {
+            where: {
+                row_id: contract.contract_id,
+                type: 'contract',
+            }
+        })
+
+        res.status(200).json({
+            status: 200,
+            result: data,
+        })
+    }
+    catch(err){
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function rejectContract(req, res, next){
+    let contract = req.query
+    console.log("APPLICATION: ", contract)
+
+    try{
+        let data = await ProfileAttribute.update(
+        {
+            ATTRIB_02: 'rejected',
+        },
+        {
+            where: {
+                row_id: contract.contract_id,
+                type: 'contract',
+            }
+        })
+
+        res.status(200).json({
+            status: 200,
+            result: data,
+        })
+    }
+    catch(err){
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+
 module.exports = {
     getEmployee,
     updateEmployeePersonalDetails,
@@ -429,4 +511,7 @@ module.exports = {
     updateEmployeeProfessionalAttribute,
     getLeaves,
     applyForLeave,
+    getContracts,
+    acceptContract,
+    rejectContract,
 }

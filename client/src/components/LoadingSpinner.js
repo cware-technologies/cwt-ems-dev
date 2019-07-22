@@ -5,7 +5,7 @@ class LoadingSpinner extends React.Component{
 
     render() {
         return(
-            <div style={{height: '100%', width: 'auto', position: "fixed", top: '50%', left: '50%', transform: 'translate(-50%, -50%)'}}>
+            <div style={{height: '100%', width: 'auto', position: "fixed", top: '50%', left: '50%', transform: 'translate(-50%, -30%)'}}>
                 <LoadingIcon />
             </div>
         )

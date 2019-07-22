@@ -5,36 +5,36 @@ import compose from 'recompose/compose'
 import { connect } from 'react-redux'
 import { Link, withRouter } from 'react-router-dom';
 import { getViews } from '../reducers/authReducer'
-import List from '@material-ui/core/List';
+// import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
-import Divider from '@material-ui/core/Divider';
+// import Divider from '@material-ui/core/Divider';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import ListSubheader from '@material-ui/core/ListSubheader';
-import ExpandLess from '@material-ui/icons/ExpandLess';
-import ExpandMore from '@material-ui/icons/ExpandMore';
-import Collapse from '@material-ui/core/Collapse';
-import SvgIcon from '@material-ui/core/SvgIcon';
-import DashboardIcon from '@material-ui/icons/Dashboard';
-import SettingsIcon from '@material-ui/icons/Settings';
-import BarChartIcon from '@material-ui/icons/BarChart';
-import CreditCardIcon from '@material-ui/icons/CreditCard';
-import ListIcon from '@material-ui/icons/List';
-import AddIcon from '@material-ui/icons/Add';
-import EditIcon from '@material-ui/icons/Edit';
-import ViewIcon from '@material-ui/icons/ViewList';
-import NewsIcon from '@material-ui/icons/NoteAddTwoTone';
-import OrgAddIcon from '@material-ui/icons/Business';
-import EmpAddIcon from '@material-ui/icons/PersonAdd';
-import AdminIcon from '@material-ui/icons/HowToReg';
-import EducationIcon from '@material-ui/icons/School';
-import ContactIcon from '@material-ui/icons/ContactPhone';
-import SkillIcon from '@material-ui/icons/Stars'
-import ITTicketIcon from '@material-ui/icons/ConfirmationNumber';
-import DocumentIcon from '@material-ui/icons/Description';
-import CertificateIcon from '@material-ui/icons/Book';
-import ProfileIcon from '@material-ui/icons/Face';
-import ResponsibilityIcon from '@material-ui/icons/VerifiedUser';
+// import ListSubheader from '@material-ui/core/ListSubheader';
+// import ExpandLess from '@material-ui/icons/ExpandLess';
+// import ExpandMore from '@material-ui/icons/ExpandMore';
+// import Collapse from '@material-ui/core/Collapse';
+// import SvgIcon from '@material-ui/core/SvgIcon';
+// import DashboardIcon from '@material-ui/icons/Dashboard';
+// import SettingsIcon from '@material-ui/icons/Settings';
+// import BarChartIcon from '@material-ui/icons/BarChart';
+// import CreditCardIcon from '@material-ui/icons/CreditCard';
+// import ListIcon from '@material-ui/icons/List';
+// import AddIcon from '@material-ui/icons/Add';
+// import EditIcon from '@material-ui/icons/Edit';
+// import ViewIcon from '@material-ui/icons/ViewList';
+// import NewsIcon from '@material-ui/icons/NoteAddTwoTone';
+// import OrgAddIcon from '@material-ui/icons/Business';
+// import EmpAddIcon from '@material-ui/icons/PersonAdd';
+// import AdminIcon from '@material-ui/icons/HowToReg';
+// import EducationIcon from '@material-ui/icons/School';
+// import ContactIcon from '@material-ui/icons/ContactPhone';
+// import SkillIcon from '@material-ui/icons/Stars'
+// import ITTicketIcon from '@material-ui/icons/ConfirmationNumber';
+// import DocumentIcon from '@material-ui/icons/Description';
+// import CertificateIcon from '@material-ui/icons/Book';
+// import ProfileIcon from '@material-ui/icons/Face';
+// import ResponsibilityIcon from '@material-ui/icons/VerifiedUser';
 
 const styles = theme => ({
   '@global': {

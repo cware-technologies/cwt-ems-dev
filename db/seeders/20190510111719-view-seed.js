@@ -18,6 +18,7 @@ module.exports = {
       {"row_id":13, "name":"Employee Details (Admin)", "desc":"smdoiasjdoiajsoidjaoisdj", "bu_id":1, "created":"2019-05-06 11:59:18", "ATTRIB_01":"employee-details", "ATTRIB_02":"navbar", "ATTRIB_03":"", "ATTRIB_04":0, "ATTRIB_05":0, "ATTRIB_06":0, "ATTRIB_07":null, "FLG_01":"", "FLG_02":"", "FLG_03":""},
       {"row_id":14, "name":"Assets Manager", "desc":"smdoiasjdoiajsoidjaoisdj", "bu_id":1, "created":"2019-05-06 11:59:18", "ATTRIB_01":"asset-manager", "ATTRIB_02":"navbar", "ATTRIB_03":"", "ATTRIB_04":0, "ATTRIB_05":0, "ATTRIB_06":0, "ATTRIB_07":null, "FLG_01":"", "FLG_02":"", "FLG_03":""},
       {"row_id":15, "name":"Eligibility Manager", "desc":"smdoiasjdoiajsoidjaoisdj", "bu_id":1, "created":"2019-05-06 11:59:18", "ATTRIB_01":"eligibility-manager", "ATTRIB_02":"navbar", "ATTRIB_03":"", "ATTRIB_04":0, "ATTRIB_05":0, "ATTRIB_06":0, "ATTRIB_07":null, "FLG_01":"", "FLG_02":"", "FLG_03":""},
+      {"row_id":16, "name":"My Contracts", "desc":"smdoiasjdoiajsoidjaoisdj", "bu_id":1, "created":"2019-05-06 11:59:18", "ATTRIB_01":"my-contracts", "ATTRIB_02":"navbar", "ATTRIB_03":"", "ATTRIB_04":0, "ATTRIB_05":0, "ATTRIB_06":0, "ATTRIB_07":null, "FLG_01":"", "FLG_02":"", "FLG_03":""},
     ], {})
   },
 

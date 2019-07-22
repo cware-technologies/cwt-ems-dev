@@ -35,8 +35,8 @@ const updateTypes = [
         label: "Announcements",
     },
     {
-        value: "Employees",
-        label: "Employees",
+        value: "Employee News",
+        label: "Employee News",
     },
 ]
 
@@ -234,7 +234,7 @@ class PostUpdateForm extends React.Component {
                     />
                     <FormControl className={classNames(classes.textField, classes.dense, classes.singleSpanInput)}>
                         <InputLabel htmlFor="file" shrink={true} style={{zIndex:'1',marginLeft:'5px',}}><PhotoCamera />Image</InputLabel>
-                        <OutlinedInput name="file" type="file" accept="image/*" id="file" disabled={updateTypes.filter(item => item.value === news.type_cd.value).length <= 0} onChange={this.handleTextChange}/>
+                        <OutlinedInput name="file" type="file" accept="image/*" id="file" disabled={news.type_cd.value !== 'Company News'} onChange={this.handleTextChange}/>
                     </FormControl>
                     <TextField
                         id="ATTRIB_01"
