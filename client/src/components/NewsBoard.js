@@ -39,6 +39,17 @@ const styles = theme => ({
             display: 'none',
         },
     },
+    smallBoard: {
+        minWidth: 275,
+        // width: '200px',
+        // display: 'inline-block',
+        margin: theme.spacing.unit,
+        height: 'auto',
+        // backgroundColor: theme.palette.grey[500],
+        [theme.breakpoints.down('md')]: {
+            height: '200px',
+        },
+    },
     actionBar: {
         justifySelf: 'flex-end',
     },
@@ -157,9 +168,12 @@ class NewsBoard extends React.Component {
                     }
                     {news.slice(0, 3).map((item, index) => {
                         return <NewsCard
+                            _className={classes.smallBoard}                            
                             key={item.row_id}
                             title={item.ATTRIB_10}
+                            body={item.ATTRIB_01}
                             date={item.created}
+                            type={item.type_cd}
                             img={item.img_pth}
                             data={this.getDetails(index)}
                             current={this.getCurrentSlide(index)}
@@ -174,7 +188,7 @@ class NewsBoard extends React.Component {
                             className={classes.button}
                         >Edit</Button>
                     </Link> */}
-                    <Button component={Link} to={`/portal/news_and_updates`} className={classes.button}>
+                    <Button component={Link} to={{ pathname: `/portal/news-and-updates`, search: `?filter=Company News` }} fullWidth={true}>
                         Show All
                     </Button>
                 </Paper>

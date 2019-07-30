@@ -3,15 +3,20 @@ import axios from 'axios';
 import { withStyles } from '@material-ui/core/styles';
 import TablePagination from '@material-ui/core/TablePagination';
 import Container from './MainContainer';
-import Paper from '@material-ui/core/Paper';
-import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import SimpleCard from './SimpleCard';
-import { news } from '../assets/news';
+import TextField from '@material-ui/core/TextField'
+import NewsCard from './NewsCard';
 
 const styles = theme => ({
 
 });
+
+const filterOptions = [
+	{ name: 'Company News', value: 'Company News' },
+	{ name: 'Employee News', value: 'Employee News' },
+	{ name: 'Announcements', value: 'Announcements' },
+	{ name: 'External Feed', value: 'External Feed' },
+]
 
 class NewsAndUpdates extends React.Component {
 	constructor(props) {
@@ -22,22 +27,35 @@ class NewsAndUpdates extends React.Component {
 			success: null,
 			page: 0,
 			rowsPerPage: 5,
+			filter: 'all',
 		}
 	}
 
 	async componentDidMount() {
-		let response;
+		let params = new URLSearchParams(this.props.location.search);
+		let filter = params.get("filter")
+		if(filter && filter !== ""){
+			console.log("ID: ", filter)
+			this.setState(prevState => ({
+				filter,
+			}))
+		}
 
-		this.startSlideshow()
+		this.getData()
+	}
+
+	getData = async () => {
+		let response;
 
 		try {
 			response = await axios({
 				method: 'get',
-				url: '/homepage/news',
+				url: '/homepage/news/all',
 			})
+			console.log(response)
+
 			this.handleResponse(response)
 
-			console.log(response)
 		}
 		catch (err) {
 			this.handleResponse(err.response)
@@ -58,7 +76,7 @@ class NewsAndUpdates extends React.Component {
 
 		else if (res.data.status >= 200 && res.data.status < 300) {
 			this.setState(prevState => ({
-				news: res.data.news,
+				news: res.data.data,
 				isFetching: false,
 				success: true,
 			}))
@@ -73,26 +91,72 @@ class NewsAndUpdates extends React.Component {
 		this.setState({ rowsPerPage: event.target.value });
 	}
 
+	handleFilterChange = (e) => {
+        let value = e.target.value
+
+        this.setState(prevState => ({
+            filter: value,
+        }))
+	}
+	
+	filterData = (data) => {
+		console.log("FILTER: ", this.state.filter, data.filter(row => row.type_cd === this.state.filter))
+        if(this.state.filter === 'all'){
+			return data
+		}
+			
+		if(this.state.filter === 'External Feed'){
+			return data.filter(row => row.type_cd === 'Local' || row.type_cd === 'Economy' || row.type_cd === 'Technology')
+		}
+
+        return data.filter(row => row.type_cd === this.state.filter)
+    }
+
 	render() {
 		const { classes } = this.props;
 		const { rowsPerPage, page, news } = this.state;
 
 		return (
 			<Container>
-				<div className={classes.appBarSpacer} />
-				<Paper className={classes.board} elevation={5}>
-					<Typography variant="h4" gutterBottom component="h2">
+					<Typography variant="h4" align='center' gutterBottom component="h2">
 						News And Updates
-                </Typography>
-					{news.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((item, index) => {
-						return <SimpleCard
-							key={index}
-							title={item.title}
-							body={item.body}
-							date={item.date}
-						/>
-					}
-					)
+					</Typography>
+
+					<TextField
+                        id='filter-list'
+                        select
+                        label='Filter'
+                        value={this.state.filter}
+                        defaultValue=''
+                        onChange={this.handleFilterChange}
+                        SelectProps={{
+                            native: true,
+                        }}
+                        margin="dense"
+                        variant="outlined"
+                    >
+                        <option value={'all'}>
+                            {'All'}
+                        </option>
+                        {filterOptions.map((option, index) => (
+                            <option key={index} value={option.value}>
+                                {option.name}
+                            </option>
+                        ))}
+                    </TextField>
+
+					{
+						this.filterData(news).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((item, index) => {
+							return <NewsCard
+								title={item.ATTRIB_10}
+								body={item.ATTRIB_01}
+								date={item.created}
+								type={item.type_cd}
+								link={item.ATTRIB_02 && item.ATTRIB_02 !== "" ? item.ATTRIB_02 : null }
+								img={item.img_pth}
+								current={true}
+							/>
+						})
 					}
 					<TablePagination
 						rowsPerPageOptions={[5, 10, 25]}
@@ -109,7 +173,6 @@ class NewsAndUpdates extends React.Component {
 						onChangePage={this.handleChangePage}
 						onChangeRowsPerPage={this.handleChangeRowsPerPage}
 					/>
-				</Paper>
 			</Container>
 		);
 	}

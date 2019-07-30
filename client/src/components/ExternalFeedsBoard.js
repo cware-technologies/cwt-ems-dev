@@ -1,5 +1,5 @@
 import React from 'react';
-// import { Link } from 'react-router-dom'
+import RouterLink from 'react-router-dom/Link'
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import axios from 'axios';
@@ -142,6 +142,9 @@ class ExternalFeedsBoard extends React.Component {
             {value === 2 && <div><List>{news.filter(item => item.type_cd === 'Local').map(item => <ListItem><Link href={item.ATTRIB_02} target="_blank">{item.ATTRIB_10}</Link></ListItem>)}</List></div>}
           </TabContainer>
         </Paper>
+        <Button component={RouterLink} align='center' to={{ pathname: `/portal/news-and-updates`, search: `?filter=External Feed` }} fullWidth={true}>
+          See All
+        </Button>
       </div>
     );
   }

@@ -9,6 +9,7 @@ import { alertActions } from '../actions';
 const officialRows = [
     { label: 'Department',  title: 'Department', id: ['division', 'name'], type: 'text'},
     { label: 'Manager', title: 'Manager', id: ['manager', 'full_name'], type: 'text'},
+    { label: 'Location', title: 'Location', id: 'ATTRIB_01', type: 'text'},
 ]
 
 const officialSchema = yup.object().shape({
@@ -91,11 +92,11 @@ const designationFields = [
     { id: 'name', type: 'text', label: 'Name' },
     { id: 'ATTRIB_01', type:'select', label: 'Division', indeterminate: true, requestParams: {
         endPoint: '/admin/org-struct/division',
-        selectMapping: ['name', 'name', 'desc'], 
+        selectMapping: ['name', 'name', null, 'desc'], 
     }},
     { id: 'ATTRIB_02', type:'select', label: 'Organization', indeterminate: true, requestParams: {
         endPoint: '/admin/org-struct/organization',
-        selectMapping: ['name', 'name', 'desc'], 
+        selectMapping: ['name', 'name', null, 'desc'], 
     }},
     { id: 'ATTRIB_12', type: 'number', label: 'Grade', inputProps: { min: '1', max: '10', step: '1' }},
 ]

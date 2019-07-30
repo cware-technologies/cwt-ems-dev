@@ -13,6 +13,8 @@ class EmployeeDetailsSearch extends React.Component {
         selected: null,
         isFetching: false,
         success: null,
+        filter: "name",
+        query: "",
     }
 
     getEmployees = async () => {
@@ -25,10 +27,7 @@ class EmployeeDetailsSearch extends React.Component {
         try {
             response = await axios({
                 method: 'get',
-                url: '/public/search/employee',
-                params: {
-                    query: this.state.value,
-                },
+                url: `/public/search/employee?${this.state.query}`,
             })
             
             console.log(response)
@@ -62,7 +61,8 @@ class EmployeeDetailsSearch extends React.Component {
 
     onChange = (event, { newValue }) => {
         this.setState({
-            value: newValue
+            value: newValue,
+            query: `${this.state.filter}=${newValue}`
         });
     };
 

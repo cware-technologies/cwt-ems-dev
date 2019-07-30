@@ -189,7 +189,9 @@ class EmployeesBoard extends React.Component {
                             )}
                         </div>
                         <div className={classes.actionBar}>
-                            <Button>See All</Button>
+                            <Button component={Link} to={{ pathname: `/portal/news-and-updates`, search: `?filter=Employee News` }} fullWidth={true}>
+                                See All
+                            </Button>
                         </div>
                     </div>
                 </Paper>

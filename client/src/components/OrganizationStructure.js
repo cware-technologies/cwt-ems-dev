@@ -87,9 +87,13 @@ class RegisterOrganization extends React.Component {
                         fields={[
                             { id: 'name', type:'text', label: 'Name' },
                             { id: 'desc', type:'text', label: 'Description' },
-                            { id: 'par_row_id', type:'select', label: 'Parent', indeterminate: true, requestParams: {endPoint: '/admin/org-struct/organization', selectMapping: ['name', 'row_id', 'desc'], } },
+                            { id: 'par_row_id', type:'select', label: 'Parent', indeterminate: true, requestParams: {endPoint: '/admin/org-struct/organization', selectMapping: ['name', 'row_id', null, 'desc'], } },
                         ]}
-                        const schema = {{}}
+                        tableProps={{
+                            isSelectable: true,
+                            actions: true,
+                        }}
+                        schema = {{}}
                         selectEntity={this.selectEntity}
                         clearSelection={this.clearSelection}
                     />
@@ -117,14 +121,18 @@ class RegisterOrganization extends React.Component {
                                 indeterminate: true,
                                 requestParams: {
                                     endPoint: '/admin/org-struct/division',
-                                    selectMapping: ['name', 'row_id', 'desc'],
+                                    selectMapping: ['name', 'row_id', null, 'desc'],
                                     params: {
                                         bu_id: this.state.organization
                                     }
                                 }
                             },
                         ]}
-                        const schema = {{}}
+                        tableProps={{
+                            isSelectable: true,
+                            actions: true,
+                        }}
+                        schema = {{}}
                         organization={this.state.organization}
                         selectEntity={this.selectEntity}
                         clearSelection={this.clearSelection}
@@ -154,7 +162,7 @@ class RegisterOrganization extends React.Component {
                                 indeterminate: true,
                                 requestParams: {
                                     endPoint: '/admin/org-struct/position',
-                                    selectMapping: ['name', 'row_id', 'desc'],
+                                    selectMapping: ['name', 'row_id', null, 'desc'],
                                     params: {
                                         bu_id: this.state.organization,
                                         div_id: this.state.division,
@@ -162,7 +170,11 @@ class RegisterOrganization extends React.Component {
                                 },
                             },
                         ]}
-                        const schema = {{}}
+                        tableProps={{
+                            isSelectable: true,
+                            actions: true,
+                        }}
+                        schema = {{}}
                         organization={this.state.organization}
                         division={this.state.division}
                         selectEntity={this.selectEntity}

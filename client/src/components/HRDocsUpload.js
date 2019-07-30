@@ -23,6 +23,7 @@ import IconButton from '@material-ui/core/IconButton';
 import DownloadIcon from '@material-ui/icons/SaveAlt';
 import { formStyle } from '../styles/form';
 import { alertActions } from '../actions';
+import RestrictedComponent from './RestrictedComponent';
 
 const styles = theme => ({
     root: {
@@ -259,30 +260,37 @@ class HRDocsUpload extends React.Component {
     };
 
     render() {
-        const { classes } = this.props
+        const { classes, location } = this.props
         const { modalOpen, data } = this.state
         const { handleModalOpen, handleModalClose, handleDownload, handleDelete } = this
 
+        console.log("LOCATION: ", location)
+
         return (
             <Container>
-                <div className={classes.actionBar}>
-                    <Button
-                        onClick={handleModalOpen}
-                        variant="contained"
-                        color="primary"
-                        className={classes.button}
-                    >
-                        Upload
-                    </Button>
-                    <Button
-                        onClick={handleDelete}
-                        variant="contained"
-                        color="primary"
-                        className={classes.button}
-                    >
-                        Delete
-                    </Button>
-                </div>
+                <RestrictedComponent
+                    restriction='write'
+                    viewID={location.state.viewID}
+                >
+                    <div className={classes.actionBar}>
+                        <Button
+                            onClick={handleModalOpen}
+                            variant="contained"
+                            color="primary"
+                            className={classes.button}
+                        >
+                            Upload
+                        </Button>
+                        <Button
+                            onClick={handleDelete}
+                            variant="contained"
+                            color="primary"
+                            className={classes.button}
+                        >
+                            Delete
+                        </Button>
+                    </div>
+                </RestrictedComponent>
                 <List className={classes.root}>
                     {data.length <= 0 ? <ListItem dense ><ListItemText primary="No Documents Found" /></ListItem> : 
                     data.map(row => (

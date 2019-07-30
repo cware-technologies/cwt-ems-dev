@@ -37,7 +37,9 @@ passport.use(
                     }
                     else {
                         let user = req.body
-                        console.log(user)
+                        let date = new Date(user.ATTRIB_18)
+                        let contractExpiry = new Date(date.setMonth(date.getMonth()+12));
+
                         bcrypt.hash(password, BCRYPT_SALT_ROUNDS).then(hashedPassword => {
 
                             return sequelize.transaction(t => {
@@ -50,6 +52,9 @@ passport.use(
                                     postn_held_id: user.postn_held_id.value,
                                     resp_id: user.resp_id.value,
                                     report_to_id: user.report_to_id.value,
+                                    ATTRIB_01: user.ATTRIB_01,
+                                    ATTRIB_18: user.ATTRIB_18,
+                                    ATTRIB_19: contractExpiry,
                                 }, { transaction: t }).then(emp => {
                                     return User.create({
                                         login: username,

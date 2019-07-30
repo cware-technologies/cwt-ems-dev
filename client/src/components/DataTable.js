@@ -124,25 +124,43 @@ class TableHeader extends React.Component {
     };
 
     render() {
-        const { order, orderBy, classes, rows } = this.props;
+        const { order, orderBy, classes, rows, numSelected, rowCount, onSelectAllClick } = this.props;
 
         return (
             <TableHead>
                 <TableRow className={classes.row}>
                     {
-                        this.props.actions &&
-                        <div id='row-actions' className={classes.rowActions}>
-                                <TableCell
-                                    align="left"
-                                    padding="none"
-                                    classes={{ root: classes.tableCellAction }}
-                                />
-                                <TableCell
-                                    align="left"
-                                    padding="none"
-                                    classes={{ root: classes.tableCellAction }}
-                                />
-                            </div>
+                        this.props.actions || this.props.selectMultiple ?
+                            <div id='row-actions' className={classes.rowActions}>
+                                {
+                                    this.props.selectMultiple && rowCount > 0 ?
+                                        <TableCell padding="checkbox">
+                                            <Checkbox
+                                                indeterminate={numSelected > 0 && numSelected < rowCount}
+                                                checked={numSelected === rowCount}
+                                                onChange={onSelectAllClick}
+                                            />
+                                        </TableCell> :
+                                        
+                                        null
+                                }
+                                {
+                                    this.props.actions &&
+                                    <React.Fragment>
+                                        <TableCell
+                                            align="left"
+                                            padding="none"
+                                            classes={{ root: classes.tableCellAction }}
+                                        />
+                                        <TableCell
+                                            align="left"
+                                            padding="none"
+                                            classes={{ root: classes.tableCellAction }}
+                                        />
+                                    </React.Fragment>
+                                }
+                            </div> :
+                            null
                     }
                     <div 
                         id='selectable-row'
@@ -184,7 +202,7 @@ class TableHeader extends React.Component {
 let EnhancedTableHead = withStyles(headStyles)(TableHeader);
 
 EnhancedTableHead.propTypes = {
-    // numSelected: PropTypes.number.isRequired,
+    numSelected: PropTypes.number.isRequired,
     onRequestSort: PropTypes.func.isRequired,
     onSelectAllClick: PropTypes.func.isRequired,
     order: PropTypes.string.isRequired,
@@ -486,6 +504,10 @@ class EnhancedDataTable extends React.Component {
                         value={defaultValue == '1' ? "active" : defaultValue == '0' ? 'inactive' : defaultValue }
                     />
                 )
+            default:
+                return (
+                    null
+                )
         }
     }
 
@@ -522,6 +544,22 @@ class EnhancedDataTable extends React.Component {
 
     isSelected = (id) => {
         return this.state.selected.indexOf(id) !== -1
+    }
+
+    onSelectAllClick = () => {
+        if(this.state.selected.length > 0 ){
+            this.setState(prevState => ({
+                selected: [],
+            }), () => this.props.selectEntity(this.props.headerTitle, this.state.selected, null))
+
+        }
+        else{
+            let ids = this.props.data.map(row => row.row_id)
+
+            this.setState(prevState => ({
+                selected: ids,
+            }), () => this.props.selectEntity(this.props.headerTitle, this.state.selected, null))
+        }
     }
 
     multipleRowsSelect = (id) => {
@@ -594,7 +632,7 @@ class EnhancedDataTable extends React.Component {
     }
 
     render() {
-        const { classes, rows, data, headerTitle, editMode, handleDelete, disableEdit, isSelectable, disableDelete } = this.props;
+        const { classes, rows, data, headerTitle, editMode, handleDelete, disableEdit, isSelectable, selectMultiple, disableDelete } = this.props;
         const { /* data, */ order, orderBy, rowsPerPage, page, selected } = this.state;
         const { setEditMode, unsetEditMode } = this;
         const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
@@ -606,6 +644,7 @@ class EnhancedDataTable extends React.Component {
                         AddComponent={this.props.AddComponent}
                         actionBar={this.props.actionBar}
                         selected={selected}
+                        selectMultiple
                         selectedData={data.filter(row => selected.find(id => row.row_id === id))}
                         handleClearSelection={this.handleClearSelection}
                     />
@@ -616,6 +655,9 @@ class EnhancedDataTable extends React.Component {
                                 order={order}
                                 orderBy={orderBy}
                                 onRequestSort={this.handleRequestSort}
+                                onSelectAllClick={this.onSelectAllClick}
+                                selectMultiple={selectMultiple}
+                                numSelected={selected.length}
                                 rowCount={data.length}
                                 actions={this.props.actions}
                             />
@@ -628,6 +670,7 @@ class EnhancedDataTable extends React.Component {
                                         let isSelected = editMode || this.isSelected(data.row_id)
                                         return (
                                             <TableRow
+                                                hover
                                                 role="checkbox"
                                                 tabIndex={-1}
                                                 aria-checked={isSelected}
@@ -639,43 +682,60 @@ class EnhancedDataTable extends React.Component {
                                                 className={isSelected && classes.selected}
                                             >
                                                 {
-                                                    this.props.actions &&
+                                                    this.props.actions || this.props.selectMultiple ?
                                                         <div id='row-actions' className={classes.rowActions}>
-                                                            <TableCell
-                                                                align="left"
-                                                                padding="none"
-                                                                classes={{ root: classes.tableCellAction }}
-                                                            >
-                                                            { editMode ?  isSelected ?
-                                                                <Tooltip title="Edit">
-                                                                    <IconButton aria-label="Cancel" onClick={() => unsetEditMode(data, headerTitle)}>
-                                                                        <CancelIcon />
-                                                                    </IconButton>
-                                                                </Tooltip> : 
-                                                                <Tooltip title="Edit">
-                                                                    <IconButton aria-label="Edit" onClick={() => setEditMode(data, headerTitle)}>
-                                                                        <EditIcon />
-                                                                    </IconButton>
-                                                                </Tooltip> :
-                                                                <Tooltip title="Edit">
-                                                                <IconButton aria-label="Edit" disabled={disableEdit} onClick={() => setEditMode(data, headerTitle)}>
-                                                                    <EditIcon />
-                                                                </IconButton>
-                                                            </Tooltip>
+                                                            {
+                                                                selectMultiple &&
+                                                                <TableCell padding="checkbox">
+                                                                    <Checkbox
+                                                                        checked={isSelected}
+                                                                        onClick={event => this.selectEntity(event, data.row_id, data.name )}
+                                                                    />
+                                                                </TableCell>
                                                             }
-                                                            </TableCell>
-                                                            <TableCell
-                                                                align="left"
-                                                                padding="none"
-                                                                classes={{ root: classes.tableCellAction }}
-                                                            >
-                                                                <Tooltip title="Delete">
-                                                                    <IconButton disabled={editMode || disableDelete} aria-label="Delete" onClick={() => this.handleDelete(data.row_id)}>
-                                                                        <DeleteIcon />
-                                                                    </IconButton>
-                                                                </Tooltip>
-                                                            </TableCell>
-                                                        </div>
+                                                            
+                                                            {
+                                                                this.props.actions &&
+                                                                    <React.Fragment>
+                                                                        <TableCell
+                                                                            align="left"
+                                                                            padding="checkbox"
+                                                                            classes={{ root: classes.tableCellAction }}
+                                                                        >
+                                                                        { editMode ?  isSelected ?
+                                                                            <Tooltip title="Edit">
+                                                                                <IconButton aria-label="Cancel" onClick={() => unsetEditMode(data, headerTitle)}>
+                                                                                    <CancelIcon />
+                                                                                </IconButton>
+                                                                            </Tooltip> : 
+                                                                            <Tooltip title="Edit">
+                                                                                <IconButton aria-label="Edit" onClick={() => setEditMode(data, headerTitle)}>
+                                                                                    <EditIcon />
+                                                                                </IconButton>
+                                                                            </Tooltip> :
+                                                                            <Tooltip title="Edit">
+                                                                            <IconButton aria-label="Edit" disabled={disableEdit} onClick={() => setEditMode(data, headerTitle)}>
+                                                                                <EditIcon />
+                                                                            </IconButton>
+                                                                        </Tooltip>
+                                                                        }
+                                                                        </TableCell>
+                                                                        <TableCell
+                                                                            align="left"
+                                                                            padding="checkbox"
+                                                                            classes={{ root: classes.tableCellAction }}
+                                                                        >
+                                                                            <Tooltip title="Delete">
+                                                                                <IconButton disabled={editMode || disableDelete} aria-label="Delete" onClick={() => this.handleDelete(data.row_id)}>
+                                                                                    <DeleteIcon />
+                                                                                </IconButton>
+                                                                            </Tooltip>
+                                                                        </TableCell>
+                                                                    </React.Fragment>
+                                                            }
+                                                            </div>
+                                                        :
+                                                        null
                                                 }
                                                 <div 
                                                     id='selectable-row'

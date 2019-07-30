@@ -209,12 +209,11 @@ async function deleteDivision(req, res, next){
 }
 
 async function getPositions(req, res, next){
+    let where = req.query
+
     try{
         let data = await Position.findAll({
-            where:{
-                bu_id: req.query.bu_id && req.query.bu_id,
-                div_id: req.query.div_id && req.query.div_id,
-            },
+            where,
             include: [
                 {
                     model: Organization,
@@ -1491,28 +1490,26 @@ async function updateEmployee(req, res, next){
 
 async function deleteEmployee(req, res, next){
     let employee = req.body
+    
+    try{
+        let data = await Employee.destroy({ where: { row_id: employee.row_id }})
 
-    return sequelize.transaction(t => {
-        return Employee.destroy({ where: { row_id: employee.row_id }}, { transaction: t })
-        .then(result => {
-            return User.destroy({ where: { row_id: employee.row_id }}, { transaction: t })
-        })
-    }).then(result => {
         res.status(200).json({
             status: 200,
-            data: result,
+            data,
         })
-    }).catch(err => {
+    }
+    catch(err){
         err.status = 400
         err.message = `Database Error: ${err}`
         next(err)
-    })
-
+    }
 }
 
 async function changeEmployeeStatus(req, res, next){
     let checked = req.body.checked
     let employee = req.body.employee
+    console.log("ACTIVE METHOD: ", req.body)
 
     try{
         let data = await Employee.update({FLG_01: checked}, { where: { row_id: employee }})
@@ -1874,6 +1871,77 @@ async function updateEmployeeDesignation(req, res, next){
     }
 }
 
+async function searchEmployeeContracts(req, res, next){
+    let query = req.body
+
+    try{
+        let data = await ProfileAttribute.findAll({
+            where: {
+                [Op.and]: [
+                    { type: 'contract' },
+                    { [Op.or]: [
+                        { ATTRIB_02: 'rejected' },
+                        { ATTRIB_02: 'accepted' },
+                    ] }
+                ]
+            },
+            include:[
+                {
+                    model: Employee,
+                    as: 'employee',
+                    attributes: ['emp_num', 'full_name', 'fst_name', 'last_name', 'ATTRIB_18', 'ATTRIB_19'],
+                },
+            ],
+            order: [
+                // 'employee.fst_name',
+                [{model: Employee, as: 'employee'}, 'ATTRIB_19', 'ASC'],
+            ]
+        })
+        
+        res.status(200).json({
+            status: 200,
+            data,
+        })
+    }
+    catch(err){
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function renewEmployeeContracts(req, res, next){
+    let employees = req.body
+    console.log(employees)
+
+    try{
+        let data = ProfileAttribute.update(
+            { ATTRIB_02: 'pending' }, 
+            {
+                where: {
+                    row_id: {
+                        [Op.in]:employees
+                    }
+                }
+            }
+        )
+
+        res.status(200).json({
+            status: 200,
+            data,
+        })
+    }
+    catch(err){
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function deleteEmployeeContracts(req, res, next){
+    
+}
+
 module.exports = {
     getOrganizations,
     postOrganization,
@@ -1938,4 +2006,7 @@ module.exports = {
     updateEmployee,
     deleteEmployee,
     changeEmployeeStatus,
+    searchEmployeeContracts,
+    renewEmployeeContracts,
+    deleteEmployeeContracts,
 }

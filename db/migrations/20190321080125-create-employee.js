@@ -82,9 +82,11 @@ module.exports = {
         allowNull: true,
         defaultValue: null,
         references: {
-          model: 'c_emp',
+          model: 'c_postn',
           key: 'row_id',
         },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL',
       },
       created: {
         type: Sequelize.DATE,
@@ -151,7 +153,8 @@ module.exports = {
         type: Sequelize.DATE,
       },
       FLG_01: {
-        type: Sequelize.CHAR,
+        type: Sequelize.BOOLEAN,
+        defaultValue: 0,
       },
       FLG_02: {
         type: Sequelize.CHAR,

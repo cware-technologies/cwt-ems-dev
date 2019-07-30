@@ -88,10 +88,11 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: null,
       // hierarchy: true,
       references: {
-        model: 'c_emp',
+        model: 'c_postn',
         key: 'row_id',
       },
-      onDelete: 'SET NULL'
+      onUpdate: 'CASCADE',
+      onDelete: 'SET NULL',
     },
     created: {
       allowNull: false,
@@ -158,7 +159,8 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DATE,
     },
     FLG_01: {
-      type: DataTypes.CHAR,
+      type: DataTypes.BOOLEAN,
+      defaultValue: 0,
     },
     FLG_02: {
       type: DataTypes.CHAR,
@@ -203,7 +205,7 @@ module.exports = (sequelize, DataTypes) => {
   // Employee.isHierarchy({ through: employeeAncestors })
   
   Employee.associate = function(models) {
-    Employee.belongsTo( Employee, { as: 'manager', foreignKey: 'report_to_id' })
+    Employee.belongsTo( models.C_POSTN, { as: 'manager', foreignKey: 'report_to_id' })
     Employee.belongsTo( models.C_BU, { as: 'organization', foreignKey: 'bu_id' })
     Employee.belongsTo( models.C_DIV, { as: 'division', foreignKey: 'div_id' })
     Employee.belongsTo( models.C_POSTN, { as: 'position_held', foreignKey: 'postn_held_id' })

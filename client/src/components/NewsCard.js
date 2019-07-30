@@ -10,7 +10,7 @@ import Link from '@material-ui/core/Link';
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
 import Typography from '@material-ui/core/Typography';
-import { relative } from 'path';
+import NewWindowIcon from '@material-ui/icons/OpenInNew'
 import ModalTrigger from './ModalTrigger';
 
 const styles = theme => ({
@@ -19,6 +19,7 @@ const styles = theme => ({
         // width: '200px',
         // display: 'inline-block',
         margin: theme.spacing.unit,
+        height: 400,
         // backgroundColor: theme.palette.grey[500],
         [theme.breakpoints.down('md')]: {
             height: '200px',
@@ -117,6 +118,8 @@ const after = {
     background: 'rgba(0, 0, 0, 0.6)'
 }
 
+const externalNewsTypes = ['Economy', 'Technology', 'Local']
+
 function SimpleCard(props) {
     const { classes, _className } = props;
 
@@ -137,12 +140,30 @@ function SimpleCard(props) {
         return result
     }
 
+    const getImageURL = () => {
+        if(props.type === "Company News"){
+            return props.img
+        }
+        else if(props.type === "Economy" ||
+                props.type === "Technology" ||
+                props.type === "Local"
+        ){
+            return "/images/news/covers/external-news-cover.png"
+        }
+        else if(props.type === "Employee News"){
+            return "/images/news/covers/employee-news-cover.jpg"
+        }
+        else if(props.type === "Announcements"){
+            return "/images/news/covers/announcements-cover.gif"
+        }
+    }
+
     return (
-        <Card className={classNames(classes.card, _className)}>
+        <Card raised elevation={3} className={classNames(classes.card, _className)}>
             <CardContent className={classes.cardContent} classes={!props.current && {root: classes.faded}}>
                 <CardMedia
                     className={classes.media}
-                    image={props.img}
+                    image={getImageURL()}
                     title={props.title}
                     classes={{ root: classes.mediaRoot }}
                 >   
@@ -155,15 +176,39 @@ function SimpleCard(props) {
                 </CardMedia>
             </CardContent>
             <CardActions className={classes.cardActions}>
-                <ModalTrigger
-                    title='Read More'
-                >
-                    <React.Fragment>
-                        <Typography variant='title' align='center' color='textSecondary'>{props.data.ATTRIB_10}</Typography>
-                        <Typography variant='body1' align='center' color='textPrimary'>{props.data.ATTRIB_01}</Typography>
-                        <Typography variant="overline" component="p" align="right" color="textSecondary">{getDate(props.data.created).toDateString()}</Typography>
-                    </React.Fragment>
-                </ModalTrigger>
+                {
+                    externalNewsTypes.filter(type => type === props.type).length > 0 
+                    ?
+                        <Link
+                            component='button'
+                            variant='button'
+                            underline='none'
+                            TypographyClasses={{
+                                component: 'button',
+                                variant: 'button',
+                            }}
+                        >
+                            <a
+                                href={ props.link && props.link }
+                                target="_blank"
+                                rel="noreferrer"
+                                style={{ textDecoration: 'none' }}   
+                            >
+                                <NewWindowIcon/>Read More
+                            </a>
+                        </Link>
+                    :
+                        <ModalTrigger
+                            title='Read More'
+                        >
+                            <React.Fragment>
+                                <Typography variant='title' align='center' color='textSecondary'>{props.title}</Typography>
+                                <Typography variant='body1' align='center' color='textPrimary'>{props.body}</Typography>
+                                <Typography variant="overline" component="p" align="right" color="textSecondary">{getDate(props.date).toDateString()}</Typography>
+                            </React.Fragment>
+                        </ModalTrigger>
+                }
+               
                 <Typography variant="overline" component="p" align="right" color="textSecondary" className={classes.newsDate}>
                     {getDate(props.date).toDateString()}
                 </Typography>

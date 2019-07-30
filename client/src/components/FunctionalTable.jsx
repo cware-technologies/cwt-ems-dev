@@ -315,7 +315,7 @@ class SimpleTable extends React.Component {
     // }
 
     render(){
-        let {classes, title, headers, schema, clearSelection, fields} = this.props
+        let {classes, title, headers, schema, clearSelection, fields, tableProps} = this.props
         let {entity, data, editMode} = this.state
 
         let addComponent = <ModalTrigger
@@ -346,8 +346,7 @@ class SimpleTable extends React.Component {
                 headerTitle={title}
                 rows={headers}
                 data={data}
-                isSelectable
-                actions
+                {...tableProps}
                 selectEntity={this.selectEntity}
                 setEditMode={this.setEditMode}
                 unsetEditMode={this.unsetEditMode}
@@ -464,6 +463,12 @@ class SimpleTable extends React.Component {
             //     </ExpansionPanel>
             // </Paper>
         )
+    }
+}
+
+SimpleTable.defaultProps = {
+    tableProps: {
+        actions: true,
     }
 }
 

@@ -24,7 +24,9 @@ export const combineStyles = (...styles) => {
 }
 
 export const getCellValue = (obj, nesting) => {
-
+  if(nesting === null){
+      return null
+  }
   if(typeof nesting === 'string')
       return obj[nesting]
 

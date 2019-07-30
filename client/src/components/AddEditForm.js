@@ -43,7 +43,6 @@ class AddEditForm extends React.Component {
             }
         }
 
-        console.log("OBJ:", id, value)
         this.props.handleChange(e, this.props.headerTitle)
     }
 

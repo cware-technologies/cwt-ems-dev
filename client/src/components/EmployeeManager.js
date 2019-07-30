@@ -19,12 +19,6 @@ const employeeRows = [
   { id: ['employee', 'FLG_01'], type: 'toggle', numeric: false, disablePadding: true, lengthRatio: 'Action', label: 'Active' },
 ]
 
-const formFields = [
-  { id: 'val', type: 'text', label: 'Name' },
-  { id: 'type', type: 'select', label: 'Type', selectOptions: [{ value: 'leave_type', name: 'Leave Type' }], defaultValue: 'leave_type', readOnly: true, },
-  { id: 'ATTRIB_11', type: 'number', label: 'No Of Days', inputProps: { min: '1', max: '50', step: '1' } },
-]
-
 class EditEmployee extends React.Component {
   modalRef = React.createRef()
   state = {
@@ -44,6 +38,8 @@ class EditEmployee extends React.Component {
       postn_held_id: { label: '', value: null },
       resp_id: { label: '', value: null },
       report_to_id: { label: '', value: null },
+      ATTRIB_01: '',
+      ATTRIB_18: '',
     },
     editMode: false,
   }
@@ -210,6 +206,9 @@ class EditEmployee extends React.Component {
   handleSwitchChange = async (checked, id) => {
     return new Promise(async (resolve, reject) => {
       let response
+      let selected = this.state.data.filter(row => {
+        return row.row_id == id
+      })[0]
 
       try {
         response = await axios({
@@ -220,9 +219,11 @@ class EditEmployee extends React.Component {
           },
           data: {
             checked,
-            employee: id,
+            employee: selected.employee.row_id,
           },
         })
+
+        console.log("ACTIVE RESPONSE: ", response)
 
         if (response.data.status === 200) {
           this.props.success(response.data.message)
@@ -265,6 +266,7 @@ class EditEmployee extends React.Component {
     else {
       let message = response.message || 'Action Successful'
       this.props.success(message)
+      this.unsetEditMode()
     }
 
   }
@@ -332,6 +334,10 @@ class EditEmployee extends React.Component {
       return row.row_id !== id
     })
 
+    let selected = this.state.data.filter(row => {
+      return row.row_id == id
+    })[0]
+
     try {
       response = await axios({
         method: 'delete',
@@ -340,7 +346,7 @@ class EditEmployee extends React.Component {
           'content-type': 'application/json',
         },
         data: {
-          row_id: id,
+          row_id: selected.employee.row_id,
         },
       })
 

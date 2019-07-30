@@ -161,6 +161,10 @@ class AutoSuggestContainer extends React.Component {
         this.props.onSelect(suggestion)
     }
 
+    shouldRenderSuggestions = (value) => {
+        return value.trim().length > 3;
+    }
+
     render() {
         const { value, suggestions, onChange, classes, isLoading } = this.props
         const inputProps = {
@@ -179,6 +183,7 @@ class AutoSuggestContainer extends React.Component {
                     onSuggestionsClearRequested={this.onSuggestionsClearRequested}
                     onSuggestionSelected={this.onSuggestionSelected}
                     getSuggestionValue={getSuggestionValue}
+                    shouldRenderSuggestions={this.shouldRenderSuggestions}
                     renderInputComponent={(inputProps) => renderInputComponent(inputProps, classes, isLoading)}
                     renderSuggestion={renderSuggestion}
                     inputProps={inputProps}

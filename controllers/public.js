@@ -8,21 +8,27 @@ const Op = require('sequelize').Op,
 
 async function searchEmployee(req, res, next){
     let search = req.query
+    let where = search
     console.log(search)
-    let query = search.query.split(' ')
+
+    if(search.name){
+        let query = search.name.split(' ')
+
+        where = {
+            [Op.or]: { 
+                fst_name: {
+                    [Op.substring]: query[0],
+                },
+                last_name: {
+                    [Op.substring]: query[1] || query[0],
+                },
+            }
+        }
+    }
 
     try{
         let data = await Employee.findAll({
-            where: {
-                [Op.or]: { 
-                    fst_name: {
-                        [Op.substring]: query[0],
-                    },
-                    last_name: {
-                        [Op.substring]: query[1] || query[0],
-                    },
-                }
-            },
+            where,
             include: [
                 {
                     model: Division,
@@ -35,9 +41,9 @@ async function searchEmployee(req, res, next){
                     attributes: ['row_id', 'name', 'desc', 'par_row_id']
                 },
                 {
-                    model: Employee,
+                    model: Position,
                     as: 'manager',
-                    attributes: ['row_id', 'fst_name', 'last_name']
+                    attributes: ['row_id', 'name']
                 },
             ]
         })

@@ -69,6 +69,10 @@ router.get('/employee/details', adminController.searchEmployeeDetails)
 router.post('/employee/details', adminController.upsertEmployeeDetails)
 router.put('/employee/details', adminController.updateEmployeeDetails)
 
+router.get('/employee/contracts', adminController.searchEmployeeContracts)
+router.post('/employee/contracts', adminController.renewEmployeeContracts)
+router.delete('/employee/contracts', adminController.deleteEmployeeContracts)
+
 router.get('/employee/details/dependants', adminController.searchEmployeeDependants)
 router.post('/employee/details/dependants', adminController.addEmployeeDependant)
 router.delete('/employee/details/dependants', adminController.deleteEmployeeDependant)

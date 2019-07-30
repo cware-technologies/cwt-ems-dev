@@ -168,12 +168,6 @@ class CreateAccount extends React.Component {
         let value = event.target.value;
         this.validate(event)
         this.props.changeHandler(target, value)
-        .then(res => this.setState(prevState => ({
-            employee: {
-                ...prevState.employee,
-                [target] : value,
-            }
-        })))
     }
 
     handleConfirmPassChange = (event) => {
@@ -280,8 +274,8 @@ class CreateAccount extends React.Component {
     }
 
     render(){
-        let { classes, editMode } = this.props;
-        let { errors, response, employee } = this.state;
+        let { classes, editMode, employee } = this.props;
+        let { errors, response,  } = this.state;
 
         return(
             <React.Fragment>
@@ -404,7 +398,7 @@ class CreateAccount extends React.Component {
                         endpoint='/admin/org-struct/organization'
                         query={{}}
                         value={ employee.bu_id }
-                        mapping={['name', 'row_id', 'desc']}
+                        mapping={['name', 'row_id', null, 'desc']}
                         isDisabled={false}
                         handleSelectChange={this.debouncedSelectChange}
                     />
@@ -415,7 +409,7 @@ class CreateAccount extends React.Component {
                         endpoint='/admin/org-struct/division'
                         query={ { bu_id: employee.bu_id.value } }
                         value={ employee.div_id }
-                        mapping={['name', 'row_id', 'desc']}
+                        mapping={['name', 'row_id', null, 'desc']}
                         isDisabled={ employee.bu_id.value }
                         handleSelectChange={ this.debouncedSelectChange }
                     />
@@ -425,7 +419,7 @@ class CreateAccount extends React.Component {
                         endpoint='/admin/org-struct/position'
                         query={ { bu_id: employee.bu_id.value, div_id: employee.div_id.value } }
                         value={ employee.postn_held_id }
-                        mapping={['name', 'row_id', 'desc']}
+                        mapping={['name', 'row_id', null, 'desc']}
                         isDisabled={ employee.div_id.value }
                         handleSelectChange={ this.debouncedSelectChange }
                     />
@@ -435,7 +429,7 @@ class CreateAccount extends React.Component {
                         endpoint='/admin/org-struct/responsibility'
                         query={ { bu_id: employee.bu_id.value } }
                         value={ employee.resp_id }
-                        mapping={['name', 'row_id', 'desc']}
+                        mapping={['name', 'row_id', null, 'desc']}
                         isDisabled={ employee.bu_id.value }
                         handleSelectChange={ this.debouncedSelectChange }
                     />
@@ -443,214 +437,40 @@ class CreateAccount extends React.Component {
                         name='reports to'
                         id='report_to_id'
                         endpoint='/admin/org-struct/position'
-                        query={ { bu_id: employee.bu_id.value, div_id: employee.div_id.value } }
+                        query={ { bu_id: employee.bu_id.value } }
                         value={ employee.report_to_id }
-                        mapping={['name', 'row_id', 'desc']}
+                        mapping={['name', 'row_id', ['division', 'name'], 'desc']}
                         isDisabled={ employee.postn_held_id.value }
                         handleSelectChange={ this.debouncedSelectChange }
                     />
-                    {/* <TextField
-                        id="dropdown_1"
-                        name="/admin/org-struct/division"
-                        select
-                        label={`Organization *`}
-                        error={errors.bu_id}
-                        helperText={errors.bu_id && <ul className={classes.errorList}> {errors.bu_id.map((error)=>{ return <li className={classes.errorListItem}>{error}</li>})}</ul>}
-                        disabled={this.state.dropdown_1.disabled}
-                        className={classNames(classes.textField, classes.dense)}
-                        value={employee.bu_id}
-                        onChange={this.handleSelectChange}
-                        onBlur={this.validate}
-                        SelectProps={{
-                            native: true,
-                            MenuProps: {
-                                className: classes.menu,
-                            },
-                        }}
-                        // helperText="Please select your currency"
-                        margin="dense"
-                        variant="filled"
-                        classes={{
-                            root: classes.inputRoot,
-                        }}
-                        InputProps={{
-                            className: classes.input,
-                        }}
-                        InputLabelProps={{
-                            className: classes.inputLabel,
-                            shrink: true,
-                        }}
-                    >
-                        <option value={null}>
-                            {''}
-                        </option>
-                        {this.state.dropdown_1.data.map(option => (
-                            <option key={option.row_id} value={option.row_id}>
-                                {option.name}
-                            </option>
-                        ))}
-                    </TextField>
                     <TextField
-                        id="dropdown_2"
-                        name="/admin/org-struct/position"
-                        select
-                        label={`Division`}
-                        error={errors.div_id}
-                        helperText={errors.div_id && <ul className={classes.errorList}> {errors.div_id.map((error)=>{ return <li className={classes.errorListItem}>{error}</li>})}</ul>}
-                        disabled={!this.state.dropdown_1.value}
-                        className={classNames(classes.textField, classes.dense)}
-                        value={employee.div_id}
-                        onChange={this.handleSelectChange}
-                        onBlur={this.validate}
-                        SelectProps={{
-                            native: true,
-                            MenuProps: {
-                                className: classes.menu,
-                            },
-                        }}
-                        // helperText="Please select your currency"
+                        id="ATTRIB_01"
+                        label="Location"
+                        className={classNames(classes.textField, classes.dense, classes.singleSpanInput)}
                         margin="dense"
-                        variant="filled"
-                        classes={{
-                            root: classes.inputRoot,
-                        }}
-                        InputProps={{
-                            className: classes.input,
-                        }}
-                        InputLabelProps={{
-                            className: classes.inputLabel,
-                            shrink: true,
-                        }}
-                    >
-                        <option value={null}>
-                            {''}
-                        </option>
-                        {this.state.dropdown_2.data.map(option => (
-                            <option key={option.row_id} value={option.row_id}>
-                                {option.name}
-                            </option>
-                        ))}
-                    </TextField> */}
-                    {/* <TextField
-                        id="dropdown_3"
-                        name="/admin/org-struct/responsibility"
-                        select
-                        label={`Position`}
-                        helperText={errors.postn_held_id && <ul className={classes.errorList}> {errors.postn_held_id.map((error)=>{ return <li className={classes.errorListItem}>{error}</li>})}</ul>}
-                        disabled={this.state.dropdown_3.disabled}
-                        className={classNames(classes.textField, classes.dense)}
-                        value={employee.postn_held_id}
-                        onChange={this.handleSelectChange}
+                        variant="outlined"
+                        value={employee.ATTRIB_01}
+                        error={errors.ATTRIB_01}
+                        helperText={errors.ATTRIB_01 && <ul className={classes.errorList}> {errors.ATTRIB_01.map((error)=>{ return <li className={classes.errorListItem}>{error}</li>})}</ul>}
+                        onChange={this.handleTextChange}
                         onBlur={this.validate}
-                        SelectProps={{
-                            native: true,
-                            MenuProps: {
-                                className: classes.menu,
-                            },
-                        }}
-                        // helperText="Please select your currency"
-                        margin="dense"
-                        variant="filled"
-                        classes={{
-                            root: classes.inputRoot,
-                        }}
-                        InputProps={{
-                            className: classes.input,
-                        }}
-                        InputLabelProps={{
-                            className: classes.inputLabel,
-                            shrink: true,
-                        }}
-                    >
-                        <option value={null}>
-                            {''}
-                        </option>
-                        {this.state.dropdown_3.data.map(option => (
-                            <option key={option.row_id} value={option.row_id}>
-                                {option.name}
-                            </option>
-                        ))}
-                    </TextField>
+                    />
                     <TextField
-                        id="dropdown_4"
-                        name="/employee/employee"
-                        select
-                        label={`Responsibility`}
-                        helperText={errors.resp_id && <ul className={classes.errorList}> {errors.resp_id.map((error)=>{ return <li className={classes.errorListItem}>{error}</li>})}</ul>}
-                        disabled={this.state.dropdown_4.disabled}
-                        className={classNames(classes.textField, classes.dense)}
-                        value={employee.resp_id}
-                        onChange={this.handleSelectChange}
-                        onBlur={this.validate}
-                        SelectProps={{
-                            native: true,
-                            MenuProps: {
-                                className: classes.menu,
-                            },
-                        }}
-                        // helperText="Please select your currency"
+                        id="ATTRIB_18"
+                        type='date'
+                        label="Date Of Contract"
+                        className={classNames(classes.textField, classes.dense, classes.singleSpanInput)}
                         margin="dense"
-                        variant="filled"
-                        classes={{
-                            root: classes.inputRoot,
-                        }}
-                        InputProps={{
-                            className: classes.input,
-                        }}
+                        variant="outlined"
+                        value={employee.ATTRIB_18}
+                        error={errors.ATTRIB_18}
                         InputLabelProps={{
-                            className: classes.inputLabel,
                             shrink: true,
                         }}
-                    >
-                        <option value={null}>
-                            {''}
-                        </option>
-                        {this.state.dropdown_4.data.map(option => (
-                            <option key={option.row_id} value={option.row_id}>
-                                {option.name}
-                            </option>
-                        ))}
-                    </TextField>
-                    <TextField
-                        id="dropdown_5"
-                        name=""
-                        select
-                        label={`Reports To`}
-                        helperText={errors.report_to_id && <ul className={classes.errorList}> {errors.report_to_id.map((error)=>{ return <li className={classes.errorListItem}>{error}</li>})}</ul>}
-                        disabled={this.state.dropdown_5.disabled}
-                        className={classNames(classes.textField, classes.dense)}
-                        value={employee.report_to_id}
-                        onChange={this.handleSelectChange}
+                        helperText={errors.ATTRIB_18 && <ul className={classes.errorList}> {errors.ATTRIB_18.map((error)=>{ return <li className={classes.errorListItem}>{error}</li>})}</ul>}
+                        onChange={this.handleTextChange}
                         onBlur={this.validate}
-                        SelectProps={{
-                            native: true,
-                            MenuProps: {
-                                className: classes.menu,
-                            },
-                        }}
-                        // helperText="Please select your currency"
-                        margin="dense"
-                        variant="filled"
-                        classes={{
-                            root: classes.inputRoot,
-                        }}
-                        InputProps={{
-                            className: classes.input,
-                        }}
-                        InputLabelProps={{
-                            className: classes.inputLabel,
-                            shrink: true,
-                        }}
-                    >
-                        <option value={null}>
-                            {''}
-                        </option>
-                        {this.state.dropdown_5.data.map(option => (
-                            <option key={option.row_id} value={option.row_id}>
-                                {`${option.fst_name} ${option.last_name}`}
-                            </option>
-                        ))}
-                    </TextField> */}
+                    />
                 </div>
                 <FormHelperText>{response.status && <ul className={response.status<300?classes.successList:classes.errorList}><li className={classes.errorListItem}>{response.message}</li></ul>}</FormHelperText>
                 <Button onClick={this.submitForm} variant="contained" color="primary" className={classNames(classes.button, classes.textField)}>

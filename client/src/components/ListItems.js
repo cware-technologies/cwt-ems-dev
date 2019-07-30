@@ -105,7 +105,15 @@ class MainList extends React.Component {
         {
           this.props.views.map(view => {
             return(
-              <Link to={`${match.url}${view.ATTRIB_01}`} style={{ textDecoration: 'none' }}>
+              <Link 
+                to={{
+                  pathname: `${match.url}${view.ATTRIB_01}`,
+                  state: {
+                    viewName: view.name,
+                    viewID: view.row_id,
+                  },
+                }}
+                  style={{ textDecoration: 'none' }}>
                 <ListItem button>
                   <ListItemIcon>
                     {/* <DashboardIcon /> */}

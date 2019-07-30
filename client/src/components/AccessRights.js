@@ -23,7 +23,7 @@ const responsibilityRows = [
 const responsibilityFields = [
     { id: 'name', type:'text', label: 'Name' },
     { id: 'desc', type:'text', label: 'Description' },
-    { id: 'bu_id', name: 'organization', type:'select', label: 'Organization', indeterminate: true, requestParams: {endPoint: '/admin/org-struct/organization', selectMapping: ['name', 'row_id', 'desc'], } },
+    { id: 'bu_id', name: 'organization', type:'select', label: 'Organization', indeterminate: true, requestParams: {endPoint: '/admin/org-struct/organization', selectMapping: ['name', 'row_id', null, 'desc'], } },
 ]
 
 const responsibilitySchema = {
@@ -193,6 +193,7 @@ class AddResponsibility extends React.Component {
             checkboxRefs: {},
             // [labelField]: label,
         }), () => {
+            console.log("STATE: ", this.state)
             if(entity === 'responsibility'){
                 this.getRespViews()
             }

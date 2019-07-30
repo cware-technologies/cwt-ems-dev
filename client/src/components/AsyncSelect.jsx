@@ -1,6 +1,7 @@
 import React from 'react'
 import axios from 'axios'
 import Select, { components } from 'react-select'
+import { getCellValue } from '../helpers/utils';
 
 
 const { ValueContainer, Placeholder, Option } = components;
@@ -20,12 +21,13 @@ const CustomValueContainer = ({ children, ...props }) => {
 
 const CustomOption = props => {
     const { data } = props
-
+    console.log(data, `${data.label}  ${data.subLabel}  ${data.desc}`)
     return (
         <div>
             <Option {...props}>
                 <p style={{ padding: '5px 0px', margin: 0, fontWeight: 400, fontSize: '0.8em' }}>{ data.label }</p>
-                <p style={{ padding: '5px 0px', margin: 0, color: 'gray', fontSize: '0.7em', }}>{ data.subLabel }</p>
+                {data.subLabel && <p style={{ padding: '5px 0px', margin: 0, fontWeight: 200, fontSize: '0.75em' }}>{ data.subLabel }</p>}
+                {data.desc && <p style={{ padding: '5px 0px', margin: 0, color: 'gray', fontSize: '0.7em', fontStyle: 'italic' }}>{ data.desc }</p>}
             </Option>
             {/* <hr style={{ width: '90%', margin: '0px auto', }}/> */}
         </div>
@@ -74,7 +76,8 @@ class AsyncSelect extends React.Component {
         let response
         let selectMapping = this.props.mapping
 
-        console.log("ENDPOINT!!!: ", this.props.endpoint)
+        console.log("MAPPING: ", selectMapping)
+
         this.setState(prevState => ({
             isLoading: true,
         }))
@@ -87,9 +90,10 @@ class AsyncSelect extends React.Component {
             })
 
             let responseOptions = response.data.result.map(row => ({
-                label: row[selectMapping[0]],
-                subLabel: row[selectMapping[2]],
-                value: row[selectMapping[1]],
+                label: getCellValue(row, selectMapping[0]),
+                subLabel: getCellValue(row, selectMapping[2]),
+                desc: getCellValue(row, selectMapping[3]),
+                value: getCellValue(row, selectMapping[1]),
             }))
 
             if (response.data.status === 200) {
@@ -121,7 +125,7 @@ class AsyncSelect extends React.Component {
     render() {
         let { options, isLoading } = this.state
         let { isDisabled, name, value } = this.props
-        console.log(name, value)
+
         return (
             <Select
                 options={[
@@ -156,7 +160,7 @@ class AsyncSelect extends React.Component {
                     }),
                     menuPortal: base => ({
                         ...base,
-                        height: 500,
+                        height: 800,
                         zIndex: 9999
                     }),
                     valueContainer: (provided, state) => ({
