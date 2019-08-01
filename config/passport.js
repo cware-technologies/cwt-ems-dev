@@ -62,6 +62,7 @@ passport.use(
                                         emp_id: emp.row_id,
                                         resp_id: user.resp_id.value,
                                         bu_id: user.bu_id.value,
+                                        div_id: user.div_id.value,
                                         fst_name: user.fst_name,
                                         last_name: user.last_name,
                                     }, { transaction: t });

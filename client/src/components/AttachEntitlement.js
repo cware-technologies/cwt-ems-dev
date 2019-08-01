@@ -39,6 +39,8 @@ class EmployeeInduction extends React.Component {
         ],
         leaveData: [],
         applicationFormData: {},
+        filter: 'name',
+        value: '',
         query: '',
         isFetching: false,
     }
@@ -98,10 +100,8 @@ class EmployeeInduction extends React.Component {
         try {
             response = await axios({
                 method: 'get',
-                url: '/public/search/employee',
-                params: {
-                    query: this.state.query
-                }
+                url: `/public/search/employee?${this.state.query}`,
+                params: this.state.query
             })
 
             this.setState(prevState => ({
@@ -118,7 +118,8 @@ class EmployeeInduction extends React.Component {
 
     onChange = (event, { newValue }) => {
         this.setState({
-            query: newValue
+            value: newValue,
+            query: `${this.state.filter}=${newValue}`
         });
     };
 
@@ -271,7 +272,7 @@ class EmployeeInduction extends React.Component {
                     this.setState(prevState => ({
                         checklistData: [
                             ...prevState.checklistData,
-                            ...response.data.result,
+                            response.data.result,
                         ]
                     }))
                 }
@@ -285,13 +286,13 @@ class EmployeeInduction extends React.Component {
 
     render() {
         let { classes } = this.props
-        let { checklistData, usersData, leaveTypes, query, applicationFormData, isFetching } = this.state
+        let { checklistData, usersData, leaveTypes, query, value, applicationFormData, isFetching } = this.state
 
         return (
             <Container>
                 <div className={classes.actionPanel}>
                     <AutoSuggest
-                        value={query}
+                        value={value}
                         apiCall={this.onSearch}
                         onChange={this.onChange}
                         onClear={this.clearSuggestions}

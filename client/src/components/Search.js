@@ -5,6 +5,9 @@ import { Link, withRouter } from 'react-router-dom';
 import classNames from 'classnames';
 import { fade } from '@material-ui/core/styles/colorManipulator';
 import InputBase from '@material-ui/core/InputBase';
+import MenuItem from '@material-ui/core/MenuItem'
+import Menu from '@material-ui/core/Menu'
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import SearchIcon from '@material-ui/icons/Search';
 import { Button, IconButton } from '@material-ui/core';
 import { ReactComponent as LoadingSpinner } from '../assets/loading.svg'
@@ -27,6 +30,9 @@ const styles = theme => ({
         //   marginLeft: theme.spacing.unit * 3,
           width: 'auto',
         },
+    },
+    filterMenuContainer: {
+        height: '100%'
     },
     form: {
         width: '100%',
@@ -65,11 +71,27 @@ const styles = theme => ({
         width: '100%',
         height: '100%',
     },
+    filterIcon: {
+        height: '100%',
+        width: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: fade(theme.palette.common.black, 0.10),
+        '&:hover': {
+          backgroundColor: fade(theme.palette.common.black, 0.25),
+        },
+    },
+    iconButtonRoot: {
+        borderRadius: '0px',
+        height: '100%',
+    },
 })
 
 class SearchBar extends React.Component {
     state = {
-
+        filter: 'name',
+        userMenuAnchorEl: null,
     }
 
     submitHandler = (e) => {
@@ -78,20 +100,77 @@ class SearchBar extends React.Component {
         this.props.submitHandler()
     }
 
+    handleMenu = event => {
+        this.setState({ userMenuAnchorEl: event.currentTarget });
+    };
+
+    changeHandler = (e) => {
+        this.props.changeHandler(e)
+    }
+    
+    handleClose = (event) => {
+        const target = event.target.id;
+        let filterProps = this.props.searchFilterProps
+        let filter = filterProps.filterMapping[target]
+        filterProps.changeFilter(filter)
+        this.setState(prevState => ({
+            filter: target || prevState.filter,
+            userMenuAnchorEl: null
+        }));
+    };
+
     render(){
-        const { classes, match, title, submitHandler, changeHandler, query, isSearching } = this.props
+        const { classes, match, title, submitHandler, changeHandler, query, isSearching, searchFilterProps } = this.props
         let { userMenuAnchorEl } = this.state;
         const userMenuOpen = Boolean(userMenuAnchorEl);
-        console.log(isSearching)
 
         return (
             <React.Fragment>
-                <div className={classes.search}>
-                    
+                { searchFilterProps &&
+                    <div className={classes.filterMenuContainer}>
+                        <Menu
+                            id="menu-appbar"
+                            anchorEl={userMenuAnchorEl}
+                            anchorPosition={{
+                                left: 50,
+                                top: 50,
+                            }}
+                            transformOrigin={{
+                                vertical: 'top',
+                                horizontal: 'right',
+                            }}
+                            open={userMenuOpen}
+                            onClose={this.handleClose}
+                        >
+                            {
+                                searchFilterProps.filters.map(element => 
+                                    <MenuItem id={element} onClick={this.handleClose}>{element}</MenuItem>                                
+                                )
+                            }
+                        </Menu>
+                        <div className={classes.filterBar}>
+                            <Button
+                                disableRipple
+                                color="inherit"
+                                aria-owns={userMenuOpen ? 'menu-appbar' : undefined}
+                                aria-haspopup="true"
+                                onClick={this.handleMenu}
+                                className={classes.filterIcon}
+                                classes = {{
+                                    root: classes.iconButtonRoot,
+                                }}
+                            >
+                                { this.state.filter }
+                                <ExpandMoreIcon />
+                            </Button>
+                        </div>
+                    </div>
+                }
+                <div className={classes.search}>                    
                     <form onSubmit={this.submitHandler} target="_top" className={classes.form}>
                         <InputBase
                             id='query'
-                            onChange={changeHandler}
+                            onChange={this.changeHandler}
                             value={query}
                             placeholder={`Search ${title}…`}
                             classes={{

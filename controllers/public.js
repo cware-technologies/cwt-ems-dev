@@ -4,12 +4,21 @@ const Op = require('sequelize').Op,
     models = require('../db/models'),
     Employee = models.C_EMP,
     Division = models.C_DIV,
-    Position = models.C_POSTN
+    Position = models.C_POSTN,
+    Sequelize = require('sequelize'),
+    sequelize = require('../db/models').sequelize
 
 async function searchEmployee(req, res, next){
     let search = req.query
     let where = search
     console.log(search)
+
+    let tableMapping = {
+        bu_id: 'C_BU',
+        div_id: 'C_DIV',
+        postn_held_id: 'C_POSTN',
+        resp_id: 'C_RESP',
+    }
 
     if(search.name){
         let query = search.name.split(' ')
@@ -23,6 +32,47 @@ async function searchEmployee(req, res, next){
                     [Op.substring]: query[1] || query[0],
                 },
             }
+        }
+    }
+    else if(search.ATTRIB_01){
+        where = {
+            ATTRIB_01: {
+                [Op.substring]: search.ATTRIB_01,
+            },
+        }
+    }
+    else if(search.emp_num){
+        where = {
+            emp_num: {
+                [Op.substring]: search.emp_num,
+            },
+        }
+    }
+    else if(Object.keys(search).length > 0){
+        let keys = Object.keys(search)
+        keys.forEach(key => {
+            let tempSQL1 = sequelize.dialect.QueryGenerator.selectQuery(tableMapping[key], {
+                attributes: ['row_id'],
+                where: {
+                    name: {
+                        [Op.substring]: search[key],
+                    }
+                }
+            }).slice(0,-1)
+
+            console.log(tempSQL1, [key])
+
+            where = {
+                ...where,
+                [key]: {
+                    [Op.in]: Sequelize.literal(`(${tempSQL1})`)
+                }
+            }
+        })
+        
+        where.bu_id = {
+            ...where.bu_id,
+            [Op.not]: 1,
         }
     }
 

@@ -1396,18 +1396,46 @@ async function getEmployees(req, res, next){
     let search = req.query
     let where
 
+    let tableMapping = {
+        bu_id: 'C_BU',
+        div_id: 'C_DIV',
+        postn_held_id: 'C_POSTN',
+        resp_id: 'C_RESP',
+    }
+
     console.log(search)
 
-    if(search.id){
+    if(search.emp_num){
+        let tempSQL1 = sequelize.dialect.QueryGenerator.selectQuery('C_EMP', {
+            attributes: ['row_id'],
+            where: {
+                emp_num: {
+                    [Op.substring]: search.emp_num,
+                }
+            }
+        }).slice(0,-1)
+
         where = {
             bu_id: {
                 [Op.not]: 1,
             },
-            row_id: search.id,
+            emp_id: {
+                [Op.in]: Sequelize.literal(`(${tempSQL1})`)
+            },
         }
     }
-    else if(search.query){
-        let query = search.query.split(' ')
+    else if(search.ATTRIB_01){
+        where = {
+            bu_id: {
+                [Op.not]: 1,
+            },
+            ATTRIB_01: {
+                [Op.substring]: search.ATTRIB_01,
+            },
+        }
+    }
+    else if(search.name){
+        let query = search.name.split(' ')
         where = {
             bu_id: {
                 [Op.not]: 1,
@@ -1420,6 +1448,33 @@ async function getEmployees(req, res, next){
                     [Op.substring]: query[1] || query[0],
                 },
             }
+        }
+    }
+    else if(Object.keys(search).length > 0){
+        let keys = Object.keys(search)
+        keys.forEach(key => {
+            let tempSQL1 = sequelize.dialect.QueryGenerator.selectQuery(tableMapping[key], {
+                attributes: ['row_id'],
+                where: {
+                    name: {
+                        [Op.substring]: search[key],
+                    }
+                }
+            }).slice(0,-1)
+
+            console.log(tempSQL1, [key])
+
+            where = {
+                ...where,
+                [key]: {
+                    [Op.in]: Sequelize.literal(`(${tempSQL1})`)
+                }
+            }
+        })
+        
+        where.bu_id = {
+            ...where.bu_id,
+            [Op.not]: 1,
         }
     }
     console.log(where)
@@ -1586,9 +1641,22 @@ async function applyForEntitlement(req, res, next){
             ATTRIB_11: application.leave,
         })
 
+        let data2 = await ProfileAttribute.findOne({
+            where: {
+                row_id: data.row_id,
+            },
+            include: [
+                {
+                    model: ListOfValues,
+                    as: 'function',
+                    attributes: ['val', 'ATTRIB_11'],
+                }
+            ]
+        })
+
         res.status(200).json({
             status: 200,
-            result: [data],
+            result: data2,
         })
     }
     catch(err){

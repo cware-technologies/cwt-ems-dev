@@ -24,7 +24,9 @@ class EditEmployee extends React.Component {
   state = {
     data: [],
     selected: null,
+    filter: 'name',
     query: '',
+    searchQuery: '',
     isSearching: false,
     active: false,
     formData: {
@@ -47,44 +49,31 @@ class EditEmployee extends React.Component {
   componentDidMount() {
     let params = new URLSearchParams(this.props.location.search);
     if(params.get("id")){
-      console.log("ID: ", params.get("id"))
-      this.getList(params.get("id"))
+      this.setState(prevProps => ({
+        filter: 'id',
+        searchQuery: `id=${params.get("id")}`,
+      }), () => this.getList())
     }
     else{
       this.getList()
     }
   }
 
-  getList = async (searchQuery) => {
+  getList = async () => {
     let response
     let params
-
-    if(searchQuery){
-      params = {
-        id: searchQuery,
-        organization: this.props.organization,
-      }
-    }
-    else{
-      params = {
-        query: this.state.query,
-        organization: this.props.organization,
-      }
-    }
 
     this.setState(prevState => ({
       isSearching: true,
     }))
 
     try {
-      console.log("Search Query: ", searchQuery)
       response = await axios({
         method: 'get',
-        url: '/admin/employees',
+        url: `/admin/employees?${this.state.searchQuery}`,
         headers: {
           'content-type': 'application/json',
         },
-        params,
       })
 
       this.setState(prevState => ({
@@ -162,11 +151,28 @@ class EditEmployee extends React.Component {
     })
   }
 
+  
+  changeSearchFilter = (filter) => {
+    console.log("CHANGE SEARCH FILTER")
+    if(filter){
+      this.setState(prevProps => ({
+        filter: filter,
+        searchQuery: `${filter}=${prevProps.query}`
+      }), () => console.log(this.state))
+    }
+  }
+
   onSearchChange = (e) => {
     let value = e.target.value
     this.setState(prevState => ({
       query: value,
+      searchQuery: `${this.state.filter}=${value}`,
     }))
+  }
+
+  onSearchSubmit = () => {
+
+    this.getList()
   }
 
   handleChange = (target, value) => {
@@ -380,9 +386,20 @@ class EditEmployee extends React.Component {
           <Search
             title="Employee"
             query={query}
-            submitHandler={this.getList}
+            submitHandler={this.onSearchSubmit}
             changeHandler={this.onSearchChange}
             isSearching={isSearching}
+            searchFilterProps={{
+              changeFilter: this.changeSearchFilter,
+              filters: [ 'id', 'name', 'location', 'organization', 'division' ],
+              filterMapping: {
+                  id: 'emp_num',
+                  name: 'name',
+                  location: 'ATTRIB_01',
+                  organization: 'bu_id',
+                  division: 'div_id',
+              }
+          }}
           />
           <ModalTrigger
             title="Add"

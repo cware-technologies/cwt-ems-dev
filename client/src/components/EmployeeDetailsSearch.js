@@ -60,6 +60,7 @@ class EmployeeDetailsSearch extends React.Component {
     }
 
     onChange = (event, { newValue }) => {
+        console.log(this.state.filter)
         this.setState({
             value: newValue,
             query: `${this.state.filter}=${newValue}`
@@ -80,6 +81,15 @@ class EmployeeDetailsSearch extends React.Component {
         }))
     }
 
+    changeSearchFilter = (filter) => {
+        if(filter){
+            this.setState(prevProps => ({
+                filter,
+                query: `${this.state.filter}=${prevProps.value}`
+            }), () => console.log(this.state))
+        }
+    }
+
     render() {
         let { value, isFetching, suggestions, selected } = this.state
 
@@ -93,6 +103,18 @@ class EmployeeDetailsSearch extends React.Component {
                     onSelect={this.selectEmployee}
                     suggestions={suggestions}
                     isLoading={isFetching}
+                    searchFilterProps={{
+                        changeFilter: this.changeSearchFilter,
+                        filters: [ 'id', 'name', 'location', 'position', 'division', 'responsibility' ],
+                        filterMapping: {
+                            id: 'emp_num',
+                            name: 'name',
+                            location: 'ATTRIB_01',
+                            position: 'postn_held_id',
+                            division: 'div_id',
+                            responsibility: 'resp_id',
+                        }
+                    }}
                 />
                 <EmployeeBadge
                     data={selected}

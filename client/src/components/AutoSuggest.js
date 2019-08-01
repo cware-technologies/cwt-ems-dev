@@ -3,6 +3,12 @@ import debounce from 'lodash.debounce'
 import { withStyles } from '@material-ui/core/styles'
 import { fade } from '@material-ui/core/styles/colorManipulator';
 // import AutoComplete from './AutoComplete'
+
+import MenuItem from '@material-ui/core/MenuItem'
+import Menu from '@material-ui/core/Menu'
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
+import { Button, IconButton } from '@material-ui/core';
+
 import Autosuggest from 'react-autosuggest';
 import AutosuggestHighlightMatch from 'autosuggest-highlight/match';
 import AutosuggestHighlightParse from 'autosuggest-highlight/parse';
@@ -12,8 +18,11 @@ import { ReactComponent as LoadingSpinner } from '../assets/loading.svg'
 const style = theme => ({
     container: {
         margin: 'auto',
-        width: '70%',
+        width: '100%',
         position: 'relative',
+    },
+    filterButtonContainer: {
+        display: 'inline'
     },
     input: {
         height: '50px',
@@ -62,7 +71,8 @@ const style = theme => ({
         backgroundColor: 'gray',
     },/* 'react-autosuggest__suggestions-container--open', */
     suggestionsList: {
-
+        padding: 0,
+        margin: 0,
     },         /* 'react-autosuggest__suggestions-list', */
     suggestionFirst: {
 
@@ -89,7 +99,22 @@ const style = theme => ({
     matched: {
         color: 'blue',
         fontWeight: 'bold',
-    }
+    },
+    filterIcon: {
+        height: '100%',
+        width: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: fade(theme.palette.common.black, 0.20),
+        '&:hover': {
+          backgroundColor: fade(theme.palette.common.black, 0.35),
+        },
+    },
+    iconButtonRoot: {
+        borderRadius: '0px',
+        height: '100%',
+    },
 })
 
 const renderInputComponent = (inputProps, classes, isLoading) => (
@@ -131,12 +156,13 @@ class AutoSuggestContainer extends React.Component {
         super(props)
         this.state = {
             isLoading: false,
+            filter: 'name',
+            userMenuAnchorEl: null,
         }
         this.debouncedLoadSuggestions = debounce(this.loadSuggestions, 500);
     }
 
     loadSuggestions(value) {
-        console.log("AUTOSUGGEST VALUE:", value)
         const inputValue = value.trim().toLowerCase();
         const inputLength = inputValue.length;
 
@@ -162,20 +188,77 @@ class AutoSuggestContainer extends React.Component {
     }
 
     shouldRenderSuggestions = (value) => {
-        return value.trim().length > 3;
+        return value.trim().length > 2;
     }
 
+    handleMenu = event => {
+        this.setState({ userMenuAnchorEl: event.currentTarget });
+    };
+    
+    handleClose = (event) => {
+        const target = event.target.id;
+        let filterProps = this.props.searchFilterProps
+        let filter = filterProps.filterMapping[target]
+        filterProps.changeFilter(filter)
+        this.setState(prevState => ({
+            filter: target || prevState.filter,
+            userMenuAnchorEl: null
+        }));
+    };
+    
     render() {
-        const { value, suggestions, onChange, classes, isLoading } = this.props
+        const { value, suggestions, onChange, classes, isLoading, searchFilterProps } = this.props
         const inputProps = {
             placeholder: "Search",
             type: 'search',
             value,
             onChange: onChange
         };
+        let { userMenuAnchorEl } = this.state;
+        const userMenuOpen = Boolean(userMenuAnchorEl);
 
         return (
-            <React.Fragment>
+            <div className={classes.container}>
+                { searchFilterProps &&
+                    <div className={classes.filterButtonContainer}>
+                        <Menu
+                            id="menu-appbar"
+                            anchorEl={userMenuAnchorEl}
+                            anchorPosition={{
+                                left: 50,
+                                top: 50,
+                            }}
+                            transformOrigin={{
+                                vertical: 'top',
+                                horizontal: 'right',
+                            }}
+                            open={userMenuOpen}
+                            onClose={this.handleClose}
+                        >
+                            {
+                                searchFilterProps.filters.map(element =>
+                                    <MenuItem id={element} onClick={this.handleClose}>{element}</MenuItem>
+                                )
+                            }
+                        </Menu>
+                        <div className={classes.filterBar}>
+                            <Button
+                                disableRipple
+                                color="inherit"
+                                aria-owns={userMenuOpen ? 'menu-appbar' : undefined}
+                                aria-haspopup="true"
+                                onClick={this.handleMenu}
+                                className={classes.filterIcon}
+                                classes = {{
+                                    root: classes.iconButtonRoot,
+                                }}
+                            >
+                                { this.state.filter }
+                                <ExpandMoreIcon />
+                            </Button>
+                        </div>
+                    </div>
+                }
                 <Autosuggest
                     theme={classes}
                     suggestions={suggestions}
@@ -188,7 +271,7 @@ class AutoSuggestContainer extends React.Component {
                     renderSuggestion={renderSuggestion}
                     inputProps={inputProps}
                 />
-            </React.Fragment>
+            </div>
         )
     }
 }
