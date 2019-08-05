@@ -143,20 +143,20 @@ const hierarchy = {
                     "name": "Ehsan Ul Hassan",
                     "position": "Peon",
                 },
-    //             {
-    //                 "name": "Mariam Amin",
-    //                 "value": 300
-    //             },
-    //             {
-    //                 "name": "Suleman Ishtiaq",
-    //                 "value": 200
-    //             }
+                {
+                    "name": "Mariam Amin",
+                    "value": 300
+                },
+                {
+                    "name": "Suleman Ishtiaq",
+                    "value": 200
+                }
             ]
         },
-    //     {
-    //         "name": "Jeff Bezos",
-    //         "value": 200
-    //     }
+        {
+            "name": "Jeff Bezos",
+            "value": 200
+        }
     ]
 }
 

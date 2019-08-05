@@ -3,6 +3,12 @@ import axios from 'axios'
 import Select, { components } from 'react-select'
 import { getCellValue } from '../helpers/utils';
 
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import Typography from '@material-ui/core/Typography';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+
 
 const { ValueContainer, Placeholder, Option } = components;
 
@@ -19,7 +25,7 @@ const CustomValueContainer = ({ children, ...props }) => {
   );
 };
 
-const CustomOption = props => {
+const CustomOption = ({...props}, onChange) => {
     const { data } = props
     console.log(data, `${data.label}  ${data.subLabel}  ${data.desc}`)
     return (

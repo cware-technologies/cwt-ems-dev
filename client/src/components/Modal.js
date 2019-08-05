@@ -16,7 +16,7 @@ const styles = theme => ({
     paper: {
         position: 'relative',
         width: '80vw',
-        height: '70vh',
+        height: '95vh',
         maxHeight: '100vh',
         overflow: 'auto',
         backgroundColor: theme.palette.background.paper,

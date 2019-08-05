@@ -368,7 +368,7 @@ class AddResponsibility extends React.Component {
 
         else if (res.data.status >= 200 && res.data.status < 300) {
 
-            if(res.data.inserted){
+            if(!res.data.inserted){
                 this.props.success("Action Successfull!")
 
                 this.setState(prevState => ({
@@ -378,7 +378,7 @@ class AddResponsibility extends React.Component {
                     ]
                 }))
             }
-            else if(!res.data.inserted){
+            else if(res.data.inserted){
                 this.props.warning("View Already Exists.")
             }
         }
