@@ -20,7 +20,7 @@ module.exports = {
       par_row_id: {
         type: Sequelize.INTEGER(11),
         references: {
-          'model': 'c_bu',
+          'model': 'C_BU',
           'key': 'row_id',
         },
         onUpdate: 'CASCADE',

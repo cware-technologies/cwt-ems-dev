@@ -17,7 +17,7 @@ module.exports = {
         type: Sequelize.INTEGER(10),
         // unique: 'composite-key',
         references: {
-          'model': 'c_bu',
+          'model': 'C_BU',
           'key': 'row_id',  
         },
         onUpdate: 'CASCADE',
@@ -28,8 +28,12 @@ module.exports = {
       },
       par_row_id: {
         type: Sequelize.INTEGER(11),
-        allowNull: true,
-        defaultValue: null,
+        references: {
+          'model': 'C_DIV',
+          'key': 'row_id',  
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL',
       },
       created: {
         allowNull: false,

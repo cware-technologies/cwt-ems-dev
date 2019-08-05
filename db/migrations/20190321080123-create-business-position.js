@@ -15,7 +15,7 @@ module.exports = {
       bu_id: {
         type: Sequelize.INTEGER(10),
         references: {
-          'model': 'c_bu',
+          'model': 'C_BU',
           'key': 'row_id',  
         },
         onUpdate: 'CASCADE',
@@ -24,7 +24,7 @@ module.exports = {
       div_id: {
         type: Sequelize.INTEGER(10),
         references: {
-          'model': 'c_div',
+          'model': 'C_DIV',
           'key': 'row_id',  
         },
         onUpdate: 'CASCADE',
@@ -38,7 +38,7 @@ module.exports = {
         allowNull: true,
         defaultValue: null,
         references: {
-          'model': 'c_postn',
+          'model': 'C_POSTN',
           'key': 'row_id',
         },
         onUpdate: 'CASCADE',

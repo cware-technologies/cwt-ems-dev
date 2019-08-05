@@ -13,7 +13,7 @@ module.exports = {
         allowNull: false,
         defaultValue: 1,
         references: {
-          'model': 'c_bu',
+          'model': 'C_BU',
           'key': 'row_id',
         }
       },

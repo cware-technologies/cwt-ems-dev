@@ -22,7 +22,7 @@ module.exports = {
         allowNull: false,
         defaultValue: 0,
         references: {
-          'model': 'c_bu',
+          'model': 'C_BU',
           'key': 'row_id',
         }
       },

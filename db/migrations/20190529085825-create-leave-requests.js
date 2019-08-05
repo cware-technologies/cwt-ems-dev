@@ -11,7 +11,7 @@ module.exports = {
       emp_id: {
         type: Sequelize.INTEGER(11),
         references: {
-          'model': 'c_emp',
+          'model': 'C_EMP',
           'key': 'row_id',
         },
       },
@@ -31,7 +31,7 @@ module.exports = {
       bu_id: {
         type: Sequelize.INTEGER(11),
         references: {
-          'model': 'c_bu',
+          'model': 'C_BU',
           'key': 'row_id',
         },
       },

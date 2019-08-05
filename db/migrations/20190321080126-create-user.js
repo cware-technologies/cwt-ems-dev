@@ -38,7 +38,7 @@ module.exports = {
         allowNull: true,
         defaultValue: null,
         references: {
-          'model': 'c_emp',
+          'model': 'C_EMP',
           'key': 'row_id',
         },
         onUpdate: 'CASCADE',
@@ -48,7 +48,7 @@ module.exports = {
         type: Sequelize.INTEGER(11),
         allowNull: true,
         references: {
-          'model': 'c_resp',
+          'model': 'C_RESP',
           'key': 'row_id'
         }
       },
@@ -65,7 +65,7 @@ module.exports = {
         allowNull: true,
         defaultValue: null,
         references: {
-          'model': 'c_bu',
+          'model': 'C_BU',
           'key' : 'row_id',
         },
         onUpdate: 'CASCADE',
@@ -76,7 +76,7 @@ module.exports = {
         allowNull: true,
         defaultValue: null,
         references: {
-          'model': 'c_div',
+          'model': 'C_DIV',
           'key' : 'row_id',
         },
         onUpdate: 'CASCADE',

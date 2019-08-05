@@ -13,7 +13,7 @@ module.exports = {
         allowNull: true,
         defaultValue: 0,
         references: {
-          'model': 'c_bu',
+          'model': 'C_BU',
           'key': 'row_id',
         },
       },
@@ -21,7 +21,7 @@ module.exports = {
         type: Sequelize.INTEGER(11),
         allowNull: false,
         references: {
-          'model': 'c_view',
+          'model': 'C_VIEW',
           'key': 'row_id',
         },
       },
@@ -29,7 +29,7 @@ module.exports = {
         type: Sequelize.INTEGER(11),
         allowNull: false,
         references: {
-          'model': 'c_resp',
+          'model': 'C_RESP',
           'key': 'row_id',
         },
       },

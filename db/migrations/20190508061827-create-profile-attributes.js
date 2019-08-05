@@ -18,7 +18,7 @@ module.exports = {
         type: Sequelize.INTEGER(11),
         allowNull: false,
         references: {
-          'model': 'c_emp',
+          'model': 'C_EMP',
           'key' : 'row_id',
         },
         onUpdate: 'CASCADE',
@@ -61,7 +61,7 @@ module.exports = {
       ATTRIB_11: {
         type: Sequelize.INTEGER(11),
         references: {
-          'model': 'c_lst_val',
+          'model': 'C_LST_VAL',
           'key': 'row_id',
         },
         onUpdate: 'CASCADE',

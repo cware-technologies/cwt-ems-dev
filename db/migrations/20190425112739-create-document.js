@@ -16,6 +16,15 @@ module.exports = {
         type: Sequelize.STRING(400),
         allowNull: false,
       },
+      bu_id: {
+        type: Sequelize.INTEGER(11),
+        references: {
+          'model': 'C_BU',
+          'key': 'row_id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL',
+      },
       created: {
         allowNull: false,
         type: Sequelize.DATE
