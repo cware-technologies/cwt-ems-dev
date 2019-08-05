@@ -1,9 +1,12 @@
 const mysql = require('mysql');
 const Sequelize = require('sequelize');
 
+let user = process.env.MYSQL_USERNAME || "root"
+let password = process.env.MYSQL_PASSWORD || "cwaret155,"
+
 function connectMySQL() {
     return new Promise((resolve, reject) => {
-        const sequelize = new Sequelize('EMS', 'root', 'cwaret155,', {
+        const sequelize = new Sequelize('EMS', user, password, {
             host: 'localhost',
             dialect: 'mysql',
             define: {

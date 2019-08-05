@@ -7,6 +7,10 @@ const { errorHandler } = require('./middleware');
 
 const app = express();
 
+if (process.env.NODE_ENV !== 'production') {
+    require('dotenv').config();
+}
+
 require('./config/passport')
 
 app.use(cors());
@@ -19,9 +23,12 @@ app.use(passport.initialize());
 connectMySQL()
 .then(sequelize => {
     require('./routes')(app, sequelize);
+    app.get('*', (req,res) =>{
+        res.sendFile(path.join(__dirname+'/client/build/index.html'));
+    });
     app.use(errorHandler);
     app.listen(process.env.PORT || 3001, () => {
-        console.log('Listening On Port 3001...');
+        console.log(`Listening On Port ${process.env.PORT || 3001}...`);
     });
 }, 
 err => {
