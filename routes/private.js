@@ -33,4 +33,6 @@ router.get('/employee/contracts', privateController.getContracts)
 router.get('/employee/contracts/accept', privateController.acceptContract)
 router.get('/employee/contracts/reject', privateController.rejectContract)
 
+router.post('/employee/leave/request', privateController.postLeaveRequest)
+
 module.exports = router

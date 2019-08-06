@@ -490,6 +490,49 @@ async function rejectContract(req, res, next){
     }
 }
 
+async function getLeaves(req, res, next){
+    let params = req.query
+
+    try{
+        let data = await LeaveRequest.findAll({
+            where: {
+                emp_id: params.employee,
+            }
+        })
+
+        res.status(200).json({
+            status: 200,
+            data,
+        })
+    }
+    catch(err){
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function postLeaveRequest(req, res, next){
+    let leave = req.body
+    console.log("APPLICATION: ", leave)
+
+    try{
+        let data = await LeaveRequest.create({
+            ...leave
+        })
+
+        res.status(200).json({
+            status: 200,
+            data,
+        })
+    }
+    catch(err){
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
 
 module.exports = {
     getEmployee,
@@ -510,6 +553,7 @@ module.exports = {
     deleteEmployeeProfessionalAttribute,
     updateEmployeeProfessionalAttribute,
     getLeaves,
+    postLeaveRequest,
     applyForLeave,
     getContracts,
     acceptContract,

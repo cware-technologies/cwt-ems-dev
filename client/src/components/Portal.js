@@ -6,14 +6,14 @@ import { getAlert } from '../reducers/alertReducer';
 import { withStyles } from '@material-ui/core/styles';
 import { Route, Switch, Redirect } from 'react-router-dom'
 import LoadingSpinner from './LoadingSpinner';
-import LeaveManager from './LeaveManager';
 import AlertSnackbars from './AlertSnackbars'
 
 const AppBar = lazy(() => import('./AppBar'));
 const Drawer = lazy(() => import('./Drawer'));
 const Dashboard = lazy(() => import('./Dashboard'));
 const RegisterEmployeeForm = lazy(() => import('./RegisterEmployeeForm'));
-const LeaveTabs = lazy(() => import('./LeaveTabs'));
+
+const LeaveManager = lazy(() => import('./LeaveManager'));
 const AdminLeaves = lazy(() => import('./AdminLeaves'));
 const LeaveForm = lazy(() => import('./LeaveForm'));
 const PaySlipTabs = lazy(() => import('./PaySlipTabs'));

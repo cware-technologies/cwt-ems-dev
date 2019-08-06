@@ -5,6 +5,7 @@ const styles = theme => ({
     root: {
         width: '100%',
         display: 'flex',
+        flexDirection: 'column',
         padding: theme.spacing.unit * 2,
     }
 });
