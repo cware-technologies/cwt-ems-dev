@@ -2,11 +2,14 @@
 'use strict';
 
 const Op = require('sequelize').Op,
-models = require('../db/models'),
-Employee = models.C_EMP,
-Position = models.C_POSTN,
-ProfileAttribute = models.C_EMP_XM,
-LeaveRequest = models.C_LV_REQ
+    models = require('../db/models'),
+    Employee = models.C_EMP,
+    Position = models.C_POSTN,
+    ProfileAttribute = models.C_EMP_XM,
+    ListValues = models.C_LST_VAL,
+    LeaveRequest = models.C_LV_REQ,
+    Sequelize = require('sequelize'),
+    sequelize = require('../db/models').sequelize
 
 async function getEmployee(req, res, next){
     let employee = req.query
@@ -383,6 +386,35 @@ async function updateEmployeeProfessionalAttribute(req, res, next){
     }
 }
 
+async function getEmployeeEntitlements(req, res, next){
+    let params = req.query
+
+    try{
+        let data = await ProfileAttribute.findAll({
+            where: {
+                emp_id: params.emp_id,
+                type: 'leave_type',
+            },
+            include: [
+                {
+                    model: ListValues,
+                    as: 'function',
+                }
+            ]
+        }).map(ele => ele.get({plain: true}).function)
+
+        res.status(200).json({
+            status: 200,
+            result: data,
+        })
+    }
+    catch(err){
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
 async function getLeaves(req, res, next){
     let params = req.query
 
@@ -496,14 +528,89 @@ async function getLeaves(req, res, next){
     try{
         let data = await LeaveRequest.findAll({
             where: {
-                emp_id: params.employee,
-            }
+                emp_id: params.emp_id,
+            },
+            include: [
+                {
+                    model: ListValues,
+                    as: 'entitlement',
+                },
+            ]
         })
 
         res.status(200).json({
             status: 200,
             data,
         })
+    }
+    catch(err){
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function getEntitlementsData(req, res, next){
+    let params = req.query
+
+    try{
+        let data = await ProfileAttribute.findAll({
+            where: {
+                emp_id: params.emp_id,
+                type: 'leave_type',
+            },
+            include: [
+                {
+                    model: ListValues,
+                    as: 'function',
+                }
+            ]
+        }).map(ele => ele.get({plain: true}).function)
+        
+        // let tempSQL1 = sequelize.dialect.QueryGenerator.selectQuery('C_LV_REQ', {
+        //     attributes: ['stat_cd'/* [Sequelize.fn('SUM', sequelize.col('c_lv_req.ATTRIB_11')), 'temp'] */],
+        // }).slice(0,-1)
+
+        // tempSQL1 = Sequelize.literal(`(${tempSQL1})`)
+
+        sequelize.query(
+            `
+                SELECT SUM(clr.ATTRIB_11) AS no_days, (clv.ATTRIB_11 - SUM(clr.ATTRIB_11)) AS remaining, clv.val, clv.ATTRIB_11
+                FROM C_LV_REQ clr, C_LST_VAL clv
+                WHERE clr.type_cd = clv.row_id AND clr.emp_id = ${params.emp_id}
+                GROUP BY clr.type_cd
+            `,
+            {
+                type: sequelize.QueryTypes.SELECT
+            }
+        ).then(result => res.status(200).json({
+            status: 200,
+            data: result,
+        }))
+        // let data2 = await LeaveRequest.findAll({
+        //     where: {
+        //         emp_id: params.emp_id,
+        //     },
+        //     include: [
+        //         {
+        //             model: ListValues,
+        //             as: 'entitlement',
+        //             // attributes: ['row_id', 'val', 'ATTRIB_11']
+        //         },
+        //     ],
+        //     group: ['type_cd'],
+        //     attributes: [
+        //         [Sequelize.fn('SUM', sequelize.col('c_lv_req.ATTRIB_11')), 'no_days'],
+        //         // Sequelize.literal(`${tempSQL1}`),
+        //     ],
+        // })
+
+        // console.log(data)
+
+        // res.status(200).json({
+        //     status: 200,
+        //     data: data2,
+        // })
     }
     catch(err){
         err.status = 400
@@ -515,10 +622,12 @@ async function getLeaves(req, res, next){
 async function postLeaveRequest(req, res, next){
     let leave = req.body
     console.log("APPLICATION: ", leave)
+    console.log(leave['type_cd.value'])
 
     try{
         let data = await LeaveRequest.create({
-            ...leave
+            ...leave,
+            type_cd: leave['type_cd.value'],
         })
 
         res.status(200).json({
@@ -533,6 +642,111 @@ async function postLeaveRequest(req, res, next){
     }
 }
 
+async function withdrawLeave(req, res, next) {
+    let entity = req.body
+
+    try {
+        let data = await LeaveRequest.destroy(
+            {
+                where:
+                {
+                    row_id: entity.row_id
+                }
+            }
+        )
+
+        res.status(200).json({
+            status: 200,
+            data,
+        })
+    }
+    catch (err) {
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+
+async function getRequestedLeaves(req, res, next) {
+    let params = req.query
+
+    try {
+        let data = await Employee.findAll({
+            where: {
+                report_to_id: params.emp_id,
+            },
+            attributes: ["row_id"]
+        }).map(ele => ele.get({ plain: true }).row_id)
+
+
+        try {
+            let data2 = await LeaveRequest.findAll({
+                where: {
+                    emp_id: {
+                        [Op.in]: data,
+                    },
+                    stat_cd: "pending"
+                },
+                include: [
+                    {
+                        model: Employee,
+                        as: "requestor",
+                        attributes: [
+                            "fst_name",
+                            "last_name"
+
+                        ]
+                    }
+                ],
+
+            })
+
+            res.status(200).json({
+                status: 200,
+                data: data2,
+            })
+        }
+        catch (err) {
+
+        }
+
+
+    }
+    catch (err) {
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function updateLeaveRequested(req, res, next) {
+    let details = req.body
+
+    try {
+        let data = await LeaveRequest.update(
+            {
+                stat_cd: details.stat_cd
+            },
+            {
+                where:
+                {
+                    row_id: details.row_id
+                }
+            })
+
+        res.status(200).json({
+            status: 200,
+            data,
+        })
+    }
+    catch (err) {
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+
+}
 
 module.exports = {
     getEmployee,
@@ -552,8 +766,13 @@ module.exports = {
     addEmployeeProfessionalAttribute,
     deleteEmployeeProfessionalAttribute,
     updateEmployeeProfessionalAttribute,
+    getEmployeeEntitlements,
     getLeaves,
+    getEntitlementsData,
     postLeaveRequest,
+    withdrawLeave,
+    getRequestedLeaves,
+    updateLeaveRequested,
     applyForLeave,
     getContracts,
     acceptContract,

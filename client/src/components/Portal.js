@@ -5,8 +5,11 @@ import { connect } from 'react-redux';
 import { getAlert } from '../reducers/alertReducer';
 import { withStyles } from '@material-ui/core/styles';
 import { Route, Switch, Redirect } from 'react-router-dom'
+import PrivateRoute from './PrivateRoute'
 import LoadingSpinner from './LoadingSpinner';
 import AlertSnackbars from './AlertSnackbars'
+import { authActions } from '../actions';
+import { getLoggedIn } from '../reducers/authReducer';
 
 const AppBar = lazy(() => import('./AppBar'));
 const Drawer = lazy(() => import('./Drawer'));
@@ -15,7 +18,6 @@ const RegisterEmployeeForm = lazy(() => import('./RegisterEmployeeForm'));
 
 const LeaveManager = lazy(() => import('./LeaveManager'));
 const AdminLeaves = lazy(() => import('./AdminLeaves'));
-const LeaveForm = lazy(() => import('./LeaveForm'));
 const PaySlipTabs = lazy(() => import('./PaySlipTabs'));
 const ITTicketTabs = lazy(() => import('./ITTicketTabs'));
 const NewsAndUpdates = lazy(() => import('./NewsAndUpdates'));
@@ -67,6 +69,11 @@ class Portal extends React.Component {
       }
     }
   }
+  
+  requireAuth = () => {
+		console.log("AUTHHHHHHHHHHHHHHHHHHHHHHHH ", this.props.loggedIn)
+		return this.props.loggedIn
+	}
 
   handleDrawerOpen = () => {
     this.setState({ drawerOpen: true });
@@ -109,34 +116,33 @@ class Portal extends React.Component {
         </Suspense>
         <Suspense fallback={<LoadingSpinner/>}>
           <Switch>
-            <Route path={`${match.path}dashboard`} component={Dashboard} />
-            <Route path={`${match.path}register-user`} component={RegisterEmployeeForm} />
-            <Route path={`${match.path}organization-structure`} component={OrganizationStructure} />
-            <Route path={`${match.path}leaves`} component={LeaveManager} />
-            <Route path={`${match.path}manage-leaves`} component={AdminLeaves} />
-            <Route path={`${match.path}apply-leave`} component={LeaveForm} />
-            <Route path={`${match.path}pay-slips`} component={PaySlipTabs} />
-            <Route path={`${match.path}it-tickets`} component={ITTicketTabs} />
-            <Route path={`${match.path}news-and-updates`} component={NewsAndUpdates} />
-            <Route path={`${match.path}post-update`} component={NewsManager} />
-            <Route path={`${match.path}edit-profile`} component={ProfileEditForm} />
-            <Route path={`${match.path}my-profile`} component={Profile} />
-            <Route path={`${match.path}attendance`} component={Attendance} />
-            <Route path={`${match.path}notifications`} component={Notifications} />
-            <Route path={`${match.path}password-reset`} component={PasswordReset} />
-            <Route path={`${match.path}access-rights`} component={AccessRights} />
-            <Route path={`${match.path}hr-documents`} component={HRDocsUpload} />
-            <Route path={`${match.path}induction-list-admin`} component={InductionChecklist} />
-            <Route path={`${match.path}employee-induction-exit`} component={EmployeeInductionExit} />
-            <Route path={`${match.path}entitlements-manager`} component={EntitlementsManager} />
-            <Route path={`${match.path}attach-entitlements`} component={AttachEntitlement} />
-            <Route path={`${match.path}attendance-list`} component={EmployeeAttendanceList} />
-            <Route path={`${match.path}employee-details`} component={EmployeeDetailsSearch} />
-            <Route path={`${match.path}employee-manager`} component={EmployeeManager} />
-            <Route path={`${match.path}asset-manager`} component={AssetManager} />
-            <Route path={`${match.path}eligibility-manager`} component={EligibilityManager} />
-            <Route path={`${match.path}my-contracts`} component={ContractsPortal} />
-            <Route path={`${match.path}contracts-manager`} component={ContractsManager} />
+            <PrivateRoute path={`${match.path}dashboard`} component={Dashboard} accessFunction={this.requireAuth} />
+            <PrivateRoute path={`${match.path}register-user`} component={RegisterEmployeeForm} accessFunction={this.requireAuth} />
+            <PrivateRoute path={`${match.path}organization-structure`} component={OrganizationStructure} accessFunction={this.requireAuth} />
+            <PrivateRoute path={`${match.path}leave-manager`} component={LeaveManager} accessFunction={this.requireAuth} />
+            <PrivateRoute path={`${match.path}manage-leaves`} component={AdminLeaves} accessFunction={this.requireAuth} />
+            <PrivateRoute path={`${match.path}pay-slips`} component={PaySlipTabs} accessFunction={this.requireAuth} />
+            <PrivateRoute path={`${match.path}it-tickets`} component={ITTicketTabs} accessFunction={this.requireAuth} />
+            <PrivateRoute path={`${match.path}news-and-updates`} component={NewsAndUpdates} accessFunction={this.requireAuth} />
+            <PrivateRoute path={`${match.path}post-update`} component={NewsManager} accessFunction={this.requireAuth} />
+            <PrivateRoute path={`${match.path}edit-profile`} component={ProfileEditForm} accessFunction={this.requireAuth} />
+            <PrivateRoute path={`${match.path}my-profile`} component={Profile} accessFunction={this.requireAuth} />
+            <PrivateRoute path={`${match.path}attendance`} component={Attendance} accessFunction={this.requireAuth} />
+            <PrivateRoute path={`${match.path}notifications`} component={Notifications} accessFunction={this.requireAuth} />
+            <PrivateRoute path={`${match.path}password-reset`} component={PasswordReset} accessFunction={this.requireAuth} />
+            <PrivateRoute path={`${match.path}access-rights`} component={AccessRights} accessFunction={this.requireAuth} />
+            <PrivateRoute path={`${match.path}hr-documents`} component={HRDocsUpload} accessFunction={this.requireAuth} />
+            <PrivateRoute path={`${match.path}induction-list-admin`} component={InductionChecklist} accessFunction={this.requireAuth} />
+            <PrivateRoute path={`${match.path}employee-induction-exit`} component={EmployeeInductionExit} accessFunction={this.requireAuth} />
+            <PrivateRoute path={`${match.path}entitlements-manager`} component={EntitlementsManager} accessFunction={this.requireAuth} />
+            <PrivateRoute path={`${match.path}attach-entitlements`} component={AttachEntitlement} accessFunction={this.requireAuth} />
+            <PrivateRoute path={`${match.path}attendance-list`} component={EmployeeAttendanceList} accessFunction={this.requireAuth} />
+            <PrivateRoute path={`${match.path}employee-details`} component={EmployeeDetailsSearch} accessFunction={this.requireAuth} />
+            <PrivateRoute path={`${match.path}employee-manager`} component={EmployeeManager} accessFunction={this.requireAuth} />
+            <PrivateRoute path={`${match.path}asset-manager`} component={AssetManager} accessFunction={this.requireAuth} />
+            <PrivateRoute path={`${match.path}eligibility-manager`} component={EligibilityManager} accessFunction={this.requireAuth} />
+            <PrivateRoute path={`${match.path}my-contracts`} component={ContractsPortal} accessFunction={this.requireAuth} />
+            <PrivateRoute path={`${match.path}contracts-manager`} component={ContractsManager} accessFunction={this.requireAuth} />
             <Redirect from='/' to='/portal/dashboard' />
           </Switch>
         </Suspense>
@@ -151,11 +157,12 @@ Portal.propTypes = {
 
 const mapStateToProps = (state) => {
   return {
+    loggedIn: getLoggedIn(state),
     alert: getAlert(state),
   }
 }
 
 export default compose(
   withStyles(styles),
-  connect(mapStateToProps, {})
+  connect(mapStateToProps, {...authActions})
 )(Portal);

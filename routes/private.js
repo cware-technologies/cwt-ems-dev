@@ -24,15 +24,16 @@ router.post('/employee/details/professionalAttributes', privateController.addEmp
 router.delete('/employee/details/professionalAttributes', privateController.deleteEmployeeProfessionalAttribute)
 router.put('/employee/details/professionalAttributes', privateController.updateEmployeeProfessionalAttribute)
 
-router.get('/employee/leaves', privateController.getLeaves)
-router.post('/employee/leaves', privateController.addEmployeeProfessionalAttribute)
-router.delete('/employee/leaves', privateController.deleteEmployeeProfessionalAttribute)
-router.put('/employee/leaves', privateController.updateEmployeeProfessionalAttribute)
-
 router.get('/employee/contracts', privateController.getContracts)
 router.get('/employee/contracts/accept', privateController.acceptContract)
 router.get('/employee/contracts/reject', privateController.rejectContract)
 
+router.get('/employee/leaves', privateController.getLeaves)
 router.post('/employee/leave/request', privateController.postLeaveRequest)
+router.delete('/employee/leaves', privateController.withdrawLeave)
+router.get('/employee/leave/requestedLeaves', privateController.getRequestedLeaves)
+router.put('/employee/leave/updateLeaveRequested', privateController.updateLeaveRequested)
+router.get('/employee/entitlements/history', privateController.getEntitlementsData)
+router.get('/employee/entitlements', privateController.getEmployeeEntitlements)
 
 module.exports = router

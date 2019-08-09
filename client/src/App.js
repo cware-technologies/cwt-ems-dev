@@ -10,7 +10,8 @@ import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-d
 import './App.css';
 import SignIn from './components/SignIn';
 import Portal from './components/Portal';
-import { store, persistor } from './helpers/reduxStore'
+import PrivateRoute from './components/PrivateRoute';
+import { store, persistor } from './helpers/reduxStore';
 import { addAuthHeaderAsBearerToken } from './helpers/axiosConfig';
 
 const theme = createMuiTheme(
@@ -65,7 +66,7 @@ const theme = createMuiTheme(
 			MuiFormHelperText: {
 				root: {
 					margin: 0,
-				}	
+				}
 			},
 			MuiTextField: {
 				root: {
@@ -81,21 +82,24 @@ addAuthHeaderAsBearerToken()
 
 class App extends Component {
 
-	componentDidMount(){
-		this.verifyLoggedInUser()
+	async componentDidMount() {
+		// await this.verifyLoggedInUser()
 	}
 
-	verifyLoggedInUser(){
-		console.log("LOGGED IN: ", this.props.loggedIn)
-		if(this.props.loggedIn){
-			console.log(this.props.user)
-			this.props.verifyUser(this.props.user)
-		}
+	async verifyLoggedInUser() {
+		return new Promise(async (resolve, reject) => {
+			console.log("LOGGED IN: ", this.props.loggedIn)
+			if (this.props.loggedIn) {
+				console.log(this.props.user)
+				await this.props.verifyUser(this.props.user)
+				resolve()
+			}
+		})
 	}
-
 	render() {
 		let { match, loggedIn } = this.props
-		
+
+		console.log("RENDERRRRRRR: ", this.props.loggedIn)
 		return (
 			<MuiThemeProvider theme={theme}>
 				<Router>
@@ -106,6 +110,8 @@ class App extends Component {
 								<Route path='/signin' component={SignIn} />
 								<Route strict path='/portal/' component={Portal} />
 								{ loggedIn ? <Redirect exact from='/' to='/portal/dashboard' /> : <Redirect from='/' to='/signin' /> }
+								{/* {!loggedIn && <Redirect from='*' to='/signin' />} */}
+								{/* { loggedIn && <Redirect exact from='/' to='/portal/dashboard' /> } */}
 							</Switch>
 						</div>
 					</React.Fragment>
@@ -116,10 +122,10 @@ class App extends Component {
 }
 
 const mapStateToProps = (state) => {
-	return{
-	  loggedIn: getLoggedIn(state),
-	  user: getUserInfo(state)
+	return {
+		loggedIn: getLoggedIn(state),
+		user: getUserInfo(state)
 	}
 }
 
-export default connect(mapStateToProps, {...authActions})(App);
+export default connect(mapStateToProps, { ...authActions })(App);

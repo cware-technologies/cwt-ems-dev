@@ -3,23 +3,23 @@ import { alertActions } from './alertActions'
 import { authServices } from '../services'
 
 const getViews = (responsibility) => async (dispatch) => {
-    const request  = (responsibility) => ({ type: authConstants.VIEWS_REQUEST, responsibility })
-    const success  = (views) => ({ type: authConstants.VIEWS_SUCCESS, views })
-    const failure  = (err) => ({ type: authConstants.VIEWS_FAILURE, err })
-    
+    const request = (responsibility) => ({ type: authConstants.VIEWS_REQUEST, responsibility })
+    const success = (views) => ({ type: authConstants.VIEWS_SUCCESS, views })
+    const failure = (err) => ({ type: authConstants.VIEWS_FAILURE, err })
+
     dispatch(request({ responsibility }))
 
-    try{
+    try {
         let views = await authServices.getViews(responsibility)
         dispatch(success(views))
         dispatch(alertActions.success("Views Loaded"))
     }
-    catch(err) {
+    catch (err) {
         dispatch(failure(err))
         dispatch(alertActions.error(err))
-        
+
     }
-    
+
     return
 }
 
@@ -34,12 +34,12 @@ const login = (username, password) => async (dispatch) => {
         let user = await authServices.login(username, password);
         dispatch(success(user));
 
-        try{
+        try {
             let views = await getViews(user.responsibility)(dispatch)
             dispatch(alertActions.success("Login Successful"));
             window.location.href = `${user.redirectURL}`;
         }
-        catch(err){
+        catch (err) {
             dispatch(failure(err));
             dispatch(alertActions.error(err));
             dispatch(logout())
@@ -60,25 +60,29 @@ const logout = () => dispatch => {
 }
 
 const verifyUser = (user) => async (dispatch) => {
-    const request = (user) => ({ type: authConstants.VERIFY_REQUEST, user });
-    const success = (user) => ({ type: authConstants.VERIFY_SUCCESS, user });
-    const failure = (err) => ({ type: authConstants.VERIFY_FAILURE, err });
+    return new Promise(async (reject, resolve) => {
+        const request = (user) => ({ type: authConstants.VERIFY_REQUEST, user });
+        const success = (user) => ({ type: authConstants.VERIFY_SUCCESS, user });
+        const failure = (err) => ({ type: authConstants.VERIFY_FAILURE, err });
 
-    dispatch(request({ user }));
+        await dispatch(request({ user }));
 
-    try {
-        let response = await authServices.verifyUser(user);
-        dispatch(success(user));
-        
-        dispatch(alertActions.success("User Verified"));
-        // window.location.href = `${user.redirectURL}`;
-    }
-    catch (err) {
-        dispatch(failure(err));
-        dispatch(alertActions.error(err));
-        dispatch(logout())
-        // window.location.href = `${err.response.data.redirectURL}`;
-    }
+        try {
+            let response = await authServices.verifyUser(user);
+            dispatch(success(user));
+
+            dispatch(alertActions.success("User Verified"));
+            resolve()
+            // window.location.href = `${user.redirectURL}`;
+        }
+        catch (err) {
+            dispatch(failure(err));
+            dispatch(alertActions.error(err));
+            dispatch(logout())
+            reject()
+            // window.location.href = `${err.response.data.redirectURL}`;
+        }
+    })
 }
 
 

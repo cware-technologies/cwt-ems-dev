@@ -95,6 +95,8 @@ class AsyncSelect extends React.Component {
                 params: this.props.query
             })
 
+            console.log("RESSSSSP: ", response)
+
             let responseOptions = response.data.result.map(row => ({
                 label: getCellValue(row, selectMapping[0]),
                 subLabel: getCellValue(row, selectMapping[2]),

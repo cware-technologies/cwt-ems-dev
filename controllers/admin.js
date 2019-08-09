@@ -711,10 +711,12 @@ async function uploadHRDoc(req, res, next){
             return res.status(400).json({ status: 400, message: "Upload Failed" });
         }
 
+        let pathString = req.file.path.replace(/\\/g,"/");
+
         try{
             let data = await Document.create({
                 name: req.body.name,
-                path: req.file.path,
+                path: pathString,
             })
     
             res.status(200).json({

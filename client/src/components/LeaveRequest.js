@@ -4,17 +4,10 @@ import ModalTrigger from './ModalTrigger';
 import AddEditForm from './AddEditForm';
 import { spacing } from '@material-ui/system';
 import axios from 'axios';
-import { flattenObject } from '../helpers/utils';
+import { flattenObject, calculateNumOfDays } from '../helpers/utils';
 import {connect} from 'react-redux';
 import { getUserOrganization } from '../reducers/authReducer';
 import { getUser } from '../reducers/authReducer';
-
-
-const leaveRequestFields = [
-    { id: 'strt_dt', type:'date', label: 'From' },
-    { id: 'end_dt', type:'date', label: 'To' },
-    { id: 'type_cd', name: 'leaveRequestType', type:'select', label: 'Type', indeterminate: true, requestParams: {endPoint: '/admin/org-struct/organization', selectMapping: ['name', 'row_id', null, 'desc'], } },
-]
 
 class LeaveRequest extends Component {
     
@@ -23,6 +16,13 @@ class LeaveRequest extends Component {
 
         },
     }
+
+    leaveRequestFields = [
+        { id: 'strt_dt', type:'date', label: 'From' },
+        { id: 'end_dt', type:'date', label: 'To' },
+        { id: 'type_cd', name: 'leaveRequestType', type:'select', label: 'Type', indeterminate: true, requestParams: {endPoint: '/private/employee/entitlements', params:{ emp_id: this.props.userID }, selectMapping: ['val', 'row_id', null, null], } },
+        { id: 'ATTRIB_01', type: 'textarea', label: 'Details' },
+    ]
 
     handleChange = (event) => {
         let target = event.target.id;
@@ -36,10 +36,12 @@ class LeaveRequest extends Component {
     }
 
     handleSubmit = async(event, element) => {
-     
+        let days = calculateNumOfDays(this.state.leaveRequestForm.end_dt, this.state.leaveRequestForm.strt_dt)
+
         this.setState(prevState => ({
             [`leaveRequestForm`]: {
                 ...prevState[`leaveRequestForm`],
+                ATTRIB_11: days,
                 bu_id: this.props.organization,
                 emp_id: this.props.userID,
             }
@@ -82,7 +84,7 @@ class LeaveRequest extends Component {
                 >
                 <AddEditForm
                     headerTitle="leaveRequestForm"
-                    fields={leaveRequestFields}
+                    fields={this.leaveRequestFields}
                     object={leaveRequestForm}
                     handleChange={this.handleChange}
                     handleSubmit={this.handleSubmit}

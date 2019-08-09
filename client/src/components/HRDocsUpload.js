@@ -174,7 +174,7 @@ class HRDocsUpload extends React.Component {
     }
 
     handleDownload = async(e, path) => {
-        window.open(`http://localhost:3001/admin/hr-docs/download?path=${path}`)
+        window.open(`${process.env.REACT_APP_API_URL}/admin/hr-docs/download?path=${path}`)
         
         // let response
         // try{

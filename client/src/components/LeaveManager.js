@@ -14,6 +14,7 @@ import Container from './MainContainer';
 import LeaveRequest from './LeaveRequest';
 import LeaveHistory from './LeaveHistory';
 import LeaveEnitlements from './LeaveEntitlements'
+import LeaveEmployeeRequests from './LeaveEmployeeRequests'
 
 const styles = theme => ({
     root: {
@@ -115,11 +116,13 @@ class LeaveManager extends React.Component {
                         <Tab label="Request" classes={{ labelIcon: classes.tabLabel, }} />
                         <Tab label="History" classes={{ labelIcon: classes.tabLabel, }} />
                         <Tab label="Entitlements" classes={{ labelIcon: classes.tabLabel, }} />
+                        <Tab label="Employee Requests" classes={{ labelIcon: classes.tabLabel, }} />
                     </Tabs>
                     <TabContainer>
                         {value === 0 && <div><LeaveRequest /></div>}
                         {value === 1 && <div><LeaveHistory /></div>}
                         {value === 2 && <div><LeaveEnitlements /></div>}
+                        {value === 3 && <div><LeaveEmployeeRequests /></div>}
                     </TabContainer>
                 </div>
             </Container>

@@ -36,7 +36,13 @@ module.exports = {
         },
       },
       type_cd: {
-        type: Sequelize.STRING(30)
+        type: DataTypes.INTEGER(11),
+        references: {
+          'model': 'c_emp',
+          'key': 'row_id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
       },
       created: {
         allowNull: false,

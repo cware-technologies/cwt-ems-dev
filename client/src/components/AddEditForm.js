@@ -143,6 +143,34 @@ class AddEditForm extends React.Component {
                         }}
                     />
                 )
+            case 'textarea':
+            return (
+                <TextField
+                    id={field.id}
+                    label={field.label}
+                    multiline
+                    rows={3}
+                    value={object[field.id]}
+                    disabled={field.readOnly}
+                    defaultValue={field.defaultValue}
+                    error={errors[field.id]}
+                    helperText={errors[field.id] && <ul className={classes.errorList}> {errors[field.id].map((error)=>{ return <li className={classes.errorListItem}>{error}</li>})}</ul>}
+                    onBlur={this.validate}
+                    onChange={(e) => handleChange(e, this.props.headerTitle)}
+                    className={classNames(classes.textField, classes.dense, classes.singleSpanInput)}
+                    classes={{
+                        root: classes.inputRoot,
+                    }}
+                    margin="dense"
+                    variant="filled"
+                    InputProps={{
+                        className: classes.input,
+                    }}
+                    InputLabelProps={{
+                        className: classes.inputLabel,
+                    }}
+                />
+            )
             case 'select':
                 return ( field.indeterminate ?
                     <AsyncSelect

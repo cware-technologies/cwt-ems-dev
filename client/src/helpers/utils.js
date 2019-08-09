@@ -77,7 +77,7 @@ export const getDateFormValue = (datetime) => {
 export const capitalize = (string) => {
   if (typeof string !== 'string') return ''
 
-  let sentence = string.split([' ', "_"]).map(ele => ele.charAt(0).toUpperCase() + string.slice(1)).join(' ')
+  let sentence = string.split([' ', "_", "-"]).map(ele => ele.charAt(0).toUpperCase() + string.slice(1)).join(' ')
   return sentence;
 }
 
@@ -153,4 +153,16 @@ export function objectToFormData(obj, rootName, ignoreList) {
 
     console.log(formData)
     return formData;
+}
+
+export const calculateNumOfDays = (dateFrom, dateTo) => {
+  if (!dateFrom || !dateTo) {
+      return
+  }
+  var oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
+  var firstDate = new Date(dateFrom);
+  var secondDate = new Date(dateTo);
+
+  var diffDays = Math.round(Math.abs((firstDate.getTime() - secondDate.getTime()) / (oneDay)));
+  return diffDays;
 }

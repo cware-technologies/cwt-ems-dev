@@ -13,6 +13,8 @@ module.exports = (sequelize, DataTypes) => {
         'model': 'c_emp',
         'key': 'row_id',
       },
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE',
     },
     strt_dt: {
       type: DataTypes.DATE,
@@ -33,9 +35,17 @@ module.exports = (sequelize, DataTypes) => {
         'model': 'c_bu',
         'key': 'row_id',
       },
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE',
     },
     type_cd: {
-      type: DataTypes.STRING(30)
+      type: DataTypes.INTEGER(11),
+      references: {
+        'model': 'c_emp',
+        'key': 'row_id',
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE',
     },
     created: {
       allowNull: false,
@@ -141,6 +151,7 @@ module.exports = (sequelize, DataTypes) => {
   LeaveRequest.associate = function(models) {
     LeaveRequest.belongsTo( models.C_EMP, { as: 'requestor', foreignKey: 'emp_id' })
     LeaveRequest.belongsTo( models.C_BU, { as: 'organization', foreignKey: 'bu_id' })
+    LeaveRequest.belongsTo( models.C_LST_VAL, { as: 'entitlement', foreignKey: 'type_cd' })
   };
   return LeaveRequest;
 };
