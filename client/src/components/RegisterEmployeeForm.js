@@ -166,16 +166,33 @@ class CreateAccount extends React.Component {
     handleTextChange = (event) => {
         let target = event.target.id;
         let value = event.target.value;
-        this.validate(event)
+        let ev = {
+            target: {
+                id: target,
+                value: value,
+            }
+        }
         this.props.changeHandler(target, value)
+        .then(result =>
+            this.validate(ev)
+        )
+        .catch(err=>console.log)
     }
 
     handleConfirmPassChange = (event) => {
+        event.target.id = 'confirmPassword'
         let target = event.target.id;
         let value = event.target.value;
+        
+        let ev = {
+            target: {
+                id: target,
+                value: value,
+            }
+        }
         this.setState(prevState => ({
             confirmPassword: value,
-        }))
+        }), () => this.validate(ev))
     }
 
     handleClickShowPassword = () => {

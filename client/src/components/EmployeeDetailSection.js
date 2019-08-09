@@ -12,7 +12,7 @@ import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ModalTrigger from './ModalTrigger'
 import { getCellValue, getDate, getDateFormValue } from '../helpers/utils'
-import { getUserOrganization } from '../reducers/authReducer';
+import { getUserOrganization, getUser } from '../reducers/authReducer';
 
 const styles = theme => ({
     container: {
@@ -157,6 +157,7 @@ class EmployeeDetailSection extends React.Component {
                 url: this.props.endpoint,
                 params: {
                     bu_id: this.props.organization,
+                    emp_id: this.props.userID,
                 }
             })
 
@@ -264,6 +265,7 @@ class EmployeeDetailSection extends React.Component {
 
 const mapStateToProps = (state) => ({
     organization: getUserOrganization(state),
+    userID: getUser(state),
 })
 
 export default compose(

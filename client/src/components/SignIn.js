@@ -14,9 +14,10 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import withStyles from '@material-ui/core/styles/withStyles';
-import { ReactComponent as Logo} from '../assets/ems-logo.svg';
+import { ReactComponent as Logo } from '../assets/ems-logo.svg';
 import { addAuthHeaderAsBearerToken } from '../helpers/axiosConfig';
 import { setAuthToken } from '../helpers/utils';
+import { Link } from 'react-router-dom'
 
 const styles = theme => ({
   main: {
@@ -86,38 +87,10 @@ class SignIn extends React.Component {
   handleSubmit = (event) => {
     event.preventDefault()
     let user = this.state.user
-
     this.props.login(user.email, user.password);
-
-    // let res = axios({
-    //   method: 'post',
-    //   url: '/auth/signin',
-    //   data: user,
-    //   headers: {
-    //     'content-type': 'application/json'
-    //   }
-    // })
-    // .then(this.handleResponse)
-    // .catch(err => this.handleResponse(err.response))
   }
 
-  // handleResponse = (res) => {
-  //   let error = res.data.message;
-
-  //   if(res.data.status >= 400){
-  //     this.setState(prevState => ({
-  //       error
-  //     }))
-  //   }
-
-  //   else if(res.data.status >=200 && res.data.status <300){
-  //     setAuthToken({token: res.data.token})
-  //     addAuthHeaderAsBearerToken()
-  //     window.location.href = `${res.data.redirectURL}`;
-  //   }
-  // }
-
-  render(){
+  render() {
     const { classes, alert } = this.props;
     const { user, error } = this.state;
 
@@ -125,14 +98,13 @@ class SignIn extends React.Component {
       <main className={classes.main}>
         <Paper className={classes.paper}>
           <Avatar className={classes.avatar}>
-            <Logo className={classes.logo}/>
+            <Logo className={classes.logo} />
           </Avatar>
           <Typography component="h1" variant="h5" >
             Sign in
           </Typography>
           <form className={classes.form}>
-            {alert.message && <FormHelperText error>{ alert.message }</FormHelperText> }
-            {/* <FormHelperText error>{error && <ul className={classes.errorList}><li className={classes.errorListItem}>{error}</li></ul>}</FormHelperText> */}
+            {alert.message && <FormHelperText error>{alert.message}</FormHelperText>}
             <FormControl margin="normal" required fullWidth>
               <InputLabel htmlFor="email">Email Address</InputLabel>
               <Input
@@ -159,7 +131,15 @@ class SignIn extends React.Component {
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
             />
-            <Button color="secondary" variant='text' size='small' disableRipple={true} className={classes.button}>
+            <Button
+              component={Link}
+              to={{ pathname: 'password-reset' }}
+              color="secondary"
+              variant='text'
+              size='small'
+              disableRipple={true}
+              className={classes.button}
+            >
               Forgot Password
             </Button>
             <Button

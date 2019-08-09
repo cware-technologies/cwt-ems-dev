@@ -12,40 +12,44 @@ import { ReactComponent as Logo} from '../assets/ems-logo.svg';
 
 const styles = theme => ({
     toolbarIcon: {
+        position: 'relative',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'flex-end',
         padding: '0 8px',
         ...theme.mixins.toolbar,
+    },
+    drawerPaper: {
+      overflow: 'hidden',
+      position: 'relative',
+      whiteSpace: 'nowrap',
+      width: theme.drawerWidth,
+      transition: theme.transitions.create('width', {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.enteringScreen / 2,
+      }),
+      [theme.breakpoints.down('sm')]: {
+        position: 'fixed',
       },
-      drawerPaper: {
-        position: 'relative',
-        whiteSpace: 'nowrap',
-        width: theme.drawerWidth,
-        transition: theme.transitions.create('width', {
-          easing: theme.transitions.easing.sharp,
-          duration: theme.transitions.duration.enteringScreen / 2,
-        }),
-        [theme.breakpoints.down('sm')]: {
-          position: 'fixed',
-        },
+    },
+    drawerPaperClose: {
+      overflowX: 'hidden',
+      transition: theme.transitions.create('width', {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.leavingScreen / 2,
+      }),
+      width: theme.spacing.unit * 7,
+      [theme.breakpoints.down('sm')]: {
+        width: 0,
       },
-      drawerPaperClose: {
-        overflowX: 'hidden',
-        transition: theme.transitions.create('width', {
-          easing: theme.transitions.easing.sharp,
-          duration: theme.transitions.duration.leavingScreen / 2,
-        }),
-        width: theme.spacing.unit * 7,
-        [theme.breakpoints.down('sm')]: {
-          width: 0,
-        },
-      },
-      logo: {
-        height: '60%',
-        width: '60%',
-      },
-    
+    },
+    logo: {
+      height: '60%',
+      width: '60%',
+    },
+    navList: {
+      overflow: 'auto',
+    },
 })
 
 class Drawer extends React.Component {
@@ -67,9 +71,9 @@ class Drawer extends React.Component {
                     </IconButton>
                 </div>
                 <Divider />
-                <List component="nav">
+                <List component="nav" className={classes.navList}>
                     <MainListItems />
-                    <AdminListItems />
+                    {/* <AdminListItems /> */}
                 </List>
             </DrawerMUI>
         ); 

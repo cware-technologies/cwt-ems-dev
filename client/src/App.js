@@ -14,6 +14,9 @@ import PrivateRoute from './components/PrivateRoute';
 import { store, persistor } from './helpers/reduxStore';
 import { addAuthHeaderAsBearerToken } from './helpers/axiosConfig';
 
+import PasswordReset from './components/PasswordReset'
+import PasswordNew from './components/PasswordNew'
+
 const theme = createMuiTheme(
 	{
 		palette: {
@@ -108,6 +111,8 @@ class App extends Component {
 						<div className="App">
 							<Switch>
 								<Route path='/signin' component={SignIn} />
+								<Route path={`/password-reset`} component={PasswordReset} />
+								<Route path={`/password-new/:token`} component={PasswordNew} />
 								<Route strict path='/portal/' component={Portal} />
 								{ loggedIn ? <Redirect exact from='/' to='/portal/dashboard' /> : <Redirect from='/' to='/signin' /> }
 								{/* {!loggedIn && <Redirect from='*' to='/signin' />} */}

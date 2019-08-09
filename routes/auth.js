@@ -35,7 +35,9 @@ router.post('/register', passport.authenticate('register', { failWithError: true
 );
 
 router.get('/verifyUser', authController.verifyToken)
-
 router.get('/resp-views', authController.getResponsibilityViews)
+router.post('/password-reset', authController.postResetPassword)
+router.get('/password-reset', authController.getResetPassword)
+router.put('/password-reset', authController.updateResetPassword)
 
 module.exports = router;

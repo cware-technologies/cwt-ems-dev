@@ -2,10 +2,14 @@ const jwt = require('jsonwebtoken'),
     ExtractJWT = require('passport-jwt').ExtractJwt,
     { secret } = require('../config/jwtSecret.json'),
     models = require('../db/models'),
+    Users = models.C_USER,
     ResponsibilityViews = models.C_RESP_VIEW,
     Views = models.C_VIEW,
     Sequelize = require('sequelize')
     Op = Sequelize.Op
+    crypto = require('crypto'),
+    bcrypt = require('bcryptjs'),
+    nodemailer = require('nodemailer')
 
 async function signin(req, res, next) {
     // let views = await getResponsibilityViews(req, res, next)
@@ -87,9 +91,129 @@ async function getResponsibilityViews(req, res, next) {
     }
 }
 
+async function postResetPassword(req, res, next) {
+    let details = req.body
+    const token = crypto.randomBytes(20).toString('hex');
+
+    try {
+        let data = await Users.update(
+            {
+                ATTRIB_01: token,
+                ATTRIB_02: Date.now() + 6000
+            },
+            {
+                where:
+                {
+                    login: details.email
+                }
+            }
+        )
+        res.status(200).json({
+            status: 200,
+            data,
+        })
+
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: 'aown@cwaret.com',
+                pass: 'password123',
+            },
+        });
+    
+        const mailOptions = {
+            from: 'aown@cwaret.com',
+            to: details.email,
+            subject: 'Link To Reset Password',
+            text:
+                'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n'
+                + 'Please click on the following link, or paste this into your browser to complete the process within one hour of receiving it:\n\n'
+                + `http://localhost:3000/password-new/${token}\n\n`
+                + 'If you did not request this, please ignore this email and your password will remain unchanged.\n',
+        };
+    
+        console.log('sending mail');
+    
+        transporter.sendMail(mailOptions, (err, response) => {
+            if (err) {
+                console.error('there was an error: ', err);
+            } else {
+                console.log('here is the res: ', response);
+                res.status(200).json('recovery email sent');
+            }
+        });
+    
+    }
+    catch (err) {
+        err.status = 400
+        err.message = `Database Error..: ${err}`
+        next(err)
+    }
+}
+
+async function getResetPassword(req, res, next) {
+    let details = req.body
+    try{
+        let data = await Users.findOne(
+            {
+                where:
+                {
+                    ATTRIB_01: details.resetPasswordToken
+                }
+            }
+        )
+        res.status(200).json({
+            status: 200,
+            data,
+        })
+    
+    }
+    catch (err) {
+        err.status = 400
+        err.message = `Database Error..: ${err}`
+        next(err)
+    }
+}
+
+async function updateResetPassword(req, res, next) {
+    let details = req.body
+   let pass = await bcrypt.hash(details.password, 12)
+
+   console.log("server pass   ",pass)
+   
+
+    try{
+        let data = await Users.update(
+            {
+                hash_pwd: pass
+            },
+            {  
+                where:
+                {
+                    ATTRIB_01: details.token,
+                    
+                }
+            }
+        )
+        res.status(200).json({
+            status: 200,
+            data,
+        })
+    
+    }
+    catch (err) {
+        err.status = 400
+        err.message = `Database Error..: ${err}`
+        next(err)
+    }
+}
+
 module.exports = {
     signin,
     register,
     getResponsibilityViews,
     verifyToken,
+    postResetPassword,
+    getResetPassword,
+    updateResetPassword,
 }

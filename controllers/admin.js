@@ -1209,12 +1209,21 @@ async function getAssetLOVS(req, res, next){
     console.log("ASSET: ", entity)
 
     try{
-        let data = await ListOfValues.findAll({
+        let data = await ProfileAttribute.findAll({
             where: {
                 bu_id: entity.bu_id,
+                emp_id: entity.emp_id,
                 type: 'asset',
             },
-        })
+            include: [
+                {
+                    model: ListOfValues,
+                    as: 'function',
+                    attributes: ['val', 'ATTRIB_11']
+                }
+            ]
+        }).map(ele => ele.get({ plain: true }))
+
         res.status(200).json({
             status: 200,
             result: data,
