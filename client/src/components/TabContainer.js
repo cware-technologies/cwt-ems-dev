@@ -46,40 +46,38 @@ class TabContainer extends React.Component {
         value: 0,
     }
 
+    handleChange = (event, value) => {
+        this.setState({ value });
+    };
+
     render(){
-        let { classes, title } = this.props
+        let { classes, title, components } = this.props
         const { value } = this.state
 
         return(
-            <Container>
-                <div className={classes.feed}>
-                    <Typography variant="h6" gutterBottom component="h2" align='center' className={classes.heading}>
-                        ${title}
-                    </Typography>
-                    <Tabs
-                        value={this.state.value}
-                        onChange={this.handleChange}
-                        variant="fullWidth"
-                        indicatorColor="secondary"
-                        textColor="secondary"
-                        centered
-                        classes={{
-                            root: classes.tabs,
-                        }}
-                    >
-                        <Tab label="Request" classes={{ labelIcon: classes.tabLabel, }} />
-                        <Tab label="History" classes={{ labelIcon: classes.tabLabel, }} />
-                        <Tab label="Entitlements" classes={{ labelIcon: classes.tabLabel, }} />
-                        <Tab label="Employee Requests" classes={{ labelIcon: classes.tabLabel, }} />
-                    </Tabs>
-                    <ViewContainer>
-                        {value === 0 && <div></div>}
-                        {value === 1 && <div></div>}
-                        {value === 2 && <div></div>}
-                        {value === 3 && <div></div>}
-                    </ViewContainer>
-                </div>
-        </Container>
+            <div className={classes.feed}>
+                <Typography variant="h6" gutterBottom component="h2" align='center' className={classes.heading}>
+                    {title}
+                </Typography>
+                <Tabs
+                    value={this.state.value}
+                    onChange={this.handleChange}
+                    variant="fullWidth"
+                    indicatorColor="secondary"
+                    textColor="secondary"
+                    centered
+                    classes={{
+                        root: classes.tabs,
+                    }}
+                >
+                    {
+                        components.map(component => <Tab label={component.label} classes={{ labelIcon: classes.tabLabel, }} />)
+                    }
+                </Tabs>
+                <ViewContainer>
+                    {components[value].component}
+                </ViewContainer>
+            </div>
         )
     }
 }

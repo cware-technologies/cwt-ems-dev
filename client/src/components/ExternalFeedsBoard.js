@@ -136,11 +136,15 @@ class ExternalFeedsBoard extends React.Component {
             <Tab icon={<TechnologyIcon />} label="Technology" classes={{ labelIcon: classes.tabLabel, }} />
             <Tab icon={<LocalIcon />} label="Local" classes={{ labelIcon: classes.tabLabel, }} />
           </Tabs>
-          <TabContainer>
-            {value === 0 && <div><List>{news.filter(item => item.type_cd === 'Economy').map(item => <ListItem><Link href={item.ATTRIB_02} target="_blank">{item.ATTRIB_10}</Link></ListItem>)}</List></div>}
-            {value === 1 && <div><List>{news.filter(item => item.type_cd === 'Technology').map(item => <ListItem><Link href={item.ATTRIB_02} target="_blank">{item.ATTRIB_10}</Link></ListItem>)}</List></div>}
-            {value === 2 && <div><List>{news.filter(item => item.type_cd === 'Local').map(item => <ListItem><Link href={item.ATTRIB_02} target="_blank">{item.ATTRIB_10}</Link></ListItem>)}</List></div>}
-          </TabContainer>
+          <TabContainer
+            components={
+              [
+                { label: "Economy", component: <List>{news.filter(item => item.type_cd === 'Economy').map(item => <ListItem><Link href={item.ATTRIB_02} target="_blank">{item.ATTRIB_10}</Link></ListItem>)}</List> },
+                { label: "Technology", component: <List>{news.filter(item => item.type_cd === 'Technology').map(item => <ListItem><Link href={item.ATTRIB_02} target="_blank">{item.ATTRIB_10}</Link></ListItem>)}</List> },
+                { label: "Local", component: <List>{news.filter(item => item.type_cd === 'Local').map(item => <ListItem><Link href={item.ATTRIB_02} target="_blank">{item.ATTRIB_10}</Link></ListItem>)}</List> },
+              ]
+            }
+          />
         </Paper>
         <Button component={RouterLink} align='center' to={{ pathname: `/portal/news-and-updates`, search: `?filter=External Feed` }} fullWidth={true}>
           See All

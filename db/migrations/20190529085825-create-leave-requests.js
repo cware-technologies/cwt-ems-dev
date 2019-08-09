@@ -36,7 +36,7 @@ module.exports = {
         },
       },
       type_cd: {
-        type: DataTypes.INTEGER(11),
+        type: Sequelize.INTEGER(11),
         references: {
           'model': 'c_emp',
           'key': 'row_id',

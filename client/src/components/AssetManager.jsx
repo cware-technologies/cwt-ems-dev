@@ -1,8 +1,10 @@
 import React, { Component, lazy, Suspense } from 'react'
 import { connect } from 'react-redux'
 
-import Container from './MainContainer';
+import TabContainer from './TabContainer';
 import LoadingSpinner from './LoadingSpinner';
+import AttachAssets from './AttachAssets';
+
 import { getUserOrganization } from '../reducers/authReducer';
 
 const Table = lazy(() => import('./FunctionalTable'))
@@ -10,7 +12,30 @@ const Table = lazy(() => import('./FunctionalTable'))
 export class AssetManager extends Component {
     render() {
         return (
-            <Container>
+            <TabContainer
+                components={
+                    {
+                        "All Assets":  <Suspense fallback={<LoadingSpinner/>}>
+                                            <Table
+                                                title='assets'
+                                                endpoint='/admin/employee/assets'
+                                                headers={[
+                                                    { id: 'val', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Name' },
+                                                ]}
+                                                fields={[
+                                                    { id: 'val', type:'text', label: 'Name' },
+                                                ]}
+                                                const schema = {{}}
+                                                organization={this.props.organization}
+                                                // selectEntity={this.selectEntity}
+                                                // clearSelection={this.clearSelection}
+                                            />
+                                        </Suspense>,
+                        "Attach Assets": <AttachAssets />
+
+                    }
+                }
+            >
                 <Suspense fallback={<LoadingSpinner/>}>
                     <Table
                         title='assets'
@@ -27,7 +52,7 @@ export class AssetManager extends Component {
                         // clearSelection={this.clearSelection}
                     />
                 </Suspense>
-            </Container>
+            </TabContainer>
         )
     }
 }
