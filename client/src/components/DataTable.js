@@ -775,7 +775,7 @@ class EnhancedDataTable extends React.Component {
                                 }
                                     
                                 {emptyRows > 0 && (
-                                    <TableRow style={{ height: 49 * emptyRows }}>
+                                    <TableRow style={{ height: 100 }}>
                                         <TableCell colSpan={5} />
                                     </TableRow>
                                 )}

@@ -21,7 +21,6 @@ const AdminLeaves = lazy(() => import('./AdminLeaves'));
 const PaySlipTabs = lazy(() => import('./PaySlipTabs'));
 const ITTicketTabs = lazy(() => import('./ITTicketTabs'));
 const NewsAndUpdates = lazy(() => import('./NewsAndUpdates'));
-const PostUpdateForm = lazy(() => import('./PostUpdateForm'));
 const Profile = lazy(() => import('./Profile'));
 const ProfileEditForm = lazy(() => import('./ProfileEditForm'));
 const Attendance = lazy(() => import('./Attendance'));
@@ -33,7 +32,6 @@ const HRDocsUpload = lazy(() => import('./HRDocsUpload'))
 const InductionChecklist = lazy(() => import('./InductionChecklist'));
 const EmployeeInductionExit = lazy(() => import('./EmployeeInductionExit'));
 const EntitlementsManager = lazy(() => import('./EntitlementsManager'));
-const AttachEntitlement = lazy(() => import('./AttachEntitlement'));
 const EmployeeAttendanceList = lazy(() => import('./EmployeeAttendanceList'));
 const EmployeeDetailsSearch = lazy(() => import('./EmployeeDetailsSearch'));
 const EmployeeManager = lazy(() => import('./EmployeeManager'));
@@ -42,6 +40,7 @@ const AssetManager = lazy(() => import('./AssetManager'));
 const EligibilityManager = lazy(() => import('./EligibilityManager'));
 const ContractsPortal = lazy(() => import('./ContractsPortal'));
 const ContractsManager = lazy(() => import('./ContractsManager'));
+const InductionExitManager = lazy(() => import('./InductionExitManager'));
 
 const styles = theme => ({
   root: {
@@ -135,7 +134,6 @@ class Portal extends React.Component {
             <PrivateRoute path={`${match.path}induction-list-admin`} component={InductionChecklist} accessFunction={this.requireAuth} />
             <PrivateRoute path={`${match.path}employee-induction-exit`} component={EmployeeInductionExit} accessFunction={this.requireAuth} />
             <PrivateRoute path={`${match.path}entitlements-manager`} component={EntitlementsManager} accessFunction={this.requireAuth} />
-            <PrivateRoute path={`${match.path}attach-entitlements`} component={AttachEntitlement} accessFunction={this.requireAuth} />
             <PrivateRoute path={`${match.path}attendance-list`} component={EmployeeAttendanceList} accessFunction={this.requireAuth} />
             <PrivateRoute path={`${match.path}employee-details`} component={EmployeeDetailsSearch} accessFunction={this.requireAuth} />
             <PrivateRoute path={`${match.path}employee-manager`} component={EmployeeManager} accessFunction={this.requireAuth} />
@@ -143,6 +141,7 @@ class Portal extends React.Component {
             <PrivateRoute path={`${match.path}eligibility-manager`} component={EligibilityManager} accessFunction={this.requireAuth} />
             <PrivateRoute path={`${match.path}my-contracts`} component={ContractsPortal} accessFunction={this.requireAuth} />
             <PrivateRoute path={`${match.path}contracts-manager`} component={ContractsManager} accessFunction={this.requireAuth} />
+            <PrivateRoute path={`${match.path}induction-exit-manager`} component={InductionExitManager} accessFunction={this.requireAuth} />
             <Redirect from='/' to='/portal/dashboard' />
           </Switch>
         </Suspense>

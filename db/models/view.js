@@ -23,7 +23,9 @@ module.exports = (sequelize, DataTypes) => {
       references: {
         'model': 'c_bu',
         'key': 'row_id',
-      }
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE',
     },
     created: {
       allowNull: false,

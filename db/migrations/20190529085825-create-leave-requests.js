@@ -6,7 +6,7 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER(11)
       },
       emp_id: {
         type: Sequelize.INTEGER(11),
@@ -38,7 +38,7 @@ module.exports = {
       type_cd: {
         type: Sequelize.INTEGER(11),
         references: {
-          'model': 'c_emp',
+          'model': 'C_LST_VAL',
           'key': 'row_id',
         },
         onUpdate: 'CASCADE',

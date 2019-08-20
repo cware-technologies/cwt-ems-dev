@@ -261,7 +261,7 @@ class EmployeeDetails extends React.Component{
                         headerTitle="Assets Details"
                         detailType='assets_details'
                         indeterminate={true}
-                        endpoint="/admin/employee/assets"
+                        endpoint="/admin/employee/attachedAssets"
                         schema={assetsSchema}                    
                         data={data.filter(row => row.type === 'assets_details').map(ele => ({ ...ele, name: ele.function && ele.function.val}))}
                         handleSubmit={this.handleSubmit}

@@ -16,6 +16,8 @@ module.exports = {
           'model': 'C_BU',
           'key': 'row_id',
         },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
       },
       view_id: {
         type: Sequelize.INTEGER(11),
@@ -24,6 +26,8 @@ module.exports = {
           'model': 'C_VIEW',
           'key': 'row_id',
         },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
       },
       resp_id: {
         type: Sequelize.INTEGER(11),
@@ -32,6 +36,8 @@ module.exports = {
           'model': 'C_RESP',
           'key': 'row_id',
         },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
       },
       created: {
         allowNull: false,

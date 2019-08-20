@@ -1,24 +1,12 @@
 import React from 'react'
 import axios from 'axios'
-import compose from 'recompose/compose'
-import { withStyles } from '@material-ui/core/styles'
 import { connect } from 'react-redux'
-import SelectableTable from './SelectableTable'
-import Container from './MainContainer';
-import Search from './Search';
-import Checklist from './Checklist'
 import DataTable from './DataTable'
 import AddEditForm from './AddEditForm'
 import { getUserOrganization } from '../reducers/authReducer';
 import ModalTrigger from './ModalTrigger'
 import AutoSuggest from './AutoSuggest';
-
-const style = theme => ({
-    actionPanel: {
-        display: 'flex',
-        flexDirection: 'row',
-    },
-})
+import ActionPanel from './ActionPanel';
 
 const entitlementRows = [
     { id: ['function', 'val'], numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Entitlement' },
@@ -87,6 +75,15 @@ class EmployeeInduction extends React.Component {
         }
         catch(err){
             
+        }
+    }
+
+    changeSearchFilter = (filter) => {
+        if(filter){
+            this.setState(prevProps => ({
+                filter,
+                query: `${this.state.filter}=${prevProps.value}`
+            }), () => console.log(this.state))
         }
     }
 
@@ -289,8 +286,8 @@ class EmployeeInduction extends React.Component {
         let { checklistData, usersData, leaveTypes, query, value, applicationFormData, isFetching } = this.state
 
         return (
-            <Container>
-                <div className={classes.actionPanel}>
+            <React.Fragment>
+                <ActionPanel>
                     <AutoSuggest
                         value={value}
                         apiCall={this.onSearch}
@@ -299,6 +296,18 @@ class EmployeeInduction extends React.Component {
                         onSelect={this.selectEmployee}
                         suggestions={usersData}
                         isLoading={isFetching}
+                        searchFilterProps={{
+                            changeFilter: this.changeSearchFilter,
+                            filters: [ 'id', 'name', 'location', 'position', 'division', 'responsibility' ],
+                            filterMapping: {
+                                id: 'emp_num',
+                                name: 'name',
+                                location: 'ATTRIB_01',
+                                position: 'postn_held_id',
+                                division: 'div_id',
+                                responsibility: 'resp_id',
+                            }
+                        }}
                     />
                     <ModalTrigger
                         title="Attach"
@@ -313,7 +322,7 @@ class EmployeeInduction extends React.Component {
                             handleSubmit={this.handleApplicationSubmit}
                         />
                     </ModalTrigger>
-                </div>
+                </ActionPanel>
                 
                 <DataTable
                     headerTitle="Employee Entitlements"
@@ -324,7 +333,7 @@ class EmployeeInduction extends React.Component {
                     disableEdit
                     handleDelete={this.handleDelete}
                 />
-            </Container>
+            </React.Fragment>
         )
     }
 }
@@ -335,7 +344,4 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default compose(
-    withStyles(style),
-    connect(mapStateToProps, {})
-)(EmployeeInduction)
+export default connect(mapStateToProps, {})(EmployeeInduction)

@@ -9,7 +9,6 @@ const styles = theme => ({
         position: 'relative',
         //padding: theme.spacing.unit,
         justifySelf: 'flex-start',
-        display: 'block',
         height: 40,
     },
 })

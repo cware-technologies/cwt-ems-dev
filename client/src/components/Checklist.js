@@ -104,7 +104,7 @@ class Checklist extends React.Component{
                             </ListItem>
                     ))}
                 </List>
-                <Button variant='outlined' onClick={updateHandler}>Update</Button>
+                <Button variant='outlined' onClick={updateHandler} disabled={!this.props.active}>Update</Button>
             </React.Fragment>
         )
     }

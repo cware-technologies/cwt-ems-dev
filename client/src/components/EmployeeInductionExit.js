@@ -3,14 +3,14 @@ import axios from 'axios'
 import compose from 'recompose/compose'
 import { withStyles } from '@material-ui/core/styles'
 import { connect } from 'react-redux'
-import SelectableTable from './SelectableTable'
-import Container from './MainContainer';
-import Search from './Search';
+
 import Checklist from './Checklist'
 import AddEditForm from './AddEditForm'
 import { getUserOrganization } from '../reducers/authReducer';
 import ModalTrigger from './ModalTrigger'
 import AutoSuggest from './AutoSuggest';
+import ActionPanel from './ActionPanel';
+
 import { alertActions } from '../actions';
 
 const style = theme => ({
@@ -36,8 +36,19 @@ class EmployeeInduction extends React.Component {
         usersData: [],
         checklistData: [],
         applicationFormData: {},
+        filter: 'name',
+        value: '',
         query: '',
         isFetching: false,
+    }
+
+    changeSearchFilter = (filter) => {
+        if(filter){
+            this.setState(prevProps => ({
+                filter,
+                query: `${this.state.filter}=${prevProps.value}`
+            }))
+        }
     }
 
     onSearch = async () => {
@@ -50,7 +61,7 @@ class EmployeeInduction extends React.Component {
         try {
             response = await axios({
                 method: 'get',
-                url: '/public/search/employee',
+                url: `/public/search/employee?${this.state.query}`,
                 params: {
                     query: this.state.query
                 }
@@ -123,44 +134,6 @@ class EmployeeInduction extends React.Component {
             }
         }))
     }
-
-    // handleCheckboxChange = (event, id, idx) => {
-    //     let target = event.target.id
-    //     let value = event.target.checked
-    //     let data = this.state.data
-    //     let flag = target === 'readOnly' ? 'FLG_01' : 'FLG_02'
-
-        
-    //     let index = 0
-    //     for(index; index < data.length; index++) {
-    //         if(data[index].row_id === id) 
-    //             break;
-    //     }
-            
-
-    //     // let selection = data.filter(row => row.row_id === id)
-    //     // console.log("SELECTION: ", selection)
-    //     // let index = selection[0] && selection[0].row_id
-
-    //     data[index] = {
-    //         ...data[index],
-    //         C_RESP_VIEW: {
-    //             ...data[index].C_RESP_VIEW,
-    //             [flag]: value,
-    //         }
-    //     }
-
-    //     this.setState(prevState => ({
-    //         data: data,
-    //         updates: {
-    //             ...prevState.updates,
-    //             [idx]: {
-    //                 ...prevState.updates[idx],
-    //                 [flag]: value,
-    //             }
-    //         }
-    //     }), () => console.log("UPDATE STATE: ", this.state))
-    // }
 
     getChecklist = async() => {
         let response
@@ -243,8 +216,8 @@ class EmployeeInduction extends React.Component {
         let { checklistData, usersData, query, applicationFormData, isFetching } = this.state
 
         return (
-            <Container>
-                <div className={classes.actionPanel}>
+            <React.Fragment>
+                <ActionPanel>
                     <AutoSuggest
                         value={query}
                         apiCall={this.onSearch}
@@ -253,6 +226,18 @@ class EmployeeInduction extends React.Component {
                         onSelect={this.selectEmployee}
                         suggestions={usersData}
                         isLoading={isFetching}
+                        searchFilterProps={{
+                            changeFilter: this.changeSearchFilter,
+                            filters: [ 'id', 'name', 'location', 'position', 'division', 'responsibility' ],
+                            filterMapping: {
+                                id: 'emp_num',
+                                name: 'name',
+                                location: 'ATTRIB_01',
+                                position: 'postn_held_id',
+                                division: 'div_id',
+                                responsibility: 'resp_id',
+                            }
+                        }}
                     />
                     <ModalTrigger
                         title="Apply"
@@ -267,10 +252,11 @@ class EmployeeInduction extends React.Component {
                             handleSubmit={this.handleApplicationSubmit}
                         />
                     </ModalTrigger>
-                </div>
+                </ActionPanel>
 
                 <Checklist
                     data={checklistData}
+                    active={Object.keys(this.state.updates).length}
                     handleToggle={this.handleCheckboxChange}
                     updateHandler={this.handleUpdate}
                     filterOptions={[
@@ -278,7 +264,7 @@ class EmployeeInduction extends React.Component {
                         { name: 'Exit Checklist', value: 'exit_checklist' }
                     ]}
                 />
-            </Container>
+            </React.Fragment>
         )
     }
 }

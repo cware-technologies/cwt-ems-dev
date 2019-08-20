@@ -1204,7 +1204,7 @@ async function deleteLeaveTypeLOVS(req, res, next){
     }
 }
 
-async function getAssetLOVS(req, res, next){
+async function getEmployeeAssets(req, res, next){
     let entity = req.query
     console.log("ASSET: ", entity)
 
@@ -1223,6 +1223,29 @@ async function getAssetLOVS(req, res, next){
                 }
             ]
         }).map(ele => ele.get({ plain: true }))
+
+        res.status(200).json({
+            status: 200,
+            result: data,
+        })
+    }
+    catch(err){
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function getAssetLOVS(req, res, next){
+    let entity = req.body
+    console.log("POST ASSET: ", entity)
+
+    try{
+        let data = await ListOfValues.findAll({
+            where:{
+                type: 'asset',
+            }
+        })
 
         res.status(200).json({
             status: 200,
@@ -1299,6 +1322,94 @@ async function deleteAssetLOVS(req, res, next){
         res.status(200).json({
             status: 200,
             data,
+        })
+    }
+    catch(err){
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function getAttachedAssets(req, res, next){
+    let entity = req.query
+    console.log(entity)
+
+    try{
+        let data = await ProfileAttribute.findAll({
+            where: {
+                emp_id: entity.emp_id,
+                type: 'assets_details',
+            },
+            include: [
+                {
+                    model: ListOfValues,
+                    as: 'function',
+                    attributes: ['val'],
+                },
+            ],
+        })
+
+        res.status(200).json({
+            status: 200,
+            result: data,
+        })
+    }
+    catch(err){
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function attachAsset(req, res, next){
+    let entity = req.body
+    console.log(entity)
+
+    try{
+        let data = await ProfileAttribute.create({
+           ...entity,
+           type: 'assets_details',
+        })
+
+        try{
+            let data2 = await ProfileAttribute.findOne({ 
+                where: { row_id: data.row_id },
+                include: [
+                    {
+                        model: ListOfValues,
+                        as: 'function',
+                        attributes: ['val'],
+                    }
+                ]
+            })
+            res.status(200).json({
+                status: 200,
+                result: data2,
+            })
+        }
+        catch(err){
+            err.status = 400
+            err.message = `Database Error: ${err}`
+            next(err)
+        }
+    }
+    catch(err){
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function detachAsset(req, res, next){
+    try{
+        let data = await ProfileAttribute.destroy({ 
+            where: { row_id: req.body.row_id },
+        })
+
+        res.status(200).json({
+            status: 200,
+            result: data,
         })
     }
     catch(err){
@@ -1728,7 +1839,7 @@ async function upsertEmployeeDetail(record){
 
 async function upsertEmployeeDetails(req, res, next){
     let Details = req.body
-    console.log("Record: ", Details)
+    console.log("Record Upsert: ", Details)
 
     Promise.all(Details.records.map(record => upsertEmployeeDetail(record)))
     .then(results =>
@@ -1748,7 +1859,7 @@ async function updateEmployeeDetail(record){
     return new Promise(async (resolve, reject) => {
         try{
             let data = await ProfileAttribute.update(record, { where: { ATTRIB_11: record.ATTRIB_11} })
-            console.log(data)
+            console.log("DATA: ", data)
             resolve(data)
         }
         catch(err){
@@ -1759,7 +1870,7 @@ async function updateEmployeeDetail(record){
 
 async function updateEmployeeDetails(req, res, next){
     let Details = req.body
-    console.log("Record: ", Details)
+    console.log("Record Update: ", Details)
 
     Promise.all(Details.records.map(record => updateEmployeeDetail(record)))
     .then(results => 
@@ -2056,6 +2167,10 @@ module.exports = {
     postAssetLOVS,
     updateAssetLOVS,
     deleteAssetLOVS,
+    getEmployeeAssets,
+    getAttachedAssets,
+    attachAsset,
+    detachAsset,
     getEligibilityLOVS,
     postEligibilityLOVS,
     updateEligibilityLOVS,

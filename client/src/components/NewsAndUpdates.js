@@ -161,7 +161,7 @@ class NewsAndUpdates extends React.Component {
 					<TablePagination
 						rowsPerPageOptions={[5, 10, 25]}
 						component="div"
-						count={news.length}
+						count={this.filterData(news).length}
 						rowsPerPage={rowsPerPage}
 						page={this.state.page}
 						backIconButtonProps={{

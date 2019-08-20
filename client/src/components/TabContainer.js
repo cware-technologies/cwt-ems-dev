@@ -71,7 +71,7 @@ class TabContainer extends React.Component {
                     }}
                 >
                     {
-                        components.map(component => <Tab label={component.label} classes={{ labelIcon: classes.tabLabel, }} />)
+                        components.map(component => <Tab label={component.label} icon={component.icon && component.icon} classes={{ labelIcon: classes.tabLabel, }} />)
                     }
                 </Tabs>
                 <ViewContainer>

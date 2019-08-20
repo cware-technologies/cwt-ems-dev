@@ -24,7 +24,9 @@ module.exports = {
         references: {
           'model': 'C_BU',
           'key': 'row_id',
-        }
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
       },
       created: {
         allowNull: false,

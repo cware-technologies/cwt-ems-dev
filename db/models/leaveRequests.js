@@ -5,12 +5,12 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       autoIncrement: true,
       primaryKey: true,
-      type: DataTypes.INTEGER
+      type: DataTypes.INTEGER(11)
     },
     emp_id: {
       type: DataTypes.INTEGER(11),
       references: {
-        'model': 'c_emp',
+        'model': 'C_EMP',
         'key': 'row_id',
       },
       onUpdate: 'CASCADE',
@@ -32,7 +32,7 @@ module.exports = (sequelize, DataTypes) => {
     bu_id: {
       type: DataTypes.INTEGER(11),
       references: {
-        'model': 'c_bu',
+        'model': 'C_BU',
         'key': 'row_id',
       },
       onUpdate: 'CASCADE',
@@ -41,7 +41,7 @@ module.exports = (sequelize, DataTypes) => {
     type_cd: {
       type: DataTypes.INTEGER(11),
       references: {
-        'model': 'c_emp',
+        'model': 'C_LST_VAL',
         'key': 'row_id',
       },
       onUpdate: 'CASCADE',

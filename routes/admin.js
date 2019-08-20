@@ -55,10 +55,15 @@ router.delete('/leave-types', adminController.deleteLeaveTypeLOVS)
 router.get('/employee/entitlements', adminController.getEmployeeEntitlements)
 router.delete('/employee/entitlements', adminController.deleteEmployeeEntitlements)
 
-router.get('/employee/assets', adminController.getAssetLOVS)
-router.post('/employee/assets', adminController.postAssetLOVS)
-router.put('/employee/assets', adminController.updateAssetLOVS)
-router.delete('/employee/assets', adminController.deleteAssetLOVS)
+router.get('/assets', adminController.getAssetLOVS)
+router.post('/assets', adminController.postAssetLOVS)
+router.put('/assets', adminController.updateAssetLOVS)
+router.delete('/assets', adminController.deleteAssetLOVS)
+
+router.get('/employee/attachedAssets', adminController.getAttachedAssets)
+router.post('/employee/attachAsset', adminController.attachAsset)
+router.delete('/employee/detachAsset', adminController.detachAsset)
+router.get('/employee/assets', adminController.getEmployeeAssets)
 
 router.get('/employee/eligibility', adminController.getEligibilityLOVS)
 router.post('/employee/eligibility', adminController.postEligibilityLOVS)
@@ -88,7 +93,5 @@ router.put('/employees', adminController.updateEmployee)
 router.delete('/employees', adminController.deleteEmployee)
 
 router.post('/employees/changeStatus', adminController.changeEmployeeStatus)
-
-
 
 module.exports = router

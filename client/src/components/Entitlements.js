@@ -45,7 +45,7 @@ const schema = {
     },
 }
 
-class EntitlementsManager extends React.Component{
+class Entitlements extends React.Component{
     modalRef = React.createRef()
     state = {
         data: [],
@@ -266,21 +266,19 @@ class EntitlementsManager extends React.Component{
                                 />
                             </ModalTrigger>
         return(
-            <Container>
-                <DataTable
-                    headerTitle="Leave Types Checklist"
-                    rows={viewRows}
-                    endpoint='/access-rights/view'
-                    params={{ organization: organization }}
-                    data={data}
-                    actions
-                    setEditMode={this.setEditMode}
-                    unsetEditMode={this.unsetEditMode}
-                    handleDelete={this.handleDelete}
-                    editMode={editMode}
-                    AddComponent={addComponent}
-                />
-            </Container>
+            <DataTable
+                headerTitle="Leave Types Checklist"
+                rows={viewRows}
+                endpoint='/access-rights/view'
+                params={{ organization: organization }}
+                data={data}
+                actions
+                setEditMode={this.setEditMode}
+                unsetEditMode={this.unsetEditMode}
+                handleDelete={this.handleDelete}
+                editMode={editMode}
+                AddComponent={addComponent}
+            />
         )
     }
 }
@@ -291,4 +289,4 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps, {...alertActions})(EntitlementsManager)
+export default connect(mapStateToProps, {...alertActions})(Entitlements)

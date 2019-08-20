@@ -258,21 +258,19 @@ class InductionChecklist extends React.Component{
                             </ModalTrigger>
 
         return(
-            <Container>
-                <DataTable
-                    headerTitle="Induction/Exit Checklist"
-                    rows={viewRows}
-                    endpoint='/access-rights/view'
-                    params={{ organization: organization }}
-                    data={data}
-                    actions
-                    setEditMode={this.setEditMode}
-                    unsetEditMode={this.unsetEditMode}
-                    handleDelete={this.handleDelete}
-                    editMode={editMode}
-                    AddComponent={addComponent}
-                />
-            </Container>
+            <DataTable
+                headerTitle="Induction/Exit Checklist"
+                rows={viewRows}
+                endpoint='/access-rights/view'
+                params={{ organization: organization }}
+                data={data}
+                actions
+                setEditMode={this.setEditMode}
+                unsetEditMode={this.unsetEditMode}
+                handleDelete={this.handleDelete}
+                editMode={editMode}
+                AddComponent={addComponent}
+            />
         )
     }
 }

@@ -6,10 +6,11 @@ const styles = theme => ({
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-around',
+        alignItems: 'center',
     },
 })
 
-export class ActionPanel extends Component {
+class ActionPanel extends Component {
     render() {
         const { classes, children } = this.props
 

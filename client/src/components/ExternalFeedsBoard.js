@@ -122,33 +122,31 @@ class ExternalFeedsBoard extends React.Component {
           External Feeds
           </Typography>
         <Paper square className={classes.root}>
-          <Tabs
-            value={this.state.value}
-            onChange={this.handleChange}
-            variant="fullWidth"
-            indicatorColor="secondary"
-            textColor="secondary"
-            classes={{
-              root: classes.tabs,
-            }}
-          >
-            <Tab icon={<EconomyIcon />} label="Economy" classes={{ labelIcon: classes.tabLabel, }} />
-            <Tab icon={<TechnologyIcon />} label="Technology" classes={{ labelIcon: classes.tabLabel, }} />
-            <Tab icon={<LocalIcon />} label="Local" classes={{ labelIcon: classes.tabLabel, }} />
-          </Tabs>
           <TabContainer
             components={
               [
-                { label: "Economy", component: <List>{news.filter(item => item.type_cd === 'Economy').map(item => <ListItem><Link href={item.ATTRIB_02} target="_blank">{item.ATTRIB_10}</Link></ListItem>)}</List> },
-                { label: "Technology", component: <List>{news.filter(item => item.type_cd === 'Technology').map(item => <ListItem><Link href={item.ATTRIB_02} target="_blank">{item.ATTRIB_10}</Link></ListItem>)}</List> },
-                { label: "Local", component: <List>{news.filter(item => item.type_cd === 'Local').map(item => <ListItem><Link href={item.ATTRIB_02} target="_blank">{item.ATTRIB_10}</Link></ListItem>)}</List> },
+                { 
+                  label: "Economy",
+                  icon: <EconomyIcon />,
+                  component: <List>{news.filter(item => item.type_cd === 'Economy').map(item => <ListItem><Link href={item.ATTRIB_02} target="_blank">{item.ATTRIB_10}</Link></ListItem>)}</List>
+                },
+                {
+                  label: "Technology",
+                  icon: <TechnologyIcon />,
+                  component: <List>{news.filter(item => item.type_cd === 'Technology').map(item => <ListItem><Link href={item.ATTRIB_02} target="_blank">{item.ATTRIB_10}</Link></ListItem>)}</List>
+                },
+                {
+                  label: "Local",
+                  icon: <LocalIcon />,
+                  component: <List>{news.filter(item => item.type_cd === 'Local').map(item => <ListItem><Link href={item.ATTRIB_02} target="_blank">{item.ATTRIB_10}</Link></ListItem>)}</List>
+                },
               ]
             }
           />
+          <Button component={RouterLink} align='center' to={{ pathname: `/portal/news-and-updates`, search: `?filter=External Feed` }} fullWidth={true}>
+            See All
+          </Button>
         </Paper>
-        <Button component={RouterLink} align='center' to={{ pathname: `/portal/news-and-updates`, search: `?filter=External Feed` }} fullWidth={true}>
-          See All
-        </Button>
       </div>
     );
   }

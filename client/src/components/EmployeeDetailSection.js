@@ -162,8 +162,9 @@ class EmployeeDetailSection extends React.Component {
             })
 
             console.log(response)
-            rows = response.data.result.map(ele => ({ label: ele.val, title: ele.val, id: 'ATTRIB_01', type: 'text'}))
-            response.data.result.forEach(ele => associations[ele.val] = ele.row_id )
+            rows = response.data.result.map(ele => ({ label: ele.function.val, title: ele.function.val, id: 'ATTRIB_01', type: 'text'}))
+            response.data.result.forEach(ele => associations[ele.function.val] = ele.ATTRIB_11 )
+            console.log("ASSOCIATIONS: ",associations)
 
             this.setState(prevState => ({
                 rows,
