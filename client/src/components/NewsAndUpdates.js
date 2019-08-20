@@ -34,7 +34,7 @@ class NewsAndUpdates extends React.Component {
 	async componentDidMount() {
 		let params = new URLSearchParams(this.props.location.search);
 		let filter = params.get("filter")
-		if(filter && filter !== ""){
+		if (filter && filter !== "") {
 			console.log("ID: ", filter)
 			this.setState(prevState => ({
 				filter,
@@ -92,25 +92,25 @@ class NewsAndUpdates extends React.Component {
 	}
 
 	handleFilterChange = (e) => {
-        let value = e.target.value
+		let value = e.target.value
 
-        this.setState(prevState => ({
-            filter: value,
-        }))
+		this.setState(prevState => ({
+			filter: value,
+		}))
 	}
-	
+
 	filterData = (data) => {
 		console.log("FILTER: ", this.state.filter, data.filter(row => row.type_cd === this.state.filter))
-        if(this.state.filter === 'all'){
+		if (this.state.filter === 'all') {
 			return data
 		}
-			
-		if(this.state.filter === 'External Feed'){
+
+		if (this.state.filter === 'External Feed') {
 			return data.filter(row => row.type_cd === 'Local' || row.type_cd === 'Economy' || row.type_cd === 'Technology')
 		}
 
-        return data.filter(row => row.type_cd === this.state.filter)
-    }
+		return data.filter(row => row.type_cd === this.state.filter)
+	}
 
 	render() {
 		const { classes } = this.props;
@@ -118,61 +118,61 @@ class NewsAndUpdates extends React.Component {
 
 		return (
 			<Container>
-					<Typography variant="h4" align='center' gutterBottom component="h2">
-						News And Updates
+				<Typography variant="h4" align='center' gutterBottom component="h2">
+					News And Updates
 					</Typography>
 
-					<TextField
-                        id='filter-list'
-                        select
-                        label='Filter'
-                        value={this.state.filter}
-                        defaultValue=''
-                        onChange={this.handleFilterChange}
-                        SelectProps={{
-                            native: true,
-                        }}
-                        margin="dense"
-                        variant="outlined"
-                    >
-                        <option value={'all'}>
-                            {'All'}
-                        </option>
-                        {filterOptions.map((option, index) => (
-                            <option key={index} value={option.value}>
-                                {option.name}
-                            </option>
-                        ))}
-                    </TextField>
+				<TextField
+					id='filter-list'
+					select
+					label='Filter'
+					value={this.state.filter}
+					defaultValue=''
+					onChange={this.handleFilterChange}
+					SelectProps={{
+						native: true,
+					}}
+					margin="dense"
+					variant="outlined"
+				>
+					<option value={'all'}>
+						{'All'}
+					</option>
+					{filterOptions.map((option, index) => (
+						<option key={index} value={option.value}>
+							{option.name}
+						</option>
+					))}
+				</TextField>
 
-					{
-						this.filterData(news).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((item, index) => {
-							return <NewsCard
-								title={item.ATTRIB_10}
-								body={item.ATTRIB_01}
-								date={item.created}
-								type={item.type_cd}
-								link={item.ATTRIB_02 && item.ATTRIB_02 !== "" ? item.ATTRIB_02 : null }
-								img={item.img_pth}
-								current={true}
-							/>
-						})
-					}
-					<TablePagination
-						rowsPerPageOptions={[5, 10, 25]}
-						component="div"
-						count={news.length}
-						rowsPerPage={rowsPerPage}
-						page={this.state.page}
-						backIconButtonProps={{
-							'aria-label': 'Previous Page',
-						}}
-						nextIconButtonProps={{
-							'aria-label': 'Next Page',
-						}}
-						onChangePage={this.handleChangePage}
-						onChangeRowsPerPage={this.handleChangeRowsPerPage}
-					/>
+				{
+					this.filterData(news).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((item, index) => {
+						return <NewsCard
+							title={item.ATTRIB_10}
+							body={item.ATTRIB_01}
+							date={item.created}
+							type={item.type_cd}
+							link={item.ATTRIB_02 && item.ATTRIB_02 !== "" ? item.ATTRIB_02 : null}
+							img={item.img_pth}
+							current={true}
+						/>
+					})
+				}
+				<TablePagination
+					rowsPerPageOptions={[5, 10, 25]}
+					component="div"
+					count={news.length}
+					rowsPerPage={rowsPerPage}
+					page={this.state.page}
+					backIconButtonProps={{
+						'aria-label': 'Previous Page',
+					}}
+					nextIconButtonProps={{
+						'aria-label': 'Next Page',
+					}}
+					onChangePage={this.handleChangePage}
+					onChangeRowsPerPage={this.handleChangeRowsPerPage}
+				/>
 			</Container>
 		);
 	}

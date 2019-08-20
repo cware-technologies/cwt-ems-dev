@@ -35,5 +35,6 @@ router.get('/employee/leave/requestedLeaves', privateController.getRequestedLeav
 router.put('/employee/leave/updateLeaveRequested', privateController.updateLeaveRequested)
 router.get('/employee/entitlements/history', privateController.getEntitlementsData)
 router.get('/employee/entitlements', privateController.getEmployeeEntitlements)
+router.get('/employee/leavesCount', privateController.getLeavesCount)
 
 module.exports = router
