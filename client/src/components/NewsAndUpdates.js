@@ -34,7 +34,7 @@ class NewsAndUpdates extends React.Component {
 	async componentDidMount() {
 		let params = new URLSearchParams(this.props.location.search);
 		let filter = params.get("filter")
-		if(filter && filter !== ""){
+		if (filter && filter !== "") {
 			console.log("ID: ", filter)
 			this.setState(prevState => ({
 				filter,
@@ -92,25 +92,25 @@ class NewsAndUpdates extends React.Component {
 	}
 
 	handleFilterChange = (e) => {
-        let value = e.target.value
+		let value = e.target.value
 
-        this.setState(prevState => ({
-            filter: value,
-        }))
+		this.setState(prevState => ({
+			filter: value,
+		}))
 	}
-	
+
 	filterData = (data) => {
 		console.log("FILTER: ", this.state.filter, data.filter(row => row.type_cd === this.state.filter))
-        if(this.state.filter === 'all'){
+		if (this.state.filter === 'all') {
 			return data
 		}
-			
-		if(this.state.filter === 'External Feed'){
+
+		if (this.state.filter === 'External Feed') {
 			return data.filter(row => row.type_cd === 'Local' || row.type_cd === 'Economy' || row.type_cd === 'Technology')
 		}
 
-        return data.filter(row => row.type_cd === this.state.filter)
-    }
+		return data.filter(row => row.type_cd === this.state.filter)
+	}
 
 	render() {
 		const { classes } = this.props;
@@ -118,8 +118,8 @@ class NewsAndUpdates extends React.Component {
 
 		return (
 			<Container>
-					<Typography variant="h4" align='center' gutterBottom component="h2">
-						News And Updates
+				<Typography variant="h4" align='center' gutterBottom component="h2">
+					News And Updates
 					</Typography>
 
 					<TextField

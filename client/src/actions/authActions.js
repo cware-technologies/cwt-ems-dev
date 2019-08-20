@@ -17,7 +17,6 @@ const getViews = (responsibility) => async (dispatch) => {
     catch (err) {
         dispatch(failure(err))
         dispatch(alertActions.error(err))
-
     }
 
     return

@@ -11,11 +11,11 @@ const Op = require('sequelize').Op,
     Sequelize = require('sequelize'),
     sequelize = require('../db/models').sequelize
 
-async function getEmployee(req, res, next){
+async function getEmployee(req, res, next) {
     let employee = req.query
     console.log("APPLICATION: ", employee)
 
-    try{
+    try {
         let data = await Employee.findOne({
             where: {
                 row_id: employee.employee,
@@ -39,42 +39,42 @@ async function getEmployee(req, res, next){
             result: data,
         })
     }
-    catch(err){
+    catch (err) {
         err.status = 400
         err.message = `Database Error: ${err}`
         next(err)
     }
 }
 
-async function updateEmployeePersonalDetails(req, res, next){
+async function updateEmployeePersonalDetails(req, res, next) {
     let details = req.body
 
-    try{
-        let data = await Employee.update(details.details, { where: {row_id: details.details.row_id }})
+    try {
+        let data = await Employee.update(details.details, { where: { row_id: details.details.row_id } })
 
         res.status(200).json({
             status: 200,
             data,
         })
     }
-    catch(err){
+    catch (err) {
         err.status = 400
         err.message = `Database Error: ${err}`
         next(err)
     }
 }
 
-async function searchEmployeeDetails(req, res, next){
+async function searchEmployeeDetails(req, res, next) {
     let employee = req.query
     console.log("APPLICATION: ", employee)
 
-    try{
+    try {
         let data = await ProfileAttribute.findAll({
             where: {
                 emp_id: employee.employee,
                 [Op.or]: [
-                    {type: 'contact_details'},
-                    {type: 'other_details'},
+                    { type: 'contact_details' },
+                    { type: 'other_details' },
                 ]
             }
         })
@@ -84,49 +84,49 @@ async function searchEmployeeDetails(req, res, next){
             result: data,
         })
     }
-    catch(err){
+    catch (err) {
         err.status = 400
         err.message = `Database Error: ${err}`
         next(err)
     }
 }
 
-async function upsertEmployeeDetail(record){
+async function upsertEmployeeDetail(record) {
     return new Promise(async (resolve, reject) => {
-        try{
+        try {
             let data = await ProfileAttribute.upsert(record, { returning: true, })
             console.log(data)
             resolve(data)
         }
-        catch(err){
+        catch (err) {
             reject(err)
         }
-    })    
+    })
 }
 
-async function upsertEmployeeDetails(req, res, next){
+async function upsertEmployeeDetails(req, res, next) {
     let Details = req.body
     console.log("Record: ", Details)
 
     Promise.all(Details.records.map(record => upsertEmployeeDetail(record)))
-    .then(results => 
-        res.status(200).json({
-            status: 200,
-            result: results,
+        .then(results =>
+            res.status(200).json({
+                status: 200,
+                result: results,
+            })
+        )
+        .catch(err => {
+            err.status = 400
+            err.message = `Database Error: ${err}`
+            next(err)
         })
-    )
-    .catch(err => {
-        err.status = 400
-        err.message = `Database Error: ${err}`
-        next(err)
-    })
 }
 
-async function searchEmployeeCertifications(req, res, next){
+async function searchEmployeeCertifications(req, res, next) {
     let employee = req.query
     console.log("APPLICATION: ", employee)
 
-    try{
+    try {
         let data = await ProfileAttribute.findAll({
             where: {
                 emp_id: employee.employee,
@@ -139,18 +139,18 @@ async function searchEmployeeCertifications(req, res, next){
             result: data,
         })
     }
-    catch(err){
+    catch (err) {
         err.status = 400
         err.message = `Database Error: ${err}`
         next(err)
     }
 }
 
-async function addEmployeeCertification(req, res, next){
+async function addEmployeeCertification(req, res, next) {
     let certificate = req.body
     console.log("APPLICATION: ", certificate)
 
-    try{
+    try {
         let data = await ProfileAttribute.create({
             ...certificate,
             type: 'certification_details',
@@ -161,18 +161,18 @@ async function addEmployeeCertification(req, res, next){
             data,
         })
     }
-    catch(err){
+    catch (err) {
         err.status = 400
         err.message = `Database Error: ${err}`
         next(err)
     }
 }
 
-async function deleteEmployeeCertification(req, res, next){
+async function deleteEmployeeCertification(req, res, next) {
     let certificate = req.body
     console.log("APPLICATION: ", certificate)
 
-    try{
+    try {
         let data = await ProfileAttribute.destroy({
             where: {
                 row_id: certificate.row_id
@@ -184,37 +184,37 @@ async function deleteEmployeeCertification(req, res, next){
             data,
         })
     }
-    catch(err){
+    catch (err) {
         err.status = 400
         err.message = `Database Error: ${err}`
         next(err)
     }
 }
 
-async function updateEmployeeCertification(req, res, next){
+async function updateEmployeeCertification(req, res, next) {
     let certificate = req.body
     console.log("APPLICATION: ", certificate)
 
-    try{
-        let data = await ProfileAttribute.update(certificate, { where: {row_id: certificate.row_id }})
+    try {
+        let data = await ProfileAttribute.update(certificate, { where: { row_id: certificate.row_id } })
 
         res.status(200).json({
             status: 200,
             data,
         })
     }
-    catch(err){
+    catch (err) {
         err.status = 400
         err.message = `Database Error: ${err}`
         next(err)
     }
 }
 
-async function searchEmployeeSkills(req, res, next){
+async function searchEmployeeSkills(req, res, next) {
     let employee = req.query
     console.log("APPLICATION: ", employee)
 
-    try{
+    try {
         let data = await ProfileAttribute.findAll({
             where: {
                 emp_id: employee.employee,
@@ -227,18 +227,18 @@ async function searchEmployeeSkills(req, res, next){
             result: data,
         })
     }
-    catch(err){
+    catch (err) {
         err.status = 400
         err.message = `Database Error: ${err}`
         next(err)
     }
 }
 
-async function addEmployeeSkill(req, res, next){
+async function addEmployeeSkill(req, res, next) {
     let certificate = req.body
     console.log("APPLICATION: ", certificate)
 
-    try{
+    try {
         let data = await ProfileAttribute.create({
             ...certificate,
             type: 'skill_details',
@@ -249,18 +249,18 @@ async function addEmployeeSkill(req, res, next){
             data,
         })
     }
-    catch(err){
+    catch (err) {
         err.status = 400
         err.message = `Database Error: ${err}`
         next(err)
     }
 }
 
-async function deleteEmployeeSkill(req, res, next){
+async function deleteEmployeeSkill(req, res, next) {
     let certificate = req.body
     console.log("APPLICATION: ", certificate)
 
-    try{
+    try {
         let data = await ProfileAttribute.destroy({
             where: {
                 row_id: certificate.row_id
@@ -272,37 +272,37 @@ async function deleteEmployeeSkill(req, res, next){
             data,
         })
     }
-    catch(err){
+    catch (err) {
         err.status = 400
         err.message = `Database Error: ${err}`
         next(err)
     }
 }
 
-async function updateEmployeeSkill(req, res, next){
+async function updateEmployeeSkill(req, res, next) {
     let certificate = req.body
     console.log("APPLICATION: ", certificate)
 
-    try{
-        let data = await ProfileAttribute.update(certificate, { where: {row_id: certificate.row_id }})
+    try {
+        let data = await ProfileAttribute.update(certificate, { where: { row_id: certificate.row_id } })
 
         res.status(200).json({
             status: 200,
             data,
         })
     }
-    catch(err){
+    catch (err) {
         err.status = 400
         err.message = `Database Error: ${err}`
         next(err)
     }
 }
 
-async function searchEmployeeProfessionalAttributes(req, res, next){
+async function searchEmployeeProfessionalAttributes(req, res, next) {
     let employee = req.query
     console.log("APPLICATION: ", employee)
 
-    try{
+    try {
         let data = await ProfileAttribute.findAll({
             where: {
                 emp_id: employee.employee,
@@ -315,18 +315,18 @@ async function searchEmployeeProfessionalAttributes(req, res, next){
             result: data,
         })
     }
-    catch(err){
+    catch (err) {
         err.status = 400
         err.message = `Database Error: ${err}`
         next(err)
     }
 }
 
-async function addEmployeeProfessionalAttribute(req, res, next){
+async function addEmployeeProfessionalAttribute(req, res, next) {
     let certificate = req.body
     console.log("APPLICATION: ", certificate)
 
-    try{
+    try {
         let data = await ProfileAttribute.create({
             ...certificate,
             type: 'profAttrib_details',
@@ -337,18 +337,18 @@ async function addEmployeeProfessionalAttribute(req, res, next){
             data,
         })
     }
-    catch(err){
+    catch (err) {
         err.status = 400
         err.message = `Database Error: ${err}`
         next(err)
     }
 }
 
-async function deleteEmployeeProfessionalAttribute(req, res, next){
+async function deleteEmployeeProfessionalAttribute(req, res, next) {
     let certificate = req.body
     console.log("APPLICATION: ", certificate)
 
-    try{
+    try {
         let data = await ProfileAttribute.destroy({
             where: {
                 row_id: certificate.row_id
@@ -360,36 +360,36 @@ async function deleteEmployeeProfessionalAttribute(req, res, next){
             data,
         })
     }
-    catch(err){
+    catch (err) {
         err.status = 400
         err.message = `Database Error: ${err}`
         next(err)
     }
 }
 
-async function updateEmployeeProfessionalAttribute(req, res, next){
+async function updateEmployeeProfessionalAttribute(req, res, next) {
     let certificate = req.body
     console.log("APPLICATION: ", certificate)
 
-    try{
-        let data = await ProfileAttribute.update(certificate, { where: {row_id: certificate.row_id }})
+    try {
+        let data = await ProfileAttribute.update(certificate, { where: { row_id: certificate.row_id } })
 
         res.status(200).json({
             status: 200,
             data,
         })
     }
-    catch(err){
+    catch (err) {
         err.status = 400
         err.message = `Database Error: ${err}`
         next(err)
     }
 }
 
-async function getEmployeeEntitlements(req, res, next){
+async function getEmployeeEntitlements(req, res, next) {
     let params = req.query
 
-    try{
+    try {
         let data = await ProfileAttribute.findAll({
             where: {
                 emp_id: params.emp_id,
@@ -401,24 +401,24 @@ async function getEmployeeEntitlements(req, res, next){
                     as: 'function',
                 }
             ]
-        }).map(ele => ele.get({plain: true}).function)
+        }).map(ele => ele.get({ plain: true }).function)
 
         res.status(200).json({
             status: 200,
             result: data,
         })
     }
-    catch(err){
+    catch (err) {
         err.status = 400
         err.message = `Database Error: ${err}`
         next(err)
     }
 }
 
-async function getLeaves(req, res, next){
+async function getLeaves(req, res, next) {
     let params = req.query
 
-    try{
+    try {
         let data = await LeaveRequest.findAll({
             where: {
                 emp_id: params.employee,
@@ -430,22 +430,22 @@ async function getLeaves(req, res, next){
             data,
         })
     }
-    catch(err){
+    catch (err) {
         err.status = 400
         err.message = `Database Error: ${err}`
         next(err)
     }
 }
 
-async function applyForLeave(req, res, next){
+async function applyForLeave(req, res, next) {
 
 }
 
-async function getContracts(req, res, next){
+async function getContracts(req, res, next) {
     let employee = req.query
     console.log("APPLICATION: ", employee)
 
-    try{
+    try {
         let data = await ProfileAttribute.findAll({
             where: {
                 emp_id: employee.employee,
@@ -459,73 +459,73 @@ async function getContracts(req, res, next){
             result: data,
         })
     }
-    catch(err){
+    catch (err) {
         err.status = 400
         err.message = `Database Error: ${err}`
         next(err)
     }
 }
 
-async function acceptContract(req, res, next){
+async function acceptContract(req, res, next) {
     let contract = req.query
     console.log("APPLICATION: ", contract)
 
-    try{
+    try {
         let data = await ProfileAttribute.update(
-        {
-            ATTRIB_02: 'accepted',
-        },
-        {
-            where: {
-                row_id: contract.contract_id,
-                type: 'contract',
-            }
-        })
+            {
+                ATTRIB_02: 'accepted',
+            },
+            {
+                where: {
+                    row_id: contract.contract_id,
+                    type: 'contract',
+                }
+            })
 
         res.status(200).json({
             status: 200,
             result: data,
         })
     }
-    catch(err){
+    catch (err) {
         err.status = 400
         err.message = `Database Error: ${err}`
         next(err)
     }
 }
 
-async function rejectContract(req, res, next){
+async function rejectContract(req, res, next) {
     let contract = req.query
     console.log("APPLICATION: ", contract)
 
-    try{
+    try {
         let data = await ProfileAttribute.update(
-        {
-            ATTRIB_02: 'rejected',
-        },
-        {
-            where: {
-                row_id: contract.contract_id,
-                type: 'contract',
-            }
-        })
+            {
+                ATTRIB_02: 'rejected',
+            },
+            {
+                where: {
+                    row_id: contract.contract_id,
+                    type: 'contract',
+                }
+            })
 
         res.status(200).json({
             status: 200,
             result: data,
         })
     }
-    catch(err){
+    catch (err) {
         err.status = 400
         err.message = `Database Error: ${err}`
         next(err)
     }
 }
 
-async function getLeaves(req, res, next){
+async function getLeaves(req, res, next) {
     let params = req.query
 
-    try{
+    try {
         let data = await LeaveRequest.findAll({
             where: {
                 emp_id: params.emp_id,
@@ -543,17 +543,17 @@ async function getLeaves(req, res, next){
             data,
         })
     }
-    catch(err){
+    catch (err) {
         err.status = 400
         err.message = `Database Error: ${err}`
         next(err)
     }
 }
 
-async function getEntitlementsData(req, res, next){
+async function getEntitlementsData(req, res, next) {
     let params = req.query
 
-    try{
+    try {
         let data = await ProfileAttribute.findAll({
             where: {
                 emp_id: params.emp_id,
@@ -565,13 +565,7 @@ async function getEntitlementsData(req, res, next){
                     as: 'function',
                 }
             ]
-        }).map(ele => ele.get({plain: true}).function)
-        
-        // let tempSQL1 = sequelize.dialect.QueryGenerator.selectQuery('C_LV_REQ', {
-        //     attributes: ['stat_cd'/* [Sequelize.fn('SUM', sequelize.col('c_lv_req.ATTRIB_11')), 'temp'] */],
-        // }).slice(0,-1)
-
-        // tempSQL1 = Sequelize.literal(`(${tempSQL1})`)
+        }).map(ele => ele.get({ plain: true }).function)
 
         sequelize.query(
             `
@@ -587,44 +581,20 @@ async function getEntitlementsData(req, res, next){
             status: 200,
             data: result,
         }))
-        // let data2 = await LeaveRequest.findAll({
-        //     where: {
-        //         emp_id: params.emp_id,
-        //     },
-        //     include: [
-        //         {
-        //             model: ListValues,
-        //             as: 'entitlement',
-        //             // attributes: ['row_id', 'val', 'ATTRIB_11']
-        //         },
-        //     ],
-        //     group: ['type_cd'],
-        //     attributes: [
-        //         [Sequelize.fn('SUM', sequelize.col('c_lv_req.ATTRIB_11')), 'no_days'],
-        //         // Sequelize.literal(`${tempSQL1}`),
-        //     ],
-        // })
-
-        // console.log(data)
-
-        // res.status(200).json({
-        //     status: 200,
-        //     data: data2,
-        // })
     }
-    catch(err){
+    catch (err) {
         err.status = 400
         err.message = `Database Error: ${err}`
         next(err)
     }
 }
 
-async function postLeaveRequest(req, res, next){
+async function postLeaveRequest(req, res, next) {
     let leave = req.body
     console.log("APPLICATION: ", leave)
     console.log(leave['type_cd.value'])
 
-    try{
+    try {
         let data = await LeaveRequest.create({
             ...leave,
             type_cd: leave['type_cd.value'],
@@ -635,7 +605,7 @@ async function postLeaveRequest(req, res, next){
             data,
         })
     }
-    catch(err){
+    catch (err) {
         err.status = 400
         err.message = `Database Error: ${err}`
         next(err)
@@ -686,7 +656,7 @@ async function getRequestedLeaves(req, res, next) {
                     emp_id: {
                         [Op.in]: data,
                     },
-                    stat_cd: "pending"
+                    //stat_cd: "pending"
                 },
                 include: [
                     {
@@ -710,8 +680,6 @@ async function getRequestedLeaves(req, res, next) {
         catch (err) {
 
         }
-
-
     }
     catch (err) {
         err.status = 400
@@ -733,19 +701,76 @@ async function updateLeaveRequested(req, res, next) {
                 {
                     row_id: details.row_id
                 }
+
             })
 
         res.status(200).json({
             status: 200,
             data,
         })
+
     }
     catch (err) {
         err.status = 400
         err.message = `Database Error: ${err}`
         next(err)
     }
+}
 
+async function getLeavesCount(req, res, next) {
+    let details = req.query
+
+    try {
+        let data2 = await LeaveRequest.findOne(
+            {
+                raw: true,
+                attributes: [[sequelize.fn('sum', sequelize.col('ATTRIB_11')), 'daysUtilised']],
+                where:
+                {
+                    emp_id: details.emp_id,
+                    type_cd: details.type_cd,
+                    stat_cd: 'accepted'
+                }
+            })
+
+        let ddd = parseInt(data2.daysUtilised)
+
+        try {
+            let data = await ListValues.findOne(
+                {
+                    where:
+                    {
+                        bu_id: details.bu_id,
+                        row_id: details.type_cd
+                    }
+                })
+
+            let sum = ddd + parseInt(details.days)
+            let remaining = false
+
+            if (sum < data.ATTRIB_11) {
+                remaining = true
+            }
+
+            res.status(200).json({
+                status: 200,
+                isRemaining: remaining,
+                ddd,
+                sum,
+                alloted: data.ATTRIB_11
+            })
+        }
+        catch (err) {
+            err.status = 400
+            err.message = `Database Error: ${err}`
+            next(err)
+        }
+    }
+    catch (err) {
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
 }
 
 module.exports = {
@@ -774,6 +799,7 @@ module.exports = {
     getRequestedLeaves,
     updateLeaveRequested,
     applyForLeave,
+    getLeavesCount,
     getContracts,
     acceptContract,
     rejectContract,
