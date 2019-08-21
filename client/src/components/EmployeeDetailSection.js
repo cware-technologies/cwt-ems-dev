@@ -146,6 +146,11 @@ class EmployeeDetailSection extends React.Component {
             }))
     }
 
+    componentDidUpdate(prevProps, prevState){
+        if(this.props.indeterminate && prevProps.employee !== this.props.employee)
+            this.getRows()
+    }
+
     getRows = async () => {
         let response
         let associations = {}
@@ -155,10 +160,6 @@ class EmployeeDetailSection extends React.Component {
             response = await axios({
                 method: 'get',
                 url: this.props.endpoint,
-                params: {
-                    bu_id: this.props.organization,
-                    emp_id: this.props.userID,
-                }
             })
 
             console.log(response)

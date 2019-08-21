@@ -62,9 +62,7 @@ class EmployeeInduction extends React.Component {
             response = await axios({
                 method: 'get',
                 url: `/public/search/employee?${this.state.query}`,
-                params: {
-                    query: this.state.query
-                }
+                params: this.state.query
             })
 
             this.setState(prevState => ({
@@ -97,7 +95,8 @@ class EmployeeInduction extends React.Component {
 
     onSearchChange = (event, { newValue }) => {
         this.setState({
-            query: newValue
+            value: newValue,
+            query: `${this.state.filter}=${newValue}`
         });
     }
 
@@ -213,13 +212,13 @@ class EmployeeInduction extends React.Component {
 
     render() {
         let { classes } = this.props
-        let { checklistData, usersData, query, applicationFormData, isFetching } = this.state
+        let { checklistData, usersData, query, value, applicationFormData, isFetching } = this.state
 
         return (
             <React.Fragment>
                 <ActionPanel>
                     <AutoSuggest
-                        value={query}
+                        value={value}
                         apiCall={this.onSearch}
                         onChange={this.onSearchChange}
                         onClear={this.clearSuggestions}

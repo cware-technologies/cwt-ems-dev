@@ -135,7 +135,7 @@ class EmployeeDetails extends React.Component{
                     employee: emp_id,
                 },
             })
-            
+            console.log(response)
             this.setState(prevState => ({
                 data: response.data.result,
             }))
@@ -261,18 +261,20 @@ class EmployeeDetails extends React.Component{
                         headerTitle="Assets Details"
                         detailType='assets_details'
                         indeterminate={true}
-                        endpoint="/admin/employee/attachedAssets"
+                        employee={emp_id}
+                        endpoint={`/admin/employee/attachedAssets?emp_id=${emp_id}`}
                         schema={assetsSchema}                    
                         data={data.filter(row => row.type === 'assets_details').map(ele => ({ ...ele, name: ele.function && ele.function.val}))}
                         handleSubmit={this.handleSubmit}
                     />
                     <EmployeeDetailSection
-                        headerTitle="Insurance Details"
-                        detailType='insurance_details'
+                        headerTitle="Eligibility Details"
+                        detailType='eligibility_details'
                         indeterminate={true}
-                        endpoint="/admin/employee/eligibility"
+                        employee={emp_id}
+                        endpoint={`/admin/employee/attachedEligibilities?emp_id=${emp_id}`}
                         schema={insuranceSchema}                    
-                        data={data.filter(row => row.type === 'insurance_details').map(ele => ({ ...ele, name: ele.function && ele.function.val}))}
+                        data={data.filter(row => row.type === 'eligibility_details').map(ele => ({ ...ele, name: ele.function && ele.function.val}))}
                         handleSubmit={this.handleSubmit}
                     />
                     <AttributesManager

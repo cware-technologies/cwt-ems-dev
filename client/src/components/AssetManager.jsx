@@ -23,7 +23,7 @@ export class AssetManager extends Component {
                                 component: <Suspense fallback={<LoadingSpinner/>}>
                                                 <Table
                                                     title='assets'
-                                                    endpoint='/admin/assets'
+                                                    endpoint='/admin/employee/assets'
                                                     headers={[
                                                         { id: 'val', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Name' },
                                                     ]}

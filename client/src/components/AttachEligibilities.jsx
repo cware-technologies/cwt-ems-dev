@@ -3,10 +3,6 @@ import axios from 'axios'
 import compose from 'recompose/compose'
 import { withStyles } from '@material-ui/core/styles'
 import { connect } from 'react-redux'
-import SelectableTable from './SelectableTable'
-import Container from './MainContainer';
-import Search from './Search';
-import Checklist from './Checklist'
 import DataTable from './DataTable'
 import AddEditForm from './AddEditForm'
 import { getUserOrganization } from '../reducers/authReducer';
@@ -24,10 +20,10 @@ const style = theme => ({
 })
 
 const rows = [
-    { id: ['function', 'val'], numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Asset' },
+    { id: ['function', 'val'], numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Eligibility' },
 ]
 
-class AttachAssets extends React.Component {
+class AttachEligibilities extends React.Component {
     state = {
         updates: {},
         usersData: [],
@@ -44,9 +40,9 @@ class AttachAssets extends React.Component {
     }
 
     fields = [
-        { id: 'ATTRIB_11', type: 'select', label: 'Asset', indeterminate: true, requestParams: {
+        { id: 'ATTRIB_11', type: 'select', label: 'Eligibility', indeterminate: true, requestParams: {
+            endPoint: '/admin/employee/eligibility',
             params: { bu_id: this.props.organization },
-            endPoint: '/admin/employee/assets',
             selectMapping: ['val', 'row_id', null, null], 
         }},
     ]
@@ -124,7 +120,7 @@ class AttachAssets extends React.Component {
         try{
             let response = await axios({
                 method: 'get',
-                url: '/admin/employee/attachedAssets',
+                url: '/admin/employee/attachedEligibilities',
                 params: {
                     emp_id: this.state.user,
                 }
@@ -139,23 +135,6 @@ class AttachAssets extends React.Component {
         }
     }
 
-    handleUpdate = async() => {
-        let response
-
-        try{
-            let response = await axios({
-                method: 'put',
-                url: '/admin/application/induction-exit',
-                data: {
-                    employee: this.state.user,
-                    updates: this.state.updates,
-                }
-            })
-        }catch(err){
-
-        }
-    }
-
     handleDelete = async(id) => {
         let response
         let newData = this.state.checklistData.filter(row => {
@@ -165,7 +144,7 @@ class AttachAssets extends React.Component {
         try{
             response = await axios({
                 method: 'delete',
-                url: '/admin/employee/detachAsset',
+                url: '/admin/employee/detachEligibility',
                 headers: {
                     'content-type': 'application/json',
                 },
@@ -178,10 +157,10 @@ class AttachAssets extends React.Component {
                 checklistData: newData,
             }))
 
-            this.props.success("Asset dettached successfully.")
+            this.props.success("Eligibility dettached successfully.")
         }
         catch(err){
-            this.props.error({ message: "Asset dettachment failed." })
+            this.props.error({ message: "Eligibility dettachment failed." })
         }
     }
 
@@ -194,7 +173,7 @@ class AttachAssets extends React.Component {
             try {
                 response = await axios({
                     method: 'post',
-                    url: '/admin/employee/attachAsset',
+                    url: '/admin/employee/attachEligibility',
                     data: {
                         ATTRIB_11: this.state.applicationFormData.ATTRIB_11.value,
                         bu_id: this.props.organization,
@@ -211,7 +190,7 @@ class AttachAssets extends React.Component {
                             response.data.result,
                         ]
                     }))
-                    this.props.success("Asset attached successfully!")
+                    this.props.success("Eligibility attached successfully!")
                 }
 
             }
@@ -266,7 +245,7 @@ class AttachAssets extends React.Component {
                 </ActionPanel>
                 
                 <DataTable
-                    headerTitle="Employee Assets"
+                    headerTitle="Employee Eligibilities"
                     rows={rows}
                     endpoint='admin/employee/entitlements'
                     data={checklistData}
@@ -288,4 +267,4 @@ const mapStateToProps = (state) => {
 export default compose(
     withStyles(style),
     connect(mapStateToProps, {...alertActions})
-)(AttachAssets)
+)(AttachEligibilities)

@@ -1,0 +1,239 @@
+[33mcommit 2f38d878084de99d3345db1deb5e20f9aadadfda[m[33m ([m[1;36mHEAD -> [m[1;32mC_EMS[m[33m, [m[1;31morigin/C_EMS[m[33m, [m[1;31mcompany/C_EMS[m[33m)[m
+Author: Sajeel Waien <sajeel_waien@live.com>
+Date:   Tue Aug 20 16:08:18 2019 +0500
+
+    organization of views into tabbed subviews
+
+[33mcommit 1cadaadcc12d7e573e93501643d0b7a9a8c696e4[m
+Author: Sajeel Waien <sajeel_waien@live.com>
+Date:   Fri Aug 9 16:53:04 2019 +0500
+
+    bug fixes
+
+[33mcommit 64045b6737f09581919cf4c383a7caa7115248ea[m
+Author: Sajeel Waien <sajeel_waien@live.com>
+Date:   Fri Aug 9 15:44:38 2019 +0500
+
+    password reset included
+
+[33mcommit 2c0a21e48089e205a4e4d881562ff38bf50b1d4f[m
+Author: Sajeel Waien <sajeel_waien@live.com>
+Date:   Fri Aug 9 10:53:29 2019 +0500
+
+    leave manager progress
+
+[33mcommit a62895307ef546a4e05f3178cfdf4aa397e68a9c[m
+Author: Sajeel Waien <sajeel_waien@live.com>
+Date:   Tue Aug 6 11:29:05 2019 +0500
+
+    Leave Manager frontend progress
+
+[33mcommit 375f9608656548b671bb61dae376b06e12636c70[m
+Author: Sajeel Waien <sajeel_waien@live.com>
+Date:   Mon Aug 5 15:52:51 2019 +0500
+
+    database configuration for compatibility with server
+
+[33mcommit 1c7590cb6a3824b6b381d8785c3b1f6401432299[m
+Author: Sajeel Waien <sajeel_waien@live.com>
+Date:   Mon Aug 5 14:58:46 2019 +0500
+
+    sequelizerc file updated
+
+[33mcommit 927c886c22c7c582dc97da7324e7c1a2a7cff29c[m
+Author: Sajeel Waien <sajeel_waien@live.com>
+Date:   Mon Aug 5 14:41:49 2019 +0500
+
+    MYSQL config changes
+
+[33mcommit ca19b2fe812ce5a2fc98d009c1d312ed5f873734[m
+Author: Sajeel Waien <sajeel_waien@live.com>
+Date:   Mon Aug 5 13:59:00 2019 +0500
+
+    changes for deployment
+
+[33mcommit 990c454d3d5e185c69bb26ce2dd7b43bcce70fbb[m
+Author: Sajeel Waien <sajeel_waien@live.com>
+Date:   Mon Aug 5 13:10:56 2019 +0500
+
+    changes for deployment
+
+[33mcommit 5519da0938d9e4d9207aa0a88101a67e7e5254a8[m
+Author: Sajeel Waien <sajeel_waien@live.com>
+Date:   Thu Aug 1 18:12:51 2019 +0500
+
+    Search components modified to include more than just name.
+
+[33mcommit eb1d1bb11b8ef58a5709d47a0aa6c0999a3af697[m
+Author: Sajeel Waien <sajeel_waien@live.com>
+Date:   Tue Jul 30 18:03:34 2019 +0500
+
+    Bug Fixes: 63, 64
+
+[33mcommit 8388c29ba3765f5fe4e35f983f3ec398f644ff31[m
+Author: Sajeel Waien <sajeel_waien@live.com>
+Date:   Mon Jul 22 18:01:43 2019 +0500
+
+    My Contracts view added
+
+[33mcommit 3d5f48cdca8a0334a2c053f0ad31d48f4cefed21[m
+Author: Sajeel Waien <sajeel_waien@live.com>
+Date:   Fri Jul 19 19:03:49 2019 +0500
+
+    asset, eligibility manager and employee details integration
+
+[33mcommit 5b957ec1a5930271a852dca72452a8cae8fe1463[m
+Author: Sajeel Waien <sajeel_waien@live.com>
+Date:   Wed Jul 17 18:17:38 2019 +0500
+
+    bug fixes
+
+[33mcommit c813120851d558718f4114d3a98141ce359c8056[m
+Author: Sajeel Waien <sajeel_waien@live.com>
+Date:   Mon Jul 15 18:27:27 2019 +0500
+
+    bug fixes
+
+[33mcommit 5c6712740c5e30e9bd6efffaa49531ccc97b0e22[m
+Author: Sajeel Waien <sajeel_waien@live.com>
+Date:   Fri Jul 12 17:39:03 2019 +0500
+
+    bug fixes: 12 - 19 [ News Manager fixed ]
+
+[33mcommit 7bc53550d007eae84b86ddd268ec6b5b0d06c382[m
+Author: Sajeel Waien <sajeel_waien@live.com>
+Date:   Mon Jul 8 17:45:02 2019 +0500
+
+    bugs: 45 - 51 solved
+
+[33mcommit a59d1eb8d3b40aca53f135746b779e00ba038ffe[m
+Author: Sajeel Waien <sajeel_waien@live.com>
+Date:   Fri Jul 5 19:17:23 2019 +0500
+
+    Employee Manager fixed [Bug: 35 to 44 ]
+
+[33mcommit 7b3f403140b7aa836ed1963f1712cce0492230fb[m
+Author: Sajeel Waien <sajeel_waien@live.com>
+Date:   Thu Jun 27 18:02:18 2019 +0500
+
+    access rights screen improvements, bug fixed in employee manager
+
+[33mcommit 20da4703037e4530b1b80df90d8d8fd43f219452[m
+Author: Sajeel Waien <sajeel_waien@live.com>
+Date:   Wed Jun 26 18:29:27 2019 +0500
+
+    Org Structure fixed, emp manager cosmetic changes
+
+[33mcommit 715275b9ea20344ae19f256c9b9c5a5df4a1d87e[m
+Author: Sajeel Waien <sajeel_waien@live.com>
+Date:   Tue Jun 25 10:03:37 2019 +0500
+
+    Access Rights Screen Fixed
+
+[33mcommit eb18ee89b2fd2f5bdf6c3b046fdee68f72205530[m
+Author: Sajeel Waien <sajeel_waien@live.com>
+Date:   Wed Jun 19 17:31:18 2019 +0500
+
+    added the active/inactive status functionality in employee manager
+
+[33mcommit fb5b437bd1bac5f4c28ceaf73a45894e18600ca9[m
+Author: Sajeel Waien <sajeel_waien@live.com>
+Date:   Tue Jun 18 18:30:37 2019 +0500
+
+    components update [employee manager, access rights, induction/exit]
+
+[33mcommit 064ce141611c8da122692a420e60a81c8a5218c9[m
+Author: Sajeel Waien <sajeel_waien@live.com>
+Date:   Wed Jun 12 18:48:09 2019 +0500
+
+    bug fixes
+
+[33mcommit 645cdf32e7814c4f38acaba6e3035692a4cb3abf[m
+Author: Sajeel Waien <sajeel_waien@live.com>
+Date:   Tue Jun 11 18:54:32 2019 +0500
+
+    alert system, employee manager[edit/add], modal improvements
+
+[33mcommit 0d33f9d1bdc8a98b386634a8e9fc578a0a2e75c6[m
+Author: Sajeel Waien <sajeel_waien@live.com>
+Date:   Sat Jun 1 18:23:10 2019 +0500
+
+    before submition
+
+[33mcommit 6329ec58bf8101f8351201531d26b54ee6c53fd9[m
+Author: Sajeel Waien <sajeel_waien@live.com>
+Date:   Sat Jun 1 16:12:53 2019 +0500
+
+    before submition
+
+[33mcommit 9a12e604ad1a3644119a562d5d137f58d65642d5[m
+Author: Sajeel Waien <sajeel_waien@live.com>
+Date:   Wed May 29 12:56:18 2019 +0500
+
+    My profile completed, navigation and authentication improvements, bug fixes
+
+[33mcommit 4491d2f8386a4b67f55fadde3a82e7cda3a21ede[m
+Author: Sajeel Waien <sajeel_waien@live.com>
+Date:   Fri May 24 13:17:46 2019 +0500
+
+    my profile module completed
+
+[33mcommit f9d8e8a0b53b3e4e2659b8b14c3cfe21a9fade77[m
+Author: Sajeel Waien <sajeel_waien@live.com>
+Date:   Mon May 20 12:25:46 2019 +0500
+
+    employee details module completed [fixed]
+
+[33mcommit f256632df125fb55ab540912bf903ea7439a1d5c[m
+Author: Sajeel Waien <sajeel_waien@live.com>
+Date:   Mon May 20 11:54:57 2019 +0500
+
+    employee details module completed
+
+[33mcommit 194975c2dd33192938a464c1300e13b919bbcc18[m
+Author: Sajeel Waien <sajeel_waien@live.com>
+Date:   Mon May 13 16:17:46 2019 +0500
+
+    seeders and entitlement scenario completed
+
+[33mcommit 873a25ef2abdb28de75de2b3b76f5531fc5c0026[m
+Author: Sajeel Waien <sajeel_waien@live.com>
+Date:   Wed Apr 17 10:10:32 2019 +0500
+
+    fixed create employee bugs
+
+[33mcommit 20354755fde2403236bd4d16ee6acaad93aa77a7[m
+Author: Sajeel Waien <sajeel_waien@live.com>
+Date:   Tue Apr 16 18:41:08 2019 +0500
+
+    user and employee registration complete
+
+[33mcommit a0390237089813449c1abec2474de40013dd895d[m
+Author: Sajeel Waien <sajeel_waien@live.com>
+Date:   Mon Apr 15 10:00:14 2019 +0500
+
+    organization structure complete
+
+[33mcommit 45b56109f1e92092602e8f6d3f75c8b86b998b41[m
+Author: Sajeel Waien <sajeel_waien@live.com>
+Date:   Mon Apr 8 17:00:37 2019 +0500
+
+    homepage complete except slideshow
+
+[33mcommit f7f89f41fe05d086e4aff91cd92b54c1f0b75a3e[m[33m ([m[1;31morigin/master[m[33m, [m[1;32mmaster[m[33m)[m
+Author: Sajeel Waien <sajeel_waien@live.com>
+Date:   Wed Mar 27 16:31:48 2019 +0500
+
+    authentication done
+
+[33mcommit f96ae1413015264c242e565939d7dc4752a2cff8[m
+Author: Sajeel Waien <sajeel_waien@live.com>
+Date:   Fri Mar 22 11:13:23 2019 +0500
+
+    server side
+
+[33mcommit 8fd8a9acc6c2ccb0ea3dd6cd0bd111301a294f31[m
+Author: Sajeel Waien <sajeel_waien@live.com>
+Date:   Thu Feb 21 18:35:27 2019 +0500
+
+    initial commit

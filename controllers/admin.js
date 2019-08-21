@@ -1237,12 +1237,13 @@ async function getEmployeeAssets(req, res, next){
 }
 
 async function getAssetLOVS(req, res, next){
-    let entity = req.body
+    let entity = req.query
     console.log("POST ASSET: ", entity)
 
     try{
         let data = await ListOfValues.findAll({
             where:{
+                bu_id: entity.bu_id,
                 type: 'asset',
             }
         })
@@ -1333,13 +1334,15 @@ async function deleteAssetLOVS(req, res, next){
 
 async function getAttachedAssets(req, res, next){
     let entity = req.query
-    console.log(entity)
+    console.log("GET ASSETS: ", entity)
 
     try{
         let data = await ProfileAttribute.findAll({
             where: {
-                emp_id: entity.emp_id,
-                type: 'assets_details',
+                [Op.and]: [
+                    {emp_id: entity.emp_id},
+                    {type: 'assets_details'},
+                ],
             },
             include: [
                 {
@@ -1505,6 +1508,96 @@ async function deleteEligibilityLOVS(req, res, next){
         res.status(200).json({
             status: 200,
             data,
+        })
+    }
+    catch(err){
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function getAttachedEligibilities(req, res, next){
+    let entity = req.query
+    console.log("GET ELIGIBILITIES: ", entity, entity.emp_id)
+
+    try{
+        let data = await ProfileAttribute.findAll({
+            where: {
+                [Op.and]: [
+                    {emp_id: entity.emp_id},
+                    {type: 'eligibility_details'},
+                ],
+            },
+            include: [
+                {
+                    model: ListOfValues,
+                    as: 'function',
+                    attributes: ['val'],
+                },
+            ],
+        })
+
+        res.status(200).json({
+            status: 200,
+            result: data,
+        })
+    }
+    catch(err){
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function attachEligibility(req, res, next){
+    let entity = req.body
+    console.log(entity)
+
+    try{
+        let data = await ProfileAttribute.create({
+           ...entity,
+           type: 'eligibility_details',
+        })
+
+        try{
+            let data2 = await ProfileAttribute.findOne({ 
+                where: { row_id: data.row_id },
+                include: [
+                    {
+                        model: ListOfValues,
+                        as: 'function',
+                        attributes: ['val'],
+                    }
+                ]
+            })
+            res.status(200).json({
+                status: 200,
+                result: data2,
+            })
+        }
+        catch(err){
+            err.status = 400
+            err.message = `Database Error: ${err}`
+            next(err)
+        }
+    }
+    catch(err){
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function detachEligibility(req, res, next){
+    try{
+        let data = await ProfileAttribute.destroy({ 
+            where: { row_id: req.body.row_id },
+        })
+
+        res.status(200).json({
+            status: 200,
+            result: data,
         })
     }
     catch(err){
@@ -1800,7 +1893,7 @@ async function searchEmployeeDetails(req, res, next){
                     {type: 'official_details'},
                     {type: 'bank_details'},
                     {type: 'assets_details'},
-                    {type: 'insurance_details'},
+                    {type: 'eligibility_details'},
                 ]
             },
             include: [
@@ -2175,6 +2268,9 @@ module.exports = {
     postEligibilityLOVS,
     updateEligibilityLOVS,
     deleteEligibilityLOVS,
+    getAttachedEligibilities,
+    attachEligibility,
+    detachEligibility,
     applyForInductionExit,
     getInductionExit,
     updateInductionExit,
