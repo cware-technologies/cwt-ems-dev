@@ -33,13 +33,7 @@ module.exports = {
         onDelete: 'CASCADE',
       },
       type_cd: {
-        type: Sequelize.INTEGER(11),
-        references: {
-          'model': 'C_LST_VAL',
-          'key': 'row_id',
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE',
+        type: Sequelize.STRING(200),
       },
       created: {
         allowNull: false,
