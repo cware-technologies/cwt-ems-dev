@@ -244,7 +244,7 @@ class Profile extends React.Component {
                         data={hierarchy}
                     />
                 </Paper>
-                <ProfileDetails
+                {/* <ProfileDetails
                     object={userID}
                 />
                 <AttributesManager
@@ -264,7 +264,7 @@ class Profile extends React.Component {
                     rows={profAttributesRows}
                     fields={profAttributesFields}
                     endpoint='/private/employee/details/professionalAttributes'
-                />
+                /> */}
             </Container>
         );
     }
