@@ -75,12 +75,18 @@ let constraints = {
             message: "is Required"
         },
     },
-    div_id: {
+    ATTRIB_18: {
+        presence: {
+            allowEmpty: false,
+            message: "is Required"
+        },
+    },
+    // div_id: {
         // presence: {
         //     allowEmpty: false,
         //     message: "is Required"
         // },
-    },
+    // },
     // postn_held_id: {
     //     // presence: {
     //     //     allowEmpty: false,
@@ -294,6 +300,7 @@ class CreateAccount extends React.Component {
         let { classes, editMode, employee } = this.props;
         let { errors, response,  } = this.state;
 
+        console.log("EMPLOYEE: ", employee)
         return(
             <React.Fragment>
                 <div className={classes.formSection}>
@@ -450,16 +457,31 @@ class CreateAccount extends React.Component {
                         isDisabled={ employee.bu_id.value }
                         handleSelectChange={ this.debouncedSelectChange }
                     />
-                    <AsyncSelect
-                        name='reports to'
-                        id='report_to_id'
-                        endpoint='/admin/org-struct/position'
-                        query={ { bu_id: employee.bu_id.value } }
-                        value={ employee.report_to_id }
-                        mapping={['name', 'row_id', ['division', 'name'], 'desc']}
-                        isDisabled={ employee.postn_held_id.value }
-                        handleSelectChange={ this.debouncedSelectChange }
-                    />
+                    <div className={classes.outlinedFormSection}>
+                        <Typography variant="body1" gutterBottom component="p" className={ classes.heading }>
+                            Reports To
+                        </Typography>
+                        <AsyncSelect
+                            name='reports to position'
+                            id='report_to_position'
+                            endpoint='/admin/org-struct/position'
+                            query={ { bu_id: employee.bu_id.value } }
+                            value={ employee.report_to_position }
+                            mapping={['name', 'row_id', ['division', 'name'], 'desc']}
+                            isDisabled={ employee.postn_held_id.value }
+                            handleSelectChange={ this.debouncedSelectChange }
+                        />
+                        <AsyncSelect
+                            name='reports to'
+                            id='report_to_id'
+                            endpoint='/admin/getEmployees'
+                            query={ { bu_id: employee.bu_id.value, postn_held_id: employee.report_to_position.value } }
+                            value={ employee.report_to_id }
+                            mapping={['full_name', 'row_id', ['division', 'name'], ['position_held', 'name']]}
+                            isDisabled={ employee.report_to_position.value }
+                            handleSelectChange={ this.debouncedSelectChange }
+                        />
+                    </div>
                     <TextField
                         id="ATTRIB_01"
                         label="Location"

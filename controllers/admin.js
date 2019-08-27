@@ -1608,6 +1608,38 @@ async function detachEligibility(req, res, next){
 }
 
 async function getEmployees(req, res, next){
+    let query = req.query
+    console.log("GET EMPLOYEES\ndfsdfsd\ndfsdfsd\ndfsdfsd\ndfsdfsd\ndfsdfsd\ndfsdfsd")
+
+    try{
+        let data = await Employee.findAll({
+            where: query,
+            // attributes: ['row_id', 'full_name'],
+            include: [
+                {
+                    model: Division,
+                    as: 'division'
+                },
+                {
+                    model: Position,
+                    as: 'position_held',
+                },
+            ]
+        })
+
+        res.status(200).json({
+            status: 200,
+            result: data,
+        })
+    }
+    catch(err){
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function searchEmployees(req, res, next){
     let search = req.query
     let where
 
@@ -1730,7 +1762,9 @@ async function getEmployees(req, res, next){
         })
     }
     catch(err){
-
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
     }
 }
 
@@ -1746,11 +1780,49 @@ async function updateEmployee(req, res, next){
         .then(emp => {
             return User.update(user, { where: { login: req.body.login }}, { transaction: t });
         });
-    }).then(result => {
-        res.status(200).json({
-            status: 200,
-            data: result,
-        })
+    }).then(async result => {
+        try{
+            let data = await User.findAll({
+                where: {
+                    login: user.login,
+                },
+                attributes: ['row_id', 'login'],
+                include: [
+                    {
+                        model: Employee,
+                        as: 'employee',
+                        include: [
+                            {
+                                model: Organization,
+                                as: 'organization',
+                            },
+                            {
+                                model: Division,
+                                as: 'division'
+                            },
+                            {
+                                model: Position,
+                                as: 'position_held',
+                            },
+                            {
+                                model: Responsibility,
+                                as: 'responsibility',
+                            },
+                        ]
+                    },
+                ]
+            })
+
+            res.status(200).json({
+                status: 200,
+                data,
+            })
+        }
+        catch(err){
+            err.status = 400
+            err.message = `Database Error: ${err}`
+            next(err)
+        }
     }).catch(err => {
         err.status = 400
         err.message = `Database Error: ${err}`
@@ -2293,6 +2365,7 @@ module.exports = {
     deleteEmployeeDesignation,
     updateEmployeeDesignation,
     getEmployees,
+    searchEmployees,
     updateEmployee,
     deleteEmployee,
     changeEmployeeStatus,

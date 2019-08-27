@@ -240,6 +240,9 @@ const toolbarStyles = theme => ({
         justifyContent: 'flex-end',
         color: theme.palette.text.secondary,
     },
+    actionButton: {
+        margin: `0px ${theme.spacing.unit}px`,
+    },
     title: {
         flex: '0 0 auto',
     },
@@ -284,7 +287,7 @@ let EnhancedTableToolbar = props => {
                 { AddComponent &&
                     AddComponent
                 }
-                { actionBar && actionBar.map(action => action) }
+                { actionBar && actionBar.map(action => <div className={classes.actionButton}>{action}</div>) }
             </div>
         </Toolbar>
     );
@@ -467,13 +470,15 @@ class EnhancedDataTable extends React.Component {
             this[`checkboxRef${data.row_id}`].disabled = true
 
             try{
-                response = await this.props.handleSwitchChange(value, data.row_id)
+                console.log("DATATABLE DATA: ", data)
+                response = await this.props.handleSwitchChange(value, data, e)
 
                 this[`checkboxRef${data.row_id}`].checked = value
                 this[`checkboxRef${data.row_id}`].disabled = false
                 return
             }
             catch(err){
+                console.log(err)
                 this[`checkboxRef${data.row_id}`].checked = !value
                 this[`checkboxRef${data.row_id}`].disabled = false
                 return
@@ -497,7 +502,7 @@ class EnhancedDataTable extends React.Component {
                         type="checkbox"
                         color="primary"
                         name={defaultValue}
-                        defaultChecked={defaultValue === 'active' ? true : defaultValue === 'inactive' ? false : !!parseInt(defaultValue)}
+                        defaultChecked={defaultValue === 'active' ? true : defaultValue === 'inactive' ? false : defaultValue}
                         // checked={!!this.props.switchActive}
                         ref={node => this[`checkboxRef${data.row_id}`] = node}
                         onChange={(e) => this.handleToggleChange(e, data)}
@@ -726,7 +731,7 @@ class EnhancedDataTable extends React.Component {
                                                                             classes={{ root: classes.tableCellAction }}
                                                                         >
                                                                             <Tooltip title="Delete">
-                                                                                <IconButton disabled={editMode || disableDelete} aria-label="Delete" onClick={() => this.handleDelete(data.row_id)}>
+                                                                                <IconButton disabled={editMode || disableDelete} aria-label="Delete" onClick={() => this.handleDelete(data.row_id, data)}>
                                                                                     <DeleteIcon />
                                                                                 </IconButton>
                                                                             </Tooltip>

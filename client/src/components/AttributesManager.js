@@ -231,20 +231,18 @@ class AttributesManager extends React.Component{
                             </ModalTrigger>
 
         return(
-            <Container contained>
-                <DataTable
-                    headerTitle={headerTitle}
-                    rows={rows}
-                    params={{ organization: organization }}
-                    data={data}
-                    actions
-                    setEditMode={this.setEditMode}
-                    unsetEditMode={this.unsetEditMode}
-                    handleDelete={this.handleDelete}
-                    editMode={editMode}
-                    AddComponent={addComponent}
-                />
-            </Container>
+            <DataTable
+                headerTitle={headerTitle}
+                rows={rows}
+                params={{ organization: organization }}
+                data={data}
+                actions
+                setEditMode={this.setEditMode}
+                unsetEditMode={this.unsetEditMode}
+                handleDelete={this.handleDelete}
+                editMode={editMode}
+                AddComponent={addComponent}
+            />
         )
     }
 }

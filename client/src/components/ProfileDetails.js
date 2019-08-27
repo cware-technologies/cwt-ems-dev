@@ -1,8 +1,12 @@
 import React from 'react'
 import axios from 'axios'
+import compose from 'recompose/compose'
+import { connect } from 'react-redux'
 import * as yup from 'yup'
 import { withStyles } from '@material-ui/core/styles'
 import EmployeeDetailSection from './EmployeeDetailSection'
+import { getUser } from '../reducers/authReducer';
+import Container from './MainContainer';
 
 const styles = theme => ({
     container: {
@@ -49,14 +53,14 @@ class EmployeeDetails extends React.PureComponent{
 
     getEmployeeDetails = async () => {
         let response
-        let emp_id = this.props.object.row_id
+        let emp_id = this.props.userID.row_id
 
         try{
             response = await axios({
                 method: 'get',
                 url: '/private/employee/details',
                 params: {
-                    employee: this.props.object,
+                    employee: this.props.userID,
                 },
             })
             
@@ -82,7 +86,7 @@ class EmployeeDetails extends React.PureComponent{
                     name: key,
                     type: detailType,
                     ATTRIB_01: values[key],
-                    emp_id: this.props.object,
+                    emp_id: this.props.userID,
                 }
             }
             else if(value){
@@ -113,12 +117,12 @@ class EmployeeDetails extends React.PureComponent{
     }
 
     render(){
-        let { classes, object } = this.props
+        let { classes, userID } = this.props
         let { data } = this.state
 
         return(
-            object &&
-                <div className={classes.container}>
+            userID &&
+                <Container>
                     <EmployeeDetailSection
                         headerTitle="Contact Details"
                         detailType='contact_details'
@@ -126,6 +130,8 @@ class EmployeeDetails extends React.PureComponent{
                         schema={contactSchema}
                         data={data.filter(row => row.type === 'contact_details')}
                         handleSubmit={this.handleSubmit}
+                        defaultExpanded
+                        expanded
                     />
                     <EmployeeDetailSection
                         headerTitle="Other Details"
@@ -134,11 +140,22 @@ class EmployeeDetails extends React.PureComponent{
                         schema={otherSchema}
                         data={data.filter(row => row.type === 'other_details')}
                         handleSubmit={this.handleSubmit}
+                        defaultExpanded
+                        expanded
                     />
-                </div>
+                </Container>
             
         )
     }
 }
 
-export default withStyles(styles)(EmployeeDetails)
+const mapStateToProps = (state) => {
+    return {
+        userID: getUser(state)
+    }
+}
+
+export default compose(
+    withStyles(styles),
+    connect(mapStateToProps, {}),
+)(EmployeeDetails)

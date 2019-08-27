@@ -29,6 +29,7 @@ import OptionIcon from '@material-ui/icons/SubdirectoryArrowRight';
 // import OrgAddIcon from '@material-ui/icons/Business';
 // import EmpAddIcon from '@material-ui/icons/PersonAdd';
 import AdminIcon from '@material-ui/icons/HowToReg';
+import PersonIcon from '@material-ui/icons/PersonSharp';
 // import EducationIcon from '@material-ui/icons/School';
 // import ContactIcon from '@material-ui/icons/ContactPhone';
 // import SkillIcon from '@material-ui/icons/Stars'
@@ -80,8 +81,9 @@ const styles = theme => ({
 	},
 });
 
-const categories = [
-	{ 
+const catgs = {
+	"my-profile": { label: "My Profile", value: "my-profile", icon: <PersonIcon /> },
+	'leave-manager': { 
 		label: "Leaves Manager",
 		value: "leave-manager",
 		icon: 
@@ -89,9 +91,9 @@ const categories = [
 				<path fill="#757575" d="M10.63,14.1C12.23,10.58 16.38,9.03 19.9,10.63C23.42,12.23 24.97,16.38 23.37,19.9C22.24,22.4 19.75,24 17,24C14.3,24 11.83,22.44 10.67,20H1V18C1.06,16.86 1.84,15.93 3.34,15.18C4.84,14.43 6.72,14.04 9,14C9.57,14 10.11,14.05 10.63,14.1V14.1M9,4C10.12,4.03 11.06,4.42 11.81,5.17C12.56,5.92 12.93,6.86 12.93,8C12.93,9.14 12.56,10.08 11.81,10.83C11.06,11.58 10.12,11.95 9,11.95C7.88,11.95 6.94,11.58 6.19,10.83C5.44,10.08 5.07,9.14 5.07,8C5.07,6.86 5.44,5.92 6.19,5.17C6.94,4.42 7.88,4.03 9,4M17,22A5,5 0 0,0 22,17A5,5 0 0,0 17,12A5,5 0 0,0 12,17A5,5 0 0,0 17,22M16,14H17.5V16.82L19.94,18.23L19.19,19.53L16,17.69V14Z" />
 			</SvgIcon>,
 	},
-	{ label: "My Services", value: "my-services", icon: <SettingsIcon />},
-	{ label: "Admin Panel", value: "admin-panel", icon: <AdminIcon />},
-]
+	"my-services": { label: "My Services", value: "my-services", icon: <SettingsIcon />},
+	"admin-panel": { label: "Admin Panel", value: "admin-panel", icon: <AdminIcon />},
+}
 
 class MainList extends React.Component {
 	constructor(props) {
@@ -108,8 +110,12 @@ class MainList extends React.Component {
 
 	}
 
-	isCategorySelected = () => {
-
+	getCategories = () => {
+		let categories = this.props.views.map(view => view.ATTRIB_03).filter(ele => ele !== 'root')
+		let categories2 = [...new Set(categories)]
+		console.log("CATEGORIES2: ", categories2)
+		console.log("CATEGORIES2: ", categories2.map(ele => catgs[ele]))
+		return categories2.map(ele => catgs[ele])
 	}
 
 	isSelected = (path) => {
@@ -124,6 +130,7 @@ class MainList extends React.Component {
 
 	render() {
 		let { classes, match } = this.props;
+		let categories = this.getCategories()
 
 		return (
 			<React.Fragment>

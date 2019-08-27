@@ -39,6 +39,7 @@ class EditEmployee extends React.Component {
       div_id: { label: '', value: null },
       postn_held_id: { label: '', value: null },
       resp_id: { label: '', value: null },
+      report_to_position: { label: '', value: null },
       report_to_id: { label: '', value: null },
       ATTRIB_01: '',
       ATTRIB_18: '',
@@ -76,6 +77,7 @@ class EditEmployee extends React.Component {
         },
       })
 
+      console.log(response)
       this.setState(prevState => ({
         data: response.data.data,
         isSearching: false,
@@ -132,6 +134,7 @@ class EditEmployee extends React.Component {
     formdata.div_id = { label: "", value: null }
     formdata.postn_held_id = { label: "", value: null }
     formdata.report_to_id = { label: "", value: null }
+    formdata.report_to_position = { label: "", value: null }
     formdata.resp_id = { label: "", value: null }
 
     this.setState(prevState => ({
@@ -185,6 +188,7 @@ class EditEmployee extends React.Component {
                 div_id: { label : '', value: null },
                 postn_held_id: { label : '', value: null },
                 resp_id: { label : '', value: null },
+                report_to_position: { label: "", value: null },
                 report_to_id: { label : '', value: null },
             }
         }), () => {resolve()})
@@ -195,9 +199,18 @@ class EditEmployee extends React.Component {
                   ...prevState.formData,
                   [target] : value,
                   postn_held_id: { label : '', value: null },
+                  report_to_position: { label: "", value: null },
                   report_to_id: { label : '', value: null },
               }
           }), () => {resolve()})
+      else if(target === 'report_to_position')
+        this.setState(prevState => ({
+          formData: {
+              ...prevState.formData,
+              [target] : value,
+              report_to_id: { label : '', value: null },
+          }
+        }), () => {resolve()})
       else {
           this.setState(prevState => ({
               formData: {
@@ -209,7 +222,8 @@ class EditEmployee extends React.Component {
     })
   }
 
-  handleSwitchChange = async (checked, id) => {
+  handleSwitchChange = async (checked, data) => {
+    let id = data.row_id
     return new Promise(async (resolve, reject) => {
       let response
       let selected = this.state.data.filter(row => {
@@ -300,7 +314,7 @@ class EditEmployee extends React.Component {
 
       if (response.data.status >= 200 && response.data.status < 300) {
         this.setState(prevState => ({
-          data: newData,
+          data: response.data.data,
         }))
 
         this.props.success('User Updated Succesfully')
@@ -327,10 +341,24 @@ class EditEmployee extends React.Component {
           'content-type': 'application/json',
         }
       })
-      this.handleResponse(response)
+      console.log(response)
+      if(response.data.status === 200){
+        this.setState(prevState => ({
+          data: [
+            ...prevState.data,
+            response.data.data
+          ]
+        }))
+        let message = response.message || 'Action Successful'
+        this.props.success(message)
+        this.unsetEditMode()
+      }
+      else{
+        this.props.error(response.data)
+      }
     }
     catch (err) {
-      this.handleResponse(err.response, true)
+      this.props.error(response.data)
     }
   }
 

@@ -27,9 +27,9 @@ async function getEmployee(req, res, next) {
                     attributes: ['row_id', 'name', 'desc', 'par_row_id']
                 },
                 {
-                    model: Position,
+                    model: Employee,
                     as: 'manager',
-                    attributes: ['row_id', 'name']
+                    attributes: ['row_id', 'fst_name', 'last_name']
                 },
             ]
         })

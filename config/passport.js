@@ -37,8 +37,9 @@ passport.use(
                     }
                     else {
                         let user = req.body
+                        let contractExpiry = null
                         let date = new Date(user.ATTRIB_18)
-                        let contractExpiry = new Date(date.setMonth(date.getMonth()+12));
+                        contractExpiry = new Date(date.setMonth(date.getMonth()+12));
 
                         bcrypt.hash(password, BCRYPT_SALT_ROUNDS).then(hashedPassword => {
 
@@ -69,6 +70,7 @@ passport.use(
                                 });
                             }).then(result => {
                                 debug("User Created");
+                                req.currentUsername = username
                                 return done(null, result)
                             }).catch(err => {
                                 done(err);

@@ -92,7 +92,8 @@ router.post('/employee/details/designation', adminController.addEmployeeDesignat
 router.delete('/employee/details/designation', adminController.deleteEmployeeDesignation)
 router.put('/employee/details/designation', adminController.updateEmployeeDesignation)
 
-router.get('/employees', adminController.getEmployees)
+router.get('/getEmployees', adminController.getEmployees)
+router.get('/employees', adminController.searchEmployees)
 router.put('/employees', adminController.updateEmployee)
 router.delete('/employees', adminController.deleteEmployee)
 

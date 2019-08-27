@@ -4,6 +4,7 @@ import {connect} from 'react-redux'
 import Tooltip from '@material-ui/core/Tooltip'
 import IconButton from '@material-ui/core/IconButton'
 import AddIcon from '@material-ui/icons/Add'
+import CommitIcon from '@material-ui/icons/Done'
 import Container from './MainContainer'
 import DataTable from './DataTable'
 import ListView from './ListView'
@@ -85,6 +86,16 @@ const responsibilityViewRows = [
     { id: 'desc', numeric: false, disablePadding: true, label: 'Description', },
     { id: 'readOnly', numeric: false, disablePadding: true, checkbox:true, label: 'Read Only', },
     { id: 'write', numeric: false, disablePadding: true, checkbox:true, label: 'Write', }, 
+]
+
+const respViewRows = [
+    { id: 'name', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Name', },
+    { id: 'desc', numeric: false, disablePadding: true, lengthRatio: 'Detail',label: 'Description', },
+    { id: ['C_RESP_VIEW', 'FLG_01'], type: 'toggle', numeric: false, disablePadding: true, lengthRatio: 'Action', label: 'Read Only' },
+    { id: ['C_RESP_VIEW', 'FLG_02'], type: 'toggle', numeric: false, disablePadding: true, lengthRatio: 'Action', label: 'Write' },
+
+    // { id: 'readOnly', numeric: false, disablePadding: true, checkbox:true, label: 'Read Only', },
+    // { id: 'write', numeric: false, disablePadding: true, checkbox:true, label: 'Write', }, 
 ]
 
 class AddResponsibility extends React.Component {
@@ -397,7 +408,8 @@ class AddResponsibility extends React.Component {
         this.setState(prevState => newState)
     }
 
-    handleDelete = async (id) => {
+    handleDelete = async (id, row) => {
+        let row_id = row.C_RESP_VIEW.row_id
         let response
 
         try{
@@ -405,7 +417,7 @@ class AddResponsibility extends React.Component {
                 method: 'delete',
                 url: '/admin/access-rights/responsibility-view',
                 data: {
-                    id,
+                    id: row_id,
                 }
             })
 
@@ -470,50 +482,55 @@ class AddResponsibility extends React.Component {
         }
     }
 
-    handleCheckboxChange = (event, id, idx) => {
-        let target = event.target
-        let name = target.id
-        let value = target.checked
-        let data = this.state.data
-        let flag = name === 'readOnly' ? 'FLG_01' : 'FLG_02'
+    handleCheckboxChange = (value, record, event) => {
+        return new Promise((resolve, reject) => {
+            let id = record.row_id
+            let idx = record.C_RESP_VIEW.row_id
+            let target = event.target
+            let name = target.id
+            // let value = target.checked
+            let data = this.state.data
+            let flag = name === 'readOnly' ? 'FLG_01' : 'FLG_02'
 
-        let index = 0
-        for(index; index < data.length; index++) {
-            if(data[index].row_id === id) 
-                break;
-        }
-            
 
-        // let selection = data.filter(row => row.row_id === id)
-        // console.log("SELECTION: ", selection)
-        // let index = selection[0] && selection[0].row_id
-
-        data[index] = {
-            ...data[index],
-            C_RESP_VIEW: {
-                ...data[index].C_RESP_VIEW,
-                [flag]: value,
+            let index = 0
+            for(index; index < data.length; index++) {
+                if(data[index].row_id === id) 
+                    break;
             }
-        }
+                
 
-        this.setState(prevState => ({
-            data: data,
-            updates: {
-                ...prevState.updates,
-                [idx]: {
-                    ...prevState.updates[idx],
+            // let selection = data.filter(row => row.row_id === id)
+            // console.log("SELECTION: ", selection)
+            // let index = selection[0] && selection[0].row_id
+
+            data[index] = {
+                ...data[index],
+                C_RESP_VIEW: {
+                    ...data[index].C_RESP_VIEW,
                     [flag]: value,
                 }
-            },
-            checkboxRefs: {
-                ...prevState.checkboxRefs,
-                [`${name}_${id}`]: {
-                    target,
-                    initial: !prevState.checkboxRefs[`${name}_${id}`] && !value,
-                    dirty: true,
-                }
             }
-        }))
+
+            this.setState(prevState => ({
+                data: data,
+                updates: {
+                    ...prevState.updates,
+                    [idx]: {
+                        ...prevState.updates[idx],
+                        [flag]: value,
+                    }
+                },
+                checkboxRefs: {
+                    ...prevState.checkboxRefs,
+                    [`${name}_${id}`]: {
+                        target,
+                        initial: !prevState.checkboxRefs[`${name}_${id}`] && !value,
+                        dirty: true,
+                    }
+                }
+            }), () => resolve())
+        })
     }
 
     handleUpdate = async (event) => {
@@ -578,6 +595,16 @@ class AddResponsibility extends React.Component {
         } = this.state
 
         let { editMode } = this.state
+
+        let UpdateButton = 
+            // <Tooltip title="Commit">
+            //     <IconButton aria-label="Commit">
+            //         <CommitIcon /> Commit
+            //     </IconButton>
+            // </Tooltip>
+            <Button onClick={this.handleUpdate} disabled={!responsibility || isUpdating} variant="contained" color="default" /* className={classNames(classes.button, classes.textField)} */>
+                <CommitIcon /> Commit
+            </Button> 
 
         let RespAddComp = 
             <ModalTrigger
@@ -683,16 +710,29 @@ class AddResponsibility extends React.Component {
                     AddComponent={RespAddComp}
                 />
                 
-                <ListView 
+                {/* <ListView 
                     headerTitle={`${this.getTitle()} Views`}
                     rows={responsibilityViewRows}
-                    endpoint='/access-rights/view'
                     handleCheckboxChange={this.handleCheckboxChange}
                     handleUpdate={this.handleUpdate}
                     handleDelete={this.handleDelete}
                     responsibility={responsibility}
                     data={data}
                     actions={[ViewAttachComp]}
+                    disabled={isUpdating}
+                /> */}
+                <DataTable
+                    headerTitle={`${this.getTitle()} Views`}
+                    rows={respViewRows}
+                    endpoint='/access-rights/view'
+                    handleSwitchChange={this.handleCheckboxChange}
+                    handleUpdate={this.handleUpdate}
+                    handleDelete={this.handleDelete}
+                    responsibility={responsibility}
+                    data={data}
+                    actions={true}
+                    disableEdit={true}
+                    actionBar={[UpdateButton, ViewAttachComp]}
                     disabled={isUpdating}
                 />
             </Container>

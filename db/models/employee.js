@@ -205,7 +205,7 @@ module.exports = (sequelize, DataTypes) => {
   // Employee.isHierarchy({ through: employeeAncestors })
   
   Employee.associate = function(models) {
-    Employee.belongsTo( models.C_POSTN, { as: 'manager', foreignKey: 'report_to_id' })
+    Employee.belongsTo( models.C_EMP, { as: 'manager', foreignKey: 'report_to_id' })
     Employee.belongsTo( models.C_BU, { as: 'organization', foreignKey: 'bu_id' })
     Employee.belongsTo( models.C_DIV, { as: 'division', foreignKey: 'div_id' })
     Employee.belongsTo( models.C_POSTN, { as: 'position_held', foreignKey: 'postn_held_id' })

@@ -177,7 +177,8 @@ class NewsManager extends React.Component{
         }))
     }
 
-    handleSwitchChange = async (checked, id) => {
+    handleSwitchChange = async (checked, data) => {
+        let id = data.row_id
         return new Promise(async (resolve, reject) => {
           let response
           console.log("SWITCH HANDLER")

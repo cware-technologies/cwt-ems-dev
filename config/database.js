@@ -12,7 +12,8 @@ function connectMySQL() {
             define: {
                 //prevent sequelize from pluralizing table names
                 freezeTableName: true
-            }
+            },
+            logging: false
         });
 
         // var conn = mysql.createConnection({

@@ -22,7 +22,10 @@ const PaySlipTabs = lazy(() => import('./PaySlipTabs'));
 const ITTicketTabs = lazy(() => import('./ITTicketTabs'));
 const NewsAndUpdates = lazy(() => import('./NewsAndUpdates'));
 const Profile = lazy(() => import('./Profile'));
-const ProfileEditForm = lazy(() => import('./ProfileEditForm'));
+const SkillsPanel = lazy(() => import('./SkillsPanel'));
+const ProfileDetails = lazy(() => import('./ProfileDetails'));
+const ProfessionalAttributesPanel = lazy(() => import('./ProfessionalAttributesPanel'));
+const CertificationsPanel = lazy(() => import('./CertificationsPanel'));
 const Attendance = lazy(() => import('./Attendance'));
 const Notifications = lazy(() => import('./Notifications'));
 const PasswordReset = lazy(() => import('./PasswordReset'));
@@ -124,8 +127,15 @@ class Portal extends React.Component {
             <PrivateRoute path={`${match.path}it-tickets`} component={ITTicketTabs} accessFunction={this.requireAuth} />
             <PrivateRoute path={`${match.path}news-and-updates`} component={NewsAndUpdates} accessFunction={this.requireAuth} />
             <PrivateRoute path={`${match.path}post-update`} component={NewsManager} accessFunction={this.requireAuth} />
-            <PrivateRoute path={`${match.path}edit-profile`} component={ProfileEditForm} accessFunction={this.requireAuth} />
+
+            {/* My Profile */}
             <PrivateRoute path={`${match.path}my-profile`} component={Profile} accessFunction={this.requireAuth} />
+            <PrivateRoute path={`${match.path}my-details`} component={ProfileDetails} accessFunction={this.requireAuth} />
+            <PrivateRoute path={`${match.path}my-skills`} component={SkillsPanel} accessFunction={this.requireAuth} />
+            <PrivateRoute path={`${match.path}my-professional-attributes`} component={ProfessionalAttributesPanel} accessFunction={this.requireAuth} />
+            <PrivateRoute path={`${match.path}my-certifications`} component={CertificationsPanel} accessFunction={this.requireAuth} />
+
+
             <PrivateRoute path={`${match.path}attendance`} component={Attendance} accessFunction={this.requireAuth} />
             <PrivateRoute path={`${match.path}notifications`} component={Notifications} accessFunction={this.requireAuth} />
             <PrivateRoute path={`${match.path}password-reset`} component={PasswordReset} accessFunction={this.requireAuth} />

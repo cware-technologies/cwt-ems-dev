@@ -29,12 +29,17 @@ const styles = theme => ({
 
 class HierarchyChart extends React.Component {
     componentDidMount() {
-        this.generateChart()
+        console.log("Chart:" , this.props.data)
+        if(this.props.data){
+            this.generateChart()
+        }
     }
 
-    // componentDidUpdate() {
-    //     this.generateChart()
-    // }
+    componentDidUpdate() {
+        if(this.props.data){
+            this.generateChart()
+        }
+    }
 
     generateChart = () => {
         let { classes } = this.props
@@ -90,15 +95,15 @@ class HierarchyChart extends React.Component {
             .attr('x', function (d) { return d.x + 15; })
             .attr('y', function (d) { return d.y + 5; })
 
-        d3.select('svg .names a')
-            .selectAll('text.position')
-            .data(root.descendants())
-            .enter()
-            .append('text')
-            .text(d => { return d.data.position })
-            .classed(classes.position, true)
-            .attr('x', function (d) { return d.x + 15; })
-            .attr('y', function (d) { return d.y + 25; })
+        // d3.select('svg .names a')
+        //     .selectAll('text.position')
+        //     .data(root.descendants())
+        //     .enter()
+        //     .append('text')
+        //     .text(d => { return d.data.position })
+        //     .classed(classes.position, true)
+        //     .attr('x', function (d) { return d.x + 15; })
+        //     .attr('y', function (d) { return d.y + 25; })
 
         // Links
         d3.select('svg .lines')

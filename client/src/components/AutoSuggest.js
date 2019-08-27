@@ -214,6 +214,7 @@ class AutoSuggestContainer extends React.Component {
             value,
             onChange: onChange
         };
+        console.log("SUGGESTIONS: ", suggestions)
         let { userMenuAnchorEl } = this.state;
         const userMenuOpen = Boolean(userMenuAnchorEl);
 

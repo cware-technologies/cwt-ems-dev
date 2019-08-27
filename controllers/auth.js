@@ -3,6 +3,11 @@ const jwt = require('jsonwebtoken'),
     { secret } = require('../config/jwtSecret.json'),
     models = require('../db/models'),
     Users = models.C_USER,
+    Employee = models.C_EMP,
+    Organization = models.C_BU,
+    Division = models.C_DIV,
+    Position = models.C_POSTN,
+    Responsibility = models.C_RESP,
     ResponsibilityViews = models.C_RESP_VIEW,
     Views = models.C_VIEW,
     Sequelize = require('sequelize')
@@ -26,11 +31,52 @@ async function signin(req, res, next) {
     });
 }
 
-function register(req, res, next) {
-    res.status(200).json({
-        status: 200,
-        message: 'User Created Successfully',
-    });
+async function register(req, res, next) {
+    console.log("\n\n\n" + req.currentUsername + "\n\n\n")
+    try{
+        let data = await Users.findAll({
+            where: {
+                login: req.currentUsername,
+            },
+            attributes: ['row_id', 'login'],
+            include: [
+                {
+                    model: Employee,
+                    as: 'employee',
+                    include: [
+                        {
+                            model: Organization,
+                            as: 'organization',
+                        },
+                        {
+                            model: Division,
+                            as: 'division'
+                        },
+                        {
+                            model: Position,
+                            as: 'position_held',
+                        },
+                        {
+                            model: Responsibility,
+                            as: 'responsibility',
+                        },
+                    ]
+                },
+            ]
+        })
+
+        res.status(200).json({
+            status: 200,
+            message: 'User Created Successfully',
+            data: data[0],
+        });
+    }
+    catch(err){
+        console.log(err)
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
 }
 
 function verifyToken(req, res, next){

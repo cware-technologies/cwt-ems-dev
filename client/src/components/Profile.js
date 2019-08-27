@@ -7,7 +7,7 @@ import { getUser } from '../reducers/authReducer';
 import Container from './MainContainer'
 import HierarchyChart from './HierarchyChart'
 import ProfilePic from '../assets/profile-pic.jpg'
-import { Typography } from '@material-ui/core';
+import { Paper, Typography } from '@material-ui/core';
 import generateChart from '../helpers/generateChart';
 import EmployeeBadge from './EmployeeBadge';
 import ProfileDetails from './ProfileDetails';
@@ -47,7 +47,8 @@ const styles = theme => ({
         border: `2px solid ${theme.palette.secondary.light}`
     },
     chainHeader: {
-        borderBottom: `2px solid ${theme.palette.secondary.light}`,
+        padding: '10px 10px',
+        boxShadow: '0px 0px 3px gray'
     }
 })
 
@@ -108,62 +109,39 @@ const profAttributesFields = [
     { id: 'ATTRIB_03', type: 'text', label: 'Description'},
 ]
 
-const fields = [
-    {
-        attribute: 'Department',
-        value: 'Nights Watch',
-    },
-    {
-        attribute: 'Location',
-        value: 'Castle Black',
-    },
-    {
-        attribute: 'Manager',
-        value: 'Mormont',
-    },
-    {
-        attribute: 'Email',
-        value: 'jon_snow@westeros.com',
-    },
-    {
-        attribute: 'Mobile',
-        value: '090078601',
-    },
-]
-
-const hierarchy = {
-    "name": "Ousaid Imtiaz",
-    "position": "CEO",
-    "children": [
-        {
-            "name": "Sajeel Waien",
-            "position": "Manager",
-            "children": [
-                {
-                    "name": "Ehsan Ul Hassan",
-                    "position": "Peon",
-                },
-                {
-                    "name": "Mariam Amin",
-                    "value": 300
-                },
-                {
-                    "name": "Suleman Ishtiaq",
-                    "value": 200
-                }
-            ]
-        },
-        {
-            "name": "Jeff Bezos",
-            "value": 200
-        }
-    ]
-}
+// const hierarchy = {
+//     "name": "Ousaid Imtiaz",
+//     "position": "CEO",
+//     "children": [
+//         {
+//             "name": "Sajeel Waien",
+//             "position": "Manager",
+//             "children": [
+//                 {
+//                     "name": "Ehsan Ul Hassan",
+//                     "position": "Peon",
+//                 },
+//                 {
+//                     "name": "Mariam Amin",
+//                     "value": 300
+//                 },
+//                 {
+//                     "name": "Suleman Ishtiaq",
+//                     "value": 200
+//                 }
+//             ]
+//         },
+//         {
+//             "name": "Jeff Bezos",
+//             "value": 200
+//         }
+//     ]
+// }
 
 class Profile extends React.Component {
     state = {
         chainLoaded: false,
-        data: []
+        data: [],
     }
 
     componentDidMount() {
@@ -181,7 +159,7 @@ class Profile extends React.Component {
                 console.log(user, hierarchy)
                 this.setState(prevState => ({
                     data: user.data.result,
-                    hierarchy: hierarchy.data.result,
+                    hierarchy: hierarchy.data.data,
                 }))
             }));
         
@@ -192,7 +170,7 @@ class Profile extends React.Component {
             method: 'get',
             url: '/public/employee/hierarchy',
             params: {
-                employee: 2,
+                employee: this.props.userID,
             },
         })
     }
@@ -202,7 +180,7 @@ class Profile extends React.Component {
             method: 'get',
             url: '/private/employee',
             params: {
-                employee: this.props.user_id,
+                employee: this.props.userID,
             },
         })
     }
@@ -230,8 +208,8 @@ class Profile extends React.Component {
     }
 
     render() {
-        let { classes, user_id } = this.props
-        let { data } = this.state
+        let { classes, userID } = this.props
+        let { data, hierarchy } = this.state
 
         return (
             <Container _className={classes.container}>
@@ -258,16 +236,16 @@ class Profile extends React.Component {
                         )
                     })}
                 </div> */}
-                <div className={classes.chainContainer}>
+                <Paper square>
                     <Typography className={classes.chainHeader} variant='headline' component='h1' color='secondary'>
                         Reporting Chain
                     </Typography>
                     <HierarchyChart 
                         data={hierarchy}
                     />
-                </div>
+                </Paper>
                 <ProfileDetails
-                    object={user_id}
+                    object={userID}
                 />
                 <AttributesManager
                     headerTitle={'Certifications'}
@@ -294,7 +272,7 @@ class Profile extends React.Component {
 
 const mapStateToProps = (state) => {
     return {
-        user_id: getUser(state)
+        userID: getUser(state)
     }
 }
 

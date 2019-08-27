@@ -17,7 +17,7 @@ Object.filter = (obj, predicate) =>
           .filter( key => predicate(obj[key]) )
           .reduce( (res, key) => (res[key] = obj[key], res), {} );
 
-const getNumberFieldValue = (value, inputProps) => {
+const getNumberFieldValue = (inputProps) => (value) =>{
     if(parseInt(value) > parseInt(inputProps.max)){
         return inputProps.max
     }
@@ -44,6 +44,22 @@ class AddEditForm extends React.Component {
         }
 
         this.props.handleChange(e, this.props.headerTitle)
+    }
+
+    handleNumberChange = (e, valueCalculator) => {
+        let id = e.target.id
+        let val = e.target.value
+
+        let value = valueCalculator(val)
+
+        let event = {
+            target: {
+                id,
+                value,
+            }
+        }
+
+        this.props.handleChange(event, this.props.headerTitle)
     }
 
     handleSubmit = async (e, component) => {
@@ -259,10 +275,10 @@ class AddEditForm extends React.Component {
                             type='number'
                             label={field.label}
                             className={classNames(classes.textField, classes.dense, classes.singleSpanInput)}
-                            value={getNumberFieldValue(object[field.id], field.inputProps)}
+                            value={object[field.id]}
                             disabled={field.readOnly}
                             defaultValue={field.defaultValue}
-                            onChange={(e) => handleChange(e, this.props.headerTitle)}
+                            onChange={(e) => this.handleNumberChange(e, getNumberFieldValue(field.inputProps))}
                             error={errors[field.id]}
                             helperText={errors[field.id] && <ul className={classes.errorList}> {errors[field.id].map((error)=>{ return <li className={classes.errorListItem}>{error}</li>})}</ul>}
                             onBlur={this.validate}    
