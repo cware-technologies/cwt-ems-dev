@@ -54,6 +54,8 @@ class TabContainer extends React.Component {
         let { classes, title, components } = this.props
         const { value } = this.state
 
+        console.log("COMPONENTS:", components)
+
         return(
             <div className={classes.feed}>
                 <Typography variant="h6" gutterBottom component="h2" align='center' className={classes.heading}>

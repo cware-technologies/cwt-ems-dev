@@ -9,22 +9,11 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import Button from '@material-ui/core/Button';
 import TablePagination from '@material-ui/core/TablePagination';
-import { getDate, calculateNumOfDays } from '../helpers/utils';
 import { getUser } from '../reducers/authReducer';
 import { alertActions } from '../actions';
-
-const leaveHistoryRows = [
-    { id: 'leaveAppliedDate', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Applied Date' },
-    { id: 'leaveType', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Type' },
-    { id: 'leaveStatus', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Status' },
-]
-
-const leaveData = [
-    { leaveAppliedDate: '12-2-2019', leaveType: 'Annual', leaveRequestedDays: '03', leaveDetail: 'urgent piece of work', leaveStatus: 'Pending' },
-    { leaveAppliedDate: '3-7-2019', leaveType: 'Monthly', leaveRequestedDays: '04', leaveDetail: 'not feeling well', leaveStatus: 'Approved' }
-]
+import DownloadIcon from '@material-ui/icons/SaveAlt';
+import Paper from '@material-ui/core/Paper';
 
 const styles = theme => ({
     btn: {
@@ -48,11 +37,14 @@ const styles = theme => ({
     },
     wid80: {
         width: '70%'
-    }
+    },
+    root: {
+        width: '100%',
+        display: 'block'
+    },
 })
 
-
-class LeaveHistory extends Component {
+class ExpenseClaimHistory extends Component {
 
     state = {
         leaveData: [],
@@ -77,15 +69,16 @@ class LeaveHistory extends Component {
         try {
             response = await axios({
                 method: 'get',
-                url: `/private/employee/leaves`,
+                url: `/private/employee/tickets`,
                 headers: {
                     'content-type': 'application/json',
                 },
                 params: {
-                    emp_id: this.props.userID
+                    emp_id: this.props.userID,
+                    type_cd: 'expense_claim'
                 }
             })
-            console.log(response)
+            console.log(response.data)
 
             this.setState(prevState => ({
                 data: response.data.data,
@@ -97,42 +90,9 @@ class LeaveHistory extends Component {
         }
     }
 
-    handleClickDel = async (emp) => {
-        let response
-        let newData = this.state.data.filter(row => {
-            return row.row_id !== emp.row_id
-        })
-
-        try {
-            response = await axios({
-                method: 'delete',
-                url: '/private/employee/leaves',
-                headers: {
-                    'content-type': 'application/json',
-                },
-                data: {
-                    row_id: emp.row_id
-                },
-            })
-
-            if (response.data.status === 200) {
-
-                console.log("Record Deleted Successfully!")
-
-                this.setState(prevState => ({
-                    data: newData,
-                }))
-
-            }
-            else {
-                console.log("Could Not Delete The Record")
-                console.log(response)
-            }
-        }
-        catch (err) {
-            console.log("Could Not Delete The Record")
-        }
-
+    handleDownload = async (e, path) => {
+        console.log(path)
+        window.open(`${process.env.REACT_APP_API_URL}/private/employee/ticket/download?path=${path}`)
     }
 
     handleChangePage = (event, page) => {
@@ -143,16 +103,15 @@ class LeaveHistory extends Component {
         this.setState({ rowsPerPage: event.target.value });
     };
 
+
     render() {
         let { data, rowsPerPage, page } = this.state;
         const { classes } = this.props;
-        var days = 0
 
         return (
             <div>
                 {
-                   data ? data.map(data => {
-                        days = calculateNumOfDays(data.end_dt, data.strt_dt)
+                    data.map(data => {
                         return (
                             <ExpansionPanel>
                                 <ExpansionPanelSummary
@@ -162,28 +121,30 @@ class LeaveHistory extends Component {
                                 >
                                     <div className={classes.flxContainer}>
                                         <Typography variant="subtitle2" className={classNames(classes.btn, classes.pstnabslt)} >{data.stat_cd.toUpperCase()}</Typography>
-                                        <Typography variant="subtitle2">{data.entitlement.val.toUpperCase()}</Typography>
-                                        <Typography variant="overline">{getDate(data.strt_dt).toDateString()}</Typography>
+                                        <Typography variant="subtitle2">{data.expenseType.val}</Typography>
+                                        <Typography variant="subtitle2">{data.ATTRIB_06}$</Typography>
+                                        <Typography variant="overline">{data.created}</Typography>
                                     </div>
                                 </ExpansionPanelSummary>
-                                <ExpansionPanelDetails>
+                                <ExpansionPanelDetails className={classes.root}>
                                     <div className={classes.flxContainer}>
                                         <Typography variant="subtitle" color="primary" gutterBottom>
-                                            <div>Requested Days: {days}</div>
                                             <div className={classes.wid80}>Details: {data.ATTRIB_01}</div>
+                                            <div className={classes.wid80} onClick={(e) => this.handleDownload(e, data.ATTRIB_03)}>File: <DownloadIcon /></div>
                                         </Typography>
-                                        <Button
-                                            onClick={() => this.handleClickDel(data)}
-                                            variant="outlined" className={classes.btn}
-                                            style={data.stat_cd !== "pending" ? { display: 'none' } : {}}
-                                        >
-                                            Withdraw
-                                        </Button>
                                     </div>
+                                    <Paper className={classes.root} style={data.ATTRIB_04 === null ? { display: 'none' } : {}}>
+                                        <Typography variant="subtitle" color="primary">
+                                            Admin Reply
+                                        </Typography>
+                                        <Typography component="p">
+                                            {data.ATTRIB_04}
+                                        </Typography>
+                                    </Paper>
                                 </ExpansionPanelDetails>
                             </ExpansionPanel>
                         )
-                    }): null
+                    })
                 }
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
@@ -214,4 +175,4 @@ const mapStateToProps = (state) => {
 export default compose(
     withStyles(styles),
     connect(mapStateToProps, { ...alertActions }),
-)(LeaveHistory);
+)(ExpenseClaimHistory);

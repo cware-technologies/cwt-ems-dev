@@ -1,15 +1,14 @@
-import Container from './MainContainer'
 import React, { Component } from 'react';
 import ModalTrigger from './ModalTrigger';
 import AddEditForm from './AddEditForm';
-import { spacing } from '@material-ui/system';
+import Badge from '@material-ui/core/Badge';
 import axios from 'axios';
 import { flattenObject, calculateNumOfDays, checkPastDate } from '../helpers/utils';
 import { connect } from 'react-redux';
 import { getUserOrganization } from '../reducers/authReducer';
 import { getUser } from '../reducers/authReducer';
 import { alertActions } from '../actions/alertActions';
-
+import Typography from '@material-ui/core/Typography';
 
 
 class LeaveRequest extends Component {
@@ -18,6 +17,7 @@ class LeaveRequest extends Component {
         leaveRequestForm: {
 
         },
+        requestedDays: 0
     }
 
     leaveRequestFields = [
@@ -27,20 +27,40 @@ class LeaveRequest extends Component {
         { id: 'ATTRIB_01', type: 'textarea', label: 'Details' },
     ]
 
-    componentDidMount() {
-
-
-    }
-
     handleChange = (event) => {
         let target = event.target.id;
         let value = event.target.value;
-        this.setState(prevState => ({
-            [`leaveRequestForm`]: {
-                ...prevState[`leaveRequestForm`],
-                [target]: value,
-            }
-        }))
+        let days = 1
+    
+        if (target === 'strt_dt') {
+            this.setState(prevState => ({
+                [`leaveRequestForm`]: {
+                    ...prevState[`leaveRequestForm`],
+                    [target]: value,
+                    end_dt: value,
+                }
+            }), () => {
+                days = calculateNumOfDays(this.state.leaveRequestForm.strt_dt, this.state.leaveRequestForm.end_dt)
+                console.log("Days: ", days)
+                this.setState({
+                    requestedDays: days
+                })
+            })
+        }
+        else {
+            this.setState(prevState => ({
+                [`leaveRequestForm`]: {
+                    ...prevState[`leaveRequestForm`],
+                    [target]: value,
+                }
+            }), () => {
+                days = calculateNumOfDays(this.state.leaveRequestForm.strt_dt, this.state.leaveRequestForm.end_dt)
+                console.log("Days: ", days)
+                this.setState({
+                    requestedDays: days
+                })
+            })
+        }
     }
 
     isRemainingDays = async (days, type) => {
@@ -130,7 +150,7 @@ class LeaveRequest extends Component {
     }
 
     render() {
-        let { leaveRequestForm } = this.state
+        let { leaveRequestForm, requestedDays } = this.state
         return (
             <div mt={2}>
                 <ModalTrigger
@@ -146,6 +166,9 @@ class LeaveRequest extends Component {
                         handleChange={this.handleChange}
                         handleSubmit={this.handleSubmit}
                     />
+                    <Badge style={requestedDays === 0 ? { display: 'none' } : {}} color="primary" badgeContent={requestedDays}>
+                        <Typography>Requested Days</Typography>
+                    </Badge>
                 </ModalTrigger>
             </div>
         )

@@ -1,7 +1,8 @@
 'use strict';
+
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('C_LV_REQ', {
+    return queryInterface.createTable('C_ADM_REQ', {
       row_id: {
         allowNull: false,
         autoIncrement: true,
@@ -16,14 +17,6 @@ module.exports = {
         },
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
-      },
-      strt_dt: {
-        type: Sequelize.DATE,
-        allowNull: false,
-      },
-      end_dt: {
-        type: Sequelize.DATE,
-        allowNull: false,    
       },
       stat_cd: {
         type: Sequelize.STRING(30),
@@ -83,7 +76,7 @@ module.exports = {
         type: Sequelize.STRING(100),
       },
       ATTRIB_11: {
-        type: Sequelize.INTEGER(11),
+        type: Sequelize.STRING(200),
       },
       ATTRIB_12: {
         type: Sequelize.INTEGER(11),
@@ -144,7 +137,8 @@ module.exports = {
       },
     });
   },
+
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('C_LV_REQ');
+    return queryInterface.dropTable('C_ADM_REQ');
   }
 };

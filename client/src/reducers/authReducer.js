@@ -58,6 +58,7 @@ export default combineReducers({
 
 export const getViews = (state) => state.authReducer.views
 export const getUser = (state) => state.authReducer.authentication.user.user_id
+export const getUsersName = (state) => state.authReducer.authentication.user.user_name
 export const getUserInfo = (state) => state.authReducer.authentication.user
 export const getUserOrganization = (state) => state.authReducer.authentication.user.organization
 export const getLoggedIn = (state) => state.authReducer.authentication.loggedIn

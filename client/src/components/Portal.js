@@ -44,6 +44,12 @@ const EligibilityManager = lazy(() => import('./EligibilityManager'));
 const ContractsPortal = lazy(() => import('./ContractsPortal'));
 const ContractsManager = lazy(() => import('./ContractsManager'));
 const InductionExitManager = lazy(() => import('./InductionExitManager'));
+const ITTickets = lazy(() => import('./ITTicketsManager'));
+const ExpenseClaim = lazy(() => import('./ExpenseClaimManager'));
+const HRDocs = lazy(() => import('./HRDocsManager'));
+const ExpenseNatureManager = lazy(() => import('./ExpenseNatureManager'));
+const ITTicketTypeManager = lazy(() => import('./ITTicketTypeManager'));
+const HRDocsTypeManager = lazy(() => import('./HRDocsTypeManager'));
 
 const styles = theme => ({
   root: {
@@ -124,7 +130,6 @@ class Portal extends React.Component {
             <PrivateRoute path={`${match.path}leave-manager`} component={LeaveManager} accessFunction={this.requireAuth} />
             <PrivateRoute path={`${match.path}manage-leaves`} component={AdminLeaves} accessFunction={this.requireAuth} />
             <PrivateRoute path={`${match.path}pay-slips`} component={PaySlipTabs} accessFunction={this.requireAuth} />
-            <PrivateRoute path={`${match.path}it-tickets`} component={ITTicketTabs} accessFunction={this.requireAuth} />
             <PrivateRoute path={`${match.path}news-and-updates`} component={NewsAndUpdates} accessFunction={this.requireAuth} />
             <PrivateRoute path={`${match.path}post-update`} component={NewsManager} accessFunction={this.requireAuth} />
 
@@ -152,6 +157,12 @@ class Portal extends React.Component {
             <PrivateRoute path={`${match.path}my-contracts`} component={ContractsPortal} accessFunction={this.requireAuth} />
             <PrivateRoute path={`${match.path}contracts-manager`} component={ContractsManager} accessFunction={this.requireAuth} />
             <PrivateRoute path={`${match.path}induction-exit-manager`} component={InductionExitManager} accessFunction={this.requireAuth} />
+            <PrivateRoute path={`${match.path}it-tickets`} component={ITTickets} accessFunction={this.requireAuth} />
+            <PrivateRoute path={`${match.path}expense-claim`} component={ExpenseClaim} accessFunction={this.requireAuth} />
+            <PrivateRoute path={`${match.path}hr-docs`} component={HRDocs} accessFunction={this.requireAuth} />
+            <PrivateRoute path={`${match.path}expense-nature`} component={ExpenseNatureManager} accessFunction={this.requireAuth} />
+            <PrivateRoute path={`${match.path}it-ticket-type`} component={ITTicketTypeManager} accessFunction={this.requireAuth} />
+            <PrivateRoute path={`${match.path}hr-docs-type`} component={HRDocsTypeManager} accessFunction={this.requireAuth} />
             <Redirect from='/' to='/portal/dashboard' />
           </Switch>
         </Suspense>

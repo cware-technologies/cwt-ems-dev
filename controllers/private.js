@@ -8,8 +8,12 @@ const Op = require('sequelize').Op,
     ProfileAttribute = models.C_EMP_XM,
     ListValues = models.C_LST_VAL,
     LeaveRequest = models.C_LV_REQ,
+    AdminRequest = models.C_ADM_REQ,
     Sequelize = require('sequelize'),
-    sequelize = require('../db/models').sequelize
+    sequelize = require('../db/models').sequelize,
+    multer = require('multer')
+
+let fileName
 
 async function getEmployee(req, res, next) {
     let employee = req.query
@@ -612,6 +616,34 @@ async function postLeaveRequest(req, res, next) {
     }
 }
 
+async function getLeaves(req, res, next) {
+    let params = req.query
+
+    try {
+        let data = await LeaveRequest.findAll({
+            where: {
+                emp_id: params.emp_id,
+            },
+            include: [
+                {
+                    model: ListValues,
+                    as: "entitlement",
+                }
+            ]
+        })
+
+        res.status(200).json({
+            status: 200,
+            data,
+        })
+    }
+    catch (err) {
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
 async function withdrawLeave(req, res, next) {
     let entity = req.body
 
@@ -636,7 +668,6 @@ async function withdrawLeave(req, res, next) {
         next(err)
     }
 }
-
 
 async function getRequestedLeaves(req, res, next) {
     let params = req.query
@@ -701,14 +732,12 @@ async function updateLeaveRequested(req, res, next) {
                 {
                     row_id: details.row_id
                 }
-
             })
 
         res.status(200).json({
             status: 200,
             data,
         })
-
     }
     catch (err) {
         err.status = 400
@@ -773,6 +802,189 @@ async function getLeavesCount(req, res, next) {
     }
 }
 
+async function postTicketRequest(req, res, next) {
+    let request = req.body
+    console.log("APPLICATION: ", request)
+
+    try {
+        let data = await AdminRequest.create({
+            ...request,
+            ATTRIB_03: fileName,
+            ATTRIB_11: request['ATTRIB_11.value'],
+        })
+
+        res.status(200).json({
+            status: 200,
+            data,
+        })
+    }
+    catch (err) {
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function getTickets(req, res, next) {
+    let params = req.query
+
+    try {
+        let data = await AdminRequest.findAll({
+            where: {
+                emp_id: params.emp_id,
+                type_cd: params.type_cd
+            },
+            include: [
+                {
+                    model: ListValues,
+                    as: "expenseType",
+                    attributes: [
+                        "val"
+                    ]
+                }
+            ],
+        })
+
+        res.status(200).json({
+            status: 200,
+            data,
+        })
+    }
+    catch (err) {
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function getRequestedTickets(req, res, next) {
+    let params = req.query
+
+    try {
+        let data = await AdminRequest.findAll({
+            where: {
+                [Op.and]: [
+                    { bu_id: params.bu_id },
+                    { type_cd: params.type_cd },
+                ]
+            },
+            include: [
+                {
+                    model: Employee,
+                    as: "requestor",
+                    attributes: [
+                        "fst_name",
+                        "last_name"
+                    ]
+                },
+                {
+                    model: ListValues,
+                    as: "expenseType",
+                    attributes: [
+                        "val"
+                    ]
+                }
+            ],
+        })
+
+        res.status(200).json({
+            status: 200,
+            data: data,
+        })
+    }
+    catch (err) {
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function getTicketsCount(req, res, next) {
+    let details = req.query
+
+    try {
+        let data = await AdminRequest.count(
+            {
+                where:
+                {
+                    bu_id: details.bu_id,
+                    type_cd: 'IT-Ticket'
+                }
+            })
+
+        res.status(200).json({
+            status: 200,
+            data
+        })
+    }
+    catch (err) {
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function updateTicketRequested(req, res, next) {
+    let details = req.body
+
+    try {
+        let data = await AdminRequest.update(
+            {
+                stat_cd: details.stat_cd,
+                ATTRIB_04: details.msg,
+                ATTRIB_03: fileName && fileName,
+            },
+            {
+                where:
+                {
+                    row_id: details.row_id
+                }
+            })
+
+        res.status(200).json({
+            status: 200,
+            data,
+        })
+    }
+    catch (err) {
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function uploadTicketFile(req, res, next) {
+    let time = Date.now()
+    var storage = multer.diskStorage({
+        destination: function (req, file, cb) {
+            cb(null, 'public/my_services_files')
+        },
+
+        filename: function (req, file, cb) {
+            var fileExtension = file.originalname.split('.')
+            cb(null, `${file.fieldname}-${time}.${fileExtension[fileExtension.length - 1]}`)
+            fileName = 'public/my_services_files/' + `${file.fieldname}-${time}.${fileExtension[fileExtension.length - 1]}`
+            console.log("FILLLLEEEEEE NAAAAMMEE ", fileName)
+        },
+    })
+
+    var upload = multer({ storage: storage }).array('file')
+
+    upload(req, res, function (err) {
+        if (err instanceof multer.MulterError) {
+            return res.status(500).json(err)
+        } else if (err) {
+            return res.status(500).json(err)
+        }
+        return res.status(200).send(req.file)
+    })
+}
+
+async function downloadTicketFile(req, res, next) {
+    let { path } = req.query
+    res.download(path);
+}
+
 module.exports = {
     getEmployee,
     updateEmployeePersonalDetails,
@@ -803,4 +1015,11 @@ module.exports = {
     getContracts,
     acceptContract,
     rejectContract,
+    postTicketRequest,
+    getTickets,
+    getTicketsCount,
+    uploadTicketFile,
+    downloadTicketFile,
+    getRequestedTickets,
+    updateTicketRequested,
 }

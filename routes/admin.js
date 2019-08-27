@@ -99,4 +99,19 @@ router.delete('/employees', adminController.deleteEmployee)
 
 router.post('/employees/changeStatus', adminController.changeEmployeeStatus)
 
+router.get('/expense-nature', adminController.getExpenseNatureLOVS)
+router.post('/expense-nature', adminController.postExpenseNatureLOVS)
+router.put('/expense-nature', adminController.updateExpenseNatureLOVS)
+router.delete('/expense-nature', adminController.deleteExpenseNatureLOVS)
+
+router.get('/it-tickets-type', adminController.getITTicketTypeLOVS)
+router.post('/it-tickets-type', adminController.postITTicketTypeLOVS)
+router.put('/it-tickets-type', adminController.updateITTicketTypeLOVS)
+router.delete('/it-tickets-type', adminController.deleteITTicketTypeLOVS)
+
+router.get('/hr-doc-type', adminController.getHRDocTypeLOVS)
+router.post('/hr-doc-type', adminController.postHRDocTypeLOVS)
+router.put('/hr-doc-type', adminController.updateHRDocTypeLOVS)
+router.delete('/hr-doc-type', adminController.deleteHRDocTypeLOVS)
+
 module.exports = router

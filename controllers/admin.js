@@ -11,6 +11,7 @@ const models = require('../db/models'),
     News = models.C_ORG_NEWS,
     ListOfValues = models.C_LST_VAL,
     ProfileAttribute = models.C_EMP_XM,
+    AdminRequest = models.C_ADM_REQ,
     Sequelize = require('sequelize'),
     sequelize = require('../db/models').sequelize,
     Op = Sequelize.Op,
@@ -2297,6 +2298,293 @@ async function deleteEmployeeContracts(req, res, next){
     
 }
 
+async function getExpenseNatureLOVS(req, res, next) {
+    let entity = req.body
+    console.log("POST ASSET: ", entity)
+
+    try {
+        let data = await ListOfValues.findAll({
+            where: {
+                type: 'expense_nature',
+            }
+        })
+
+        res.status(200).json({
+            status: 200,
+            result: data,
+        })
+    }
+    catch (err) {
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function postExpenseNatureLOVS(req, res, next) {
+    let entity = req.body
+    console.log("POST ASSET: ", entity)
+
+    try {
+        let data = await ListOfValues.upsert({
+            ...entity,
+            type: 'expense_nature',
+        })
+        try {
+            let data2 = await ListOfValues.findOne({
+                where: {
+                    val: entity.val
+                },
+            })
+            res.status(200).json({
+                status: 200,
+                result: data2,
+                updated: !data,
+            })
+
+        }
+        catch (err) {
+            res.status(200).json({
+                status: 200,
+                result: data,
+            })
+        }
+    }
+    catch (err) {
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function updateExpenseNatureLOVS(req, res, next) {
+    let entity = req.body
+
+    try {
+        let data = await ListOfValues.update(entity, { where: { row_id: entity.row_id } })
+
+        res.status(200).json({
+            status: 200,
+            result: data,
+        })
+    }
+    catch (err) {
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function deleteExpenseNatureLOVS(req, res, next) {
+    let entity = req.body
+
+    try {
+        let data = await ListOfValues.destroy({ where: { row_id: entity.id } })
+
+        res.status(200).json({
+            status: 200,
+            data,
+        })
+    }
+    catch (err) {
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function getITTicketTypeLOVS(req, res, next) {
+    let entity = req.body
+    console.log("POST ASSET: ", entity)
+
+    try {
+        let data = await ListOfValues.findAll({
+            where: {
+                type: 'it-ticket-type',
+            }
+        })
+
+        res.status(200).json({
+            status: 200,
+            result: data,
+        })
+    }
+    catch (err) {
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function postITTicketTypeLOVS(req, res, next) {
+    let entity = req.body
+    console.log("POST ASSET: ", entity)
+
+    try {
+        let data = await ListOfValues.upsert({
+            ...entity,
+            type: 'it-ticket-type',
+        })
+        try {
+            let data2 = await ListOfValues.findOne({
+                where: {
+                    val: entity.val
+                },
+            })
+            res.status(200).json({
+                status: 200,
+                result: data2,
+                updated: !data,
+            })
+
+        }
+        catch (err) {
+            res.status(200).json({
+                status: 200,
+                result: data,
+            })
+        }
+    }
+    catch (err) {
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function updateITTicketTypeLOVS(req, res, next) {
+    let entity = req.body
+
+    try {
+        let data = await ListOfValues.update(entity, { where: { row_id: entity.row_id } })
+
+        res.status(200).json({
+            status: 200,
+            result: data,
+        })
+    }
+    catch (err) {
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function deleteITTicketTypeLOVS(req, res, next) {
+    let entity = req.body
+
+    try {
+        let data = await ListOfValues.destroy({ where: { row_id: entity.id } })
+
+        res.status(200).json({
+            status: 200,
+            data,
+        })
+    }
+    catch (err) {
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+
+
+async function getHRDocTypeLOVS(req, res, next) {
+    let entity = req.body
+    console.log("POST ASSET: ", entity)
+
+    try {
+        let data = await ListOfValues.findAll({
+            where: {
+                type: 'hr-doc-type',
+            }
+        })
+
+        res.status(200).json({
+            status: 200,
+            result: data,
+        })
+    }
+    catch (err) {
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function postHRDocTypeLOVS(req, res, next) {
+    let entity = req.body
+    console.log("POST ASSET: ", entity)
+
+    try {
+        let data = await ListOfValues.upsert({
+            ...entity,
+            type: 'hr-doc-type',
+        })
+        try {
+            let data2 = await ListOfValues.findOne({
+                where: {
+                    val: entity.val
+                },
+            })
+            res.status(200).json({
+                status: 200,
+                result: data2,
+                updated: !data,
+            })
+
+        }
+        catch (err) {
+            res.status(200).json({
+                status: 200,
+                result: data,
+            })
+        }
+    }
+    catch (err) {
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function updateHRDocTypeLOVS(req, res, next) {
+    let entity = req.body
+
+    try {
+        let data = await ListOfValues.update(entity, { where: { row_id: entity.row_id } })
+
+        res.status(200).json({
+            status: 200,
+            result: data,
+        })
+    }
+    catch (err) {
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function deleteHRDocTypeLOVS(req, res, next) {
+    let entity = req.body
+
+    try {
+        let data = await ListOfValues.destroy({ where: { row_id: entity.id } })
+
+        res.status(200).json({
+            status: 200,
+            data,
+        })
+    }
+    catch (err) {
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
 module.exports = {
     getOrganizations,
     postOrganization,
@@ -2372,4 +2660,16 @@ module.exports = {
     searchEmployeeContracts,
     renewEmployeeContracts,
     deleteEmployeeContracts,
+    getExpenseNatureLOVS,
+    postExpenseNatureLOVS,
+    updateExpenseNatureLOVS,
+    deleteExpenseNatureLOVS,
+    getITTicketTypeLOVS,
+    postITTicketTypeLOVS,
+    updateITTicketTypeLOVS,
+    deleteITTicketTypeLOVS,
+    getHRDocTypeLOVS,
+    postHRDocTypeLOVS,
+    updateHRDocTypeLOVS,
+    deleteHRDocTypeLOVS,
 }

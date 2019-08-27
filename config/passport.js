@@ -118,6 +118,7 @@ passport.use(
                             req.jwtPayload = {
                                 id: user.row_id,
                                 username: user.login,
+                                name: user.fst_name + " " + user.last_name,
                                 responsibility: user.resp_id,
                                 organization: user.bu_id,
                             }
