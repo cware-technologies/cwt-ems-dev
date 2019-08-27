@@ -188,7 +188,7 @@ module.exports = {
         "FLG_03" : null
       },
       {
-        "row_id" : 24,
+        "row_id" : 25,
         "name" : "Certifications",
         "desc" : "skkoasijfoasijdoasijdoi",
         "bu_id" : 1,
