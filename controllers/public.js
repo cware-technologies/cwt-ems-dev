@@ -194,7 +194,10 @@ function recursiveHierarchy(root) {
 
                         return resolve(current)
                     }
-
+		    else if(manager === null){
+		    	return resolve(null)
+		    }
+		    console.log("MANAGER: ")
                     console.log("--> ", manager.get({ plain: true }).fst_name)
 
                     chain = Promise.resolve().then(() => expand(manager).then((res) => {
@@ -247,9 +250,7 @@ async function getEmployeeHierarchy(req, res, next) {
         let plain = data.get({plain: true})
         let response = {
             name: plain.full_name,
-            children: [
-                hierarchy
-            ]
+            children: hierarchy !== null &&  [ hierarchy ]
         }
         res.json({
             data: response,
