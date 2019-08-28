@@ -392,7 +392,7 @@ async function updateEmployeeProfessionalAttribute(req, res, next) {
 
 async function getEmployeeEntitlements(req, res, next) {
     let params = req.query
-
+	console.log("PARAMS:" , params)
     try {
         let data = await ProfileAttribute.findAll({
             where: {
