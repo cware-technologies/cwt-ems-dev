@@ -37,12 +37,12 @@ router.get('/employee/entitlements/history', privateController.getEntitlementsDa
 router.get('/employee/entitlements', privateController.getEmployeeEntitlements)
 router.get('/employee/leavesCount', privateController.getLeavesCount)
 
+router.get('/employee/ticket/requested', privateController.getRequestedTickets)
 router.post('/employee/ticket/request', privateController.postTicketRequest)
 router.post('/employee/ticket/upload', privateController.uploadTicketFile)
 router.get('/employee/ticket/download', privateController.downloadTicketFile)
 router.get('/employee/ticketsCount', privateController.getTicketsCount)
 router.get('/employee/tickets', privateController.getTickets)
-router.get('/employee/ticket/requested', privateController.getRequestedTickets)
 router.put('/employee/ticket/updateTicketRequested', privateController.updateTicketRequested)
 
 module.exports = router

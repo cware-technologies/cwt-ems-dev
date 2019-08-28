@@ -3,7 +3,6 @@ import TabContainer from './TabContainer';
 import Container from './MainContainer';
 import ExpenseClaimNew from './ExpenseClaimNew';
 import ExpenseClaimHistory from './ExpenseClaimHistory';
-import ExpenseClaimRequests from './ExpenseClaimRequests';
 
 export default class ExpenseClaim extends Component {
     render() {
@@ -14,8 +13,7 @@ export default class ExpenseClaim extends Component {
                     components={
                         [
                             { label: "New Expense Claim", component: <ExpenseClaimNew /> },
-                            { label: "Expense Claim History", component: <ExpenseClaimHistory /> },
-                            { label: "Expense Claim Requests", component: <ExpenseClaimRequests /> },
+                            { label: "Expense Claim History", component: <ExpenseClaimHistory /> }
                         ]
                     }
                 />

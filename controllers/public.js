@@ -254,7 +254,7 @@ async function getEmployeeHierarchy(req, res, next) {
             name: `${plain.fst_name} ${plain.last_name}`,
             children: hierarchy !== null &&  [ hierarchy ]
         }
-	
+
         res.json({
 	    status: 200,
             data: response,

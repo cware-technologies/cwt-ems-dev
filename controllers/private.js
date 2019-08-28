@@ -3,6 +3,7 @@
 
 const Op = require('sequelize').Op,
     models = require('../db/models'),
+    User = models.C_USER,
     Employee = models.C_EMP,
     Position = models.C_POSTN,
     ProfileAttribute = models.C_EMP_XM,
@@ -13,17 +14,24 @@ const Op = require('sequelize').Op,
     sequelize = require('../db/models').sequelize,
     multer = require('multer')
 
-let fileName
+    let fileName = null
+
+    function fileNameSet (name) {
+        fileName = name
+    }
 
 async function getEmployee(req, res, next) {
     let employee = req.query
     console.log("APPLICATION: ", employee)
 
     try {
-        let data = await Employee.findOne({
+        let data = await User.findOne({
             where: {
                 row_id: employee.employee,
             },
+        })
+
+        let emp = await data.getEmployee({
             include: [
                 {
                     model: Position,
@@ -40,7 +48,7 @@ async function getEmployee(req, res, next) {
 
         res.status(200).json({
             status: 200,
-            result: data,
+            result: emp,
         })
     }
     catch (err) {
@@ -804,8 +812,10 @@ async function getLeavesCount(req, res, next) {
 
 async function postTicketRequest(req, res, next) {
     let request = req.body
-    console.log("APPLICATION: ", request)
-
+    console.log("FFFFFFFIIIIIILLLLLEEEE   ",request.fileName) 
+    if(request.fileName===null){
+        fileName = null
+    }
     try {
         let data = await AdminRequest.create({
             ...request,
@@ -963,7 +973,8 @@ async function uploadTicketFile(req, res, next) {
         filename: function (req, file, cb) {
             var fileExtension = file.originalname.split('.')
             cb(null, `${file.fieldname}-${time}.${fileExtension[fileExtension.length - 1]}`)
-            fileName = 'public/my_services_files/' + `${file.fieldname}-${time}.${fileExtension[fileExtension.length - 1]}`
+            let name = 'public/my_services_files/' + `${file.fieldname}-${time}.${fileExtension[fileExtension.length - 1]}`
+            fileNameSet(name)
             console.log("FILLLLEEEEEE NAAAAMMEE ", fileName)
         },
     })
