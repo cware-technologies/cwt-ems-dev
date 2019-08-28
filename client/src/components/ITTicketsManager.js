@@ -3,11 +3,9 @@ import TabContainer from './TabContainer';
 import Container from './MainContainer';
 import ITTicketNew from './ITTicketNew';
 import ITTicketHistory from './ITTicketHistory';
-import ITTicketsRequests from './ITTicketsRequests';
 
 export default class ITTickets extends Component {
     render() {
-        console.log("ITTicketManager!!!!!!!!!!!!!!!!!!!!!")
         return (
             <Container>
                 <TabContainer
@@ -15,8 +13,7 @@ export default class ITTickets extends Component {
                     components={
                         [
                             { label: "New Ticket", component: <ITTicketNew /> },
-                            { label: "Tickets History", component: <ITTicketHistory /> },
-                            { label: "Tickets Requests", component: <ITTicketsRequests /> },
+                            { label: "Tickets History", component: <ITTicketHistory /> }
                         ]
                     }
                 />

@@ -14,7 +14,7 @@ class ExpenseClaimNew extends Component {
     state = {
         selectedFile: null,
         ticketRequestForm: {
-
+            fileName: null,
         },
         ticketNumber: 0,
     }
@@ -65,6 +65,7 @@ class ExpenseClaimNew extends Component {
                 stat_cd: 'open'
             }
         }), () => { this.sendPostRequest(element, '/private/employee/ticket/request', 'post') })
+        console.log(this.state)
     }
 
     sendPostRequest = async (element, endpoint, method) => {
@@ -78,7 +79,6 @@ class ExpenseClaimNew extends Component {
                 url: `${endpoint}`,
                 data
             })
-            console.log(response)
             this.props.success("Expense Claim Request posted Successfully")
             return
         }
@@ -102,10 +102,14 @@ class ExpenseClaimNew extends Component {
 
         })
             .then(res => {
-                console.log(this.state.selectedFile.name)
+                this.setState(prevState => ({
+                    [`ticketRequestForm`]: {
+                        ...prevState[`ticketRequestForm`],
+                        fileName: this.state.selectedFile.name,
+                    }
+                }))
 
                 this.props.success("File Uploaded Successfully!")
-
             }).catch(err => {
                 this.props.error({ message: "File Could Not Be Uploaded!" })
             })

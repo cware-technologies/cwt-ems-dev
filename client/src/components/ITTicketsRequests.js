@@ -16,6 +16,7 @@ import { getUser } from '../reducers/authReducer';
 import Search from './Search'
 import { getUserOrganization } from '../reducers/authReducer';
 import DownloadIcon from '@material-ui/icons/SaveAlt';
+import Container from './MainContainer';
 
 const styles = theme => ({
 
@@ -51,12 +52,12 @@ const styles = theme => ({
 
 const inputProps = {
     step: 500,
-  };
+};
 
 const filterOptions = [
     { name: 'In Progress', value: 'inProgress' },
     { name: 'Resolved', value: 'resolved' },
-    { name: 'open', value: 'open' },
+    { name: 'Open', value: 'open' },
     { name: 'All', value: 'all' },
 ]
 
@@ -96,13 +97,12 @@ class ITTicketsRequests extends Component {
                     type_cd: 'IT-Ticket'
                 }
             })
-            
+
             this.setState(prevState => ({
                 data: response.data.data,
                 isSearching: false,
             }))
         }
-        
         catch (err) {
 
         }
@@ -111,8 +111,8 @@ class ITTicketsRequests extends Component {
     handleClick = async (status, data) => {
         let response
         let newData = this.state.data.filter(row => {
-            return row.row_id !== data.row_id
-        })
+            return row.row_id === data.row_id
+        })[0]
 
         try {
             response = await axios({
@@ -130,10 +130,13 @@ class ITTicketsRequests extends Component {
 
             if (response.data.status === 200) {
                 console.log("Record Updated Successfully!")
+                newData.stat_cd = 'pending'
                 this.setState(prevState => ({
-                    data: newData,
-                }))
+                    data: [
+                        ...prevState.data,
 
+                    ]
+                }))
             }
             else {
                 console.log("Could Not Update The Record")
@@ -161,10 +164,16 @@ class ITTicketsRequests extends Component {
         }
 
         if (this.state.query !== '') {
-            return data.filter(row => row.requestor.fst_name.toLowerCase().search(this.state.query.toLowerCase()) > -1 || row.requestor.last_name.toLowerCase().search(this.state.query.toLowerCase()) > -1 ||  row.created.search(this.state.query) > -1 )
+            return data.filter(row => row.requestor.fst_name.toLowerCase().search(this.state.query.toLowerCase()) > -1 || row.requestor.last_name.toLowerCase().search(this.state.query.toLowerCase()) > -1 || row.created.search(this.state.query) > -1)
         }
 
         return data.filter(row => row.stat_cd === this.state.filter)
+    }
+
+    onClickExpansion = (data, expansion) => {
+        if (data.stat_cd === 'open' && expansion === false) {
+            this.handleClick('pending', data)
+        }
     }
 
     onSearchChange = (e) => {
@@ -177,12 +186,6 @@ class ITTicketsRequests extends Component {
     onSearchSubmit = () => {
         console.log(this.state.data)
         return this.state.data.filter(row => row.requestor.last_name === this.state.query)
-    }
-
-    onClickExpansion = (data) => {
-        if(data.stat_cd==='open'){
-            this.handleClick('pending',data)
-        }  
     }
 
     handleChangePage = (event, page) => {
@@ -212,111 +215,117 @@ class ITTicketsRequests extends Component {
 
         if (data) {
             return (
-                <div>
-                    <TextField
-                        id='filter-list'
-                        select
-                        label='Filter'
-                        value={this.state.filter}
-                        defaultValue=''
-                        onChange={this.handleFilterChange}
-                        SelectProps={{
-                            native: true,
-                        }}
-                        margin="dense"
-                        variant="outlined"
-                    >
-                        <option value={'pending'}>
-                            {'Pending'}
-                        </option>
-                        {filterOptions.map((option, index) => (
-                            <option key={index} value={option.value}>
-                                {option.name}
+                <Container>
+                    <div>
+                        <TextField
+                            id='filter-list'
+                            select
+                            label='Filter'
+                            value={this.state.filter}
+                            defaultValue=''
+                            onChange={this.handleFilterChange}
+                            SelectProps={{
+                                native: true,
+                            }}
+                            margin="dense"
+                            variant="outlined"
+                        >
+                            <option value={'pending'}>
+                                {'Pending'}
                             </option>
-                        ))}
-                    </TextField>
-                    <Search
-                        title="Name or Date"
-                        query={query}
-                        submitHandler={this.filterData(data)}
-                        changeHandler={this.onSearchChange}
-                        isSearching=''
-                    />
-                    {
-                        this.filterData(data).map(data => {
-                            return (
-                                <div>
-                                <ExpansionPanel onClick={()=>this.onClickExpansion(data)}>
-                                    <ExpansionPanelSummary
-                                        expandIcon={<ExpandMoreIcon />}
-                                        aria-controls="panel1a-content"
-                                        id="panel1a-header"
-                                    >
-                                        <div className={classes.flxContainer}>
-                                            <Typography variant="subtitle2" className={classNames(classes.btn, classes.pstnabslt)} >{data.stat_cd.toUpperCase()}</Typography>
-                                            <Typography variant="subtitle2">{data.requestor.fst_name} {data.requestor.last_name}</Typography>
-                                            <Typography variant="overline">{data.created}</Typography>
-                                        </div>
-                                    </ExpansionPanelSummary>
-                                    <ExpansionPanelDetails>
-                                        <div className={classes.flxContainer}>
-                                            <Typography variant="subtitle" color="primary" gutterBottom>
-                                                <div>Ticket #: {data.ATTRIB_02}</div>
-                                                <div className={classes.wid80}>Ticket Type: {data.expenseType.val} </div>
-                                                <div className={classes.wid80}>Problem Statement: {data.ATTRIB_01} </div>
-                                                <div className={classes.wid80} onClick={(e) => this.handleDownload(e, data.ATTRIB_03)}>File: <DownloadIcon /></div>
-                                            </Typography>
-                                            <TextField 
-                                                value= {this.state.msg}
-                                                multiline= {true}
-                                                rows= "4"
-                                                label="Your Reply" 
-                                                onChange = {this.onMsgChange}
-                                                style={data.stat_cd === "resolved" ? { display: 'none' } : {}}
-                                            />
-                                            <div className={classes.btnPnl}>
-                                                <Button
-                                                    id="resolved"
-                                                    onClick={(e) => this.handleClick('resolved', data)}
-                                                    variant="outlined"
-                                                    className={classes.btnP}
-                                                    style={data.stat_cd === "resolved" ? { display: 'none' } : {}}
-                                                >
-                                                    Resolved
+                            {filterOptions.map((option, index) => (
+                                <option key={index} value={option.value}>
+                                    {option.name}
+                                </option>
+                            ))}
+                        </TextField>
+                        <Search
+                            title="Name or Date"
+                            query={query}
+                            submitHandler={this.filterData(data)}
+                            changeHandler={this.onSearchChange}
+                            isSearching=''
+                        />
+                        {
+                            this.filterData(data).map(data => {
+                                return (
+                                    <div>
+                                        <ExpansionPanel onChange={(event, expansion) => this.onClickExpansion(data, expansion)}>
+                                            <ExpansionPanelSummary
+                                                expandIcon={<ExpandMoreIcon />}
+                                                aria-controls="panel1a-content"
+                                                id="panel1a-header"
+                                            >
+                                                <div className={classes.flxContainer}>
+                                                    <Typography variant="subtitle2" className={classNames(classes.btn, classes.pstnabslt)} >{data.stat_cd.toUpperCase()}</Typography>
+                                                    <Typography variant="subtitle2">{data.requestor.fst_name} {data.requestor.last_name}</Typography>
+                                                    <Typography variant="overline">{data.created}</Typography>
+                                                </div>
+                                            </ExpansionPanelSummary>
+                                            <ExpansionPanelDetails>
+                                                <div className={classes.flxContainer}>
+                                                    <Typography variant="subtitle" color="primary" gutterBottom>
+                                                        <div>Ticket #: {data.ATTRIB_02}</div>
+                                                        <div className={classes.wid80}>Ticket Type: {data.expenseType.val} </div>
+                                                        <div className={classes.wid80}>Problem Statement: {data.ATTRIB_01} </div>
+                                                        <div className={classes.wid80}
+                                                            style={data.ATTRIB_03 === null ? { display: 'none' } : {}}
+                                                            onClick={(e) => this.handleDownload(e, data.ATTRIB_03)}>
+                                                            File: <DownloadIcon />
+                                                        </div>
+                                                    </Typography>
+                                                    <TextField
+                                                        value={this.state.msg}
+                                                        multiline={true}
+                                                        rows="4"
+                                                        label="Your Reply"
+                                                        onChange={this.onMsgChange}
+                                                        style={data.stat_cd === "resolved" ? { display: 'none' } : {}}
+                                                    />
+                                                    <div className={classes.btnPnl}>
+                                                        <Button
+                                                            id="resolved"
+                                                            onClick={(e) => this.handleClick('resolved', data)}
+                                                            variant="outlined"
+                                                            className={classes.btnP}
+                                                            style={data.stat_cd === "resolved" ? { display: 'none' } : {}}
+                                                        >
+                                                            Resolved
                                             </Button>
-                                                <Button
-                                                    id="inProgress"
-                                                    onClick={() => this.handleClick('inProgress', data)}
-                                                    variant="outlined"
-                                                    className={classes.btn}
-                                                    style={data.stat_cd === "resolved" ? { display: 'none' } : {}}
-                                                >
-                                                    In Progress
+                                                        <Button
+                                                            id="inProgress"
+                                                            onClick={() => this.handleClick('inProgress', data)}
+                                                            variant="outlined"
+                                                            className={classes.btn}
+                                                            style={data.stat_cd === "resolved" ? { display: 'none' } : {}}
+                                                        >
+                                                            In Progress
                                             </Button>
-                                            </div>
-                                        </div>
-                                    </ExpansionPanelDetails>
-                                </ExpansionPanel>
-                                </div>
-                            )
-                        })
-                    }
-                    <TablePagination
-                        rowsPerPageOptions={[5, 10, 25]}
-                        component="div"
-                        count={data.length}
-                        rowsPerPage={rowsPerPage}
-                        page={this.state.page}
-                        backIconButtonProps={{
-                            'aria-label': 'Previous Page',
-                        }}
-                        nextIconButtonProps={{
-                            'aria-label': 'Next Page',
-                        }}
-                        onChangePage={this.handleChangePage}
-                        onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                    />
-                </div>
+                                                    </div>
+                                                </div>
+                                            </ExpansionPanelDetails>
+                                        </ExpansionPanel>
+                                    </div>
+                                )
+                            })
+                        }
+                        <TablePagination
+                            rowsPerPageOptions={[5, 10, 25]}
+                            component="div"
+                            count={data.length}
+                            rowsPerPage={rowsPerPage}
+                            page={this.state.page}
+                            backIconButtonProps={{
+                                'aria-label': 'Previous Page',
+                            }}
+                            nextIconButtonProps={{
+                                'aria-label': 'Next Page',
+                            }}
+                            onChangePage={this.handleChangePage}
+                            onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                        />
+                    </div>
+                </Container>
             )
         }
     }

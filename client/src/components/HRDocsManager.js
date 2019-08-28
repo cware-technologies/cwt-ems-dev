@@ -3,7 +3,6 @@ import TabContainer from './TabContainer';
 import Container from './MainContainer';
 import HRDocsNew from './HRDocsNew';
 import HRDocsHistory from './HRDocsHistory';
-import HRDocsRequests from './HRDocsRequests';
 
 export default class HRDocs extends Component {
     render() {
@@ -15,7 +14,6 @@ export default class HRDocs extends Component {
                         [
                             { label: "New HR Request", component: <HRDocsNew /> },
                             { label: "HR Documents History", component: <HRDocsHistory /> },
-                            { label: "HR RDocuments Requests", component: <HRDocsRequests /> },
                         ]
                     }
                 />
