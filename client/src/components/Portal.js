@@ -51,6 +51,10 @@ const ExpenseNatureManager = lazy(() => import('./ExpenseNatureManager'));
 const ITTicketTypeManager = lazy(() => import('./ITTicketTypeManager'));
 const HRDocsTypeManager = lazy(() => import('./HRDocsTypeManager'));
 
+const ITTicketsRequests = lazy(() => import('./ITTicketsRequests'));
+const ExpenseClaimRequests = lazy(() => import('./ExpenseClaimRequests'));
+const HRDocsRequests = lazy(() => import('./HRDocsRequests'));
+
 const styles = theme => ({
   root: {
     display: 'flex',
@@ -163,6 +167,9 @@ class Portal extends React.Component {
             <PrivateRoute path={`${match.path}expense-nature`} component={ExpenseNatureManager} accessFunction={this.requireAuth} />
             <PrivateRoute path={`${match.path}it-ticket-type`} component={ITTicketTypeManager} accessFunction={this.requireAuth} />
             <PrivateRoute path={`${match.path}hr-docs-type`} component={HRDocsTypeManager} accessFunction={this.requireAuth} />
+            <PrivateRoute path={`${match.path}it-tickets-requests`} component={ITTicketsRequests} accessFunction={this.requireAuth} />
+            <PrivateRoute path={`${match.path}expense-claim-requests`} component={ExpenseClaimRequests} accessFunction={this.requireAuth} />
+            <PrivateRoute path={`${match.path}hr-docs-requests`} component={HRDocsRequests} accessFunction={this.requireAuth} />
             <Redirect from='/' to='/portal/dashboard' />
           </Switch>
         </Suspense>

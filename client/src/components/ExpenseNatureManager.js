@@ -13,32 +13,22 @@ export class ExpenseNatureManager extends Component {
     render() {
         return (
             <Container>
-                <TabContainer
-                    title="Expense Nature Manager"
-                    components={
-                        [
-                            {
-                                label: "Add",
-                                component: <Suspense fallback={<LoadingSpinner />}>
-                                    <Table
-                                        title='Expense Nature'
-                                        endpoint='/admin/expense-nature'
-                                        headers={[
-                                            { id: 'val', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Type' },
-                                        ]}
-                                        fields={[
-                                            { id: 'val', type: 'text', label: 'Name' },
-                                        ]}
-                                        const schema={{}}
-                                        organization={this.props.organization}
-                                    // selectEntity={this.selectEntity}
-                                    // clearSelection={this.clearSelection}
-                                    />
-                                </Suspense>,
-                            },
-                        ]
-                    }
-                />
+                <Suspense fallback={<LoadingSpinner />}>
+                    <Table
+                        title='Expense Nature'
+                        endpoint='/admin/expense-nature'
+                        headers={[
+                            { id: 'val', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Type' },
+                        ]}
+                        fields={[
+                            { id: 'val', type: 'text', label: 'Name' },
+                        ]}
+                        const schema={{}}
+                        organization={this.props.organization}
+                    // selectEntity={this.selectEntity}
+                    // clearSelection={this.clearSelection}
+                    />
+                </Suspense>
             </Container>
         )
     }

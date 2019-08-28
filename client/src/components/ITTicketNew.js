@@ -13,7 +13,7 @@ class ITTicketNew extends Component {
     state = {
         selectedFile: null,
         ticketRequestForm: {
-
+            fileName: null,
         },
         ticketNumber: 0,
     }
@@ -132,8 +132,12 @@ class ITTicketNew extends Component {
 
         })
             .then(res => {
-                console.log(this.state.selectedFile.name)
-
+                this.setState(prevState => ({
+                    [`ticketRequestForm`]: {
+                        ...prevState[`ticketRequestForm`],
+                        fileName: this.state.selectedFile.name,
+                    }
+                }))
                 this.props.success("File Uploaded Successfully!")
 
             }).catch(err => {
@@ -148,7 +152,7 @@ class ITTicketNew extends Component {
 
     render() {
         let { ticketRequestForm } = this.state
-        console.log("IT TICKET NEW@@@@@@@")
+
         return (
             <div mt={2}>
                 <ModalTrigger

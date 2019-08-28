@@ -55,18 +55,18 @@ module.exports = (sequelize, DataTypes) => {
     ATTRIB_06: {
       type: DataTypes.STRING(100),
     },
-    ATTRIB_07: {
-      type: DataTypes.STRING(100),
-    },
-    ATTRIB_08: {
-      type: DataTypes.STRING(100),
-    },
-    ATTRIB_09: {
-      type: DataTypes.STRING(100),
-    },
-    ATTRIB_10: {
-      type: DataTypes.STRING(100),
-    },
+    // ATTRIB_07: {
+    //   type: DataTypes.STRING(100),
+    // },
+    // ATTRIB_08: {
+    //   type: DataTypes.STRING(100),
+    // },
+    // ATTRIB_09: {
+    //   type: DataTypes.STRING(100),
+    // },
+    // ATTRIB_10: {
+    //   type: DataTypes.STRING(100),
+    // },
     ATTRIB_11: {
       type: DataTypes.INTEGER(11),
         references: {
@@ -76,63 +76,63 @@ module.exports = (sequelize, DataTypes) => {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
     },
-    ATTRIB_12: {
-      type: DataTypes.INTEGER(11),
-    },
-    ATTRIB_13: {
-      type: DataTypes.INTEGER(11),
-    },
-    ATTRIB_14: {
-      type: DataTypes.INTEGER(11),
-    },
-    ATTRIB_15: {
-      type: DataTypes.INTEGER(11),
-    },
-    ATTRIB_16: {
-      type: DataTypes.INTEGER(11),
-    },
-    ATTRIB_17: {
-      type: DataTypes.INTEGER(11),
-    },
-    ATTRIB_18: {
-      type: DataTypes.DATE,
-    },
-    ATTRIB_19: {
-      type: DataTypes.DATE,
-    },
-    ATTRIB_20: {
-      type: DataTypes.DATE,
-    },
-    FLG_01: {
-      type: DataTypes.BOOLEAN,
-    },
-    FLG_02: {
-      type: DataTypes.BOOLEAN,
-    },
-    FLG_03: {
-      type: DataTypes.BOOLEAN,
-    },
-    FLG_04: {
-      type: DataTypes.BOOLEAN,
-    },
-    FLG_05: {
-      type: DataTypes.BOOLEAN,
-    },
-    FLG_06: {
-      type: DataTypes.CHAR,
-    },
-    FLG_07: {
-      type: DataTypes.CHAR,
-    },
-    FLG_08: {
-      type: DataTypes.CHAR,
-    },
-    FLG_09: {
-      type: DataTypes.CHAR,
-    },
-    FLG_10: {
-      type: DataTypes.CHAR,
-    },
+    // ATTRIB_12: {
+    //   type: DataTypes.INTEGER(11),
+    // },
+    // ATTRIB_13: {
+    //   type: DataTypes.INTEGER(11),
+    // },
+    // ATTRIB_14: {
+    //   type: DataTypes.INTEGER(11),
+    // },
+    // ATTRIB_15: {
+    //   type: DataTypes.INTEGER(11),
+    // },
+    // ATTRIB_16: {
+    //   type: DataTypes.INTEGER(11),
+    // },
+    // ATTRIB_17: {
+    //   type: DataTypes.INTEGER(11),
+    // },
+    // ATTRIB_18: {
+    //   type: DataTypes.DATE,
+    // },
+    // ATTRIB_19: {
+    //   type: DataTypes.DATE,
+    // },
+    // ATTRIB_20: {
+    //   type: DataTypes.DATE,
+    // },
+    // FLG_01: {
+    //   type: DataTypes.BOOLEAN,
+    // },
+    // FLG_02: {
+    //   type: DataTypes.BOOLEAN,
+    // },
+    // FLG_03: {
+    //   type: DataTypes.BOOLEAN,
+    // },
+    // FLG_04: {
+    //   type: DataTypes.BOOLEAN,
+    // },
+    // FLG_05: {
+    //   type: DataTypes.BOOLEAN,
+    // },
+    // FLG_06: {
+    //   type: DataTypes.CHAR,
+    // },
+    // FLG_07: {
+    //   type: DataTypes.CHAR,
+    // },
+    // FLG_08: {
+    //   type: DataTypes.CHAR,
+    // },
+    // FLG_09: {
+    //   type: DataTypes.CHAR,
+    // },
+    // FLG_10: {
+    //   type: DataTypes.CHAR,
+    // },
   },
   {
     timestamp: true,

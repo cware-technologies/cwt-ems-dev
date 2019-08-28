@@ -14,7 +14,11 @@ const Op = require('sequelize').Op,
     sequelize = require('../db/models').sequelize,
     multer = require('multer')
 
-let fileName
+    let fileName = null
+
+    function fileNameSet (name) {
+        fileName = name
+    }
 
 async function getEmployee(req, res, next) {
     let employee = req.query
@@ -808,8 +812,10 @@ async function getLeavesCount(req, res, next) {
 
 async function postTicketRequest(req, res, next) {
     let request = req.body
-    console.log("APPLICATION: ", request)
-
+    console.log("FFFFFFFIIIIIILLLLLEEEE   ",request.fileName) 
+    if(request.fileName===null){
+        fileName = null
+    }
     try {
         let data = await AdminRequest.create({
             ...request,
@@ -967,7 +973,8 @@ async function uploadTicketFile(req, res, next) {
         filename: function (req, file, cb) {
             var fileExtension = file.originalname.split('.')
             cb(null, `${file.fieldname}-${time}.${fileExtension[fileExtension.length - 1]}`)
-            fileName = 'public/my_services_files/' + `${file.fieldname}-${time}.${fileExtension[fileExtension.length - 1]}`
+            let name = 'public/my_services_files/' + `${file.fieldname}-${time}.${fileExtension[fileExtension.length - 1]}`
+            fileNameSet(name)
             console.log("FILLLLEEEEEE NAAAAMMEE ", fileName)
         },
     })
