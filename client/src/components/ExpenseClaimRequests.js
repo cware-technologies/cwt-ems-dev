@@ -56,10 +56,10 @@ const inputProps = {
 };
 
 const filterOptions = [
+    { name: 'open', value: 'open' },
+    { name: 'Pending', value: 'pending' },
     { name: 'In Progress', value: 'inProgress' },
     { name: 'Resolved', value: 'resolved' },
-    { name: 'open', value: 'open' },
-    { name: 'All', value: 'all' },
 ]
 
 class ExpenseClaimRequests extends Component {
@@ -70,8 +70,9 @@ class ExpenseClaimRequests extends Component {
         page: 0,
         isSearching: false,
         query: '',
-        filter: 'pending',
-        msg: ''
+        filter: 'all',
+        msg: '',
+        fileName: null,
     }
 
     componentDidMount() {
@@ -98,7 +99,7 @@ class ExpenseClaimRequests extends Component {
                     type_cd: 'expense_claim'
                 }
             })
-
+            console.log(response.data.data)
             this.setState(prevState => ({
                 data: response.data.data,
                 isSearching: false,
@@ -110,10 +111,43 @@ class ExpenseClaimRequests extends Component {
     }
 
     handleClick = async (status, data) => {
+       
         let response
         let newData = this.state.data.filter(row => {
             return row.row_id === data.row_id
         })[0]
+
+        if ((status === 'resolved' || status === 'inProgress') && this.state.msg !== '') {
+            try {
+                response = await axios({
+                    method: 'post',
+                    url: '/private/employee/notification/new',
+                    headers: {
+                        'content-type': 'application/json',
+                    },
+                    data: {
+                        ATTRIB_02: status,
+                        stat_cd: 'Unread',
+                        ATTRIB_01: this.state.msg,
+                        emp_id: data.emp_id,
+                        bu_id: this.props.organization,
+                        ATTRIB_03: data.type_cd
+                    },
+                })
+
+                if (response.data.status === 200) {
+                    console.log("Notification Added Successfully!")
+                }
+                else {
+                    console.log("Notification Could not be added")
+                    console.log(response)
+                }
+            }
+            catch (err) {
+                console.log("Could Not Update The Record")
+            }
+
+        }
 
         try {
             response = await axios({
@@ -125,19 +159,17 @@ class ExpenseClaimRequests extends Component {
                 data: {
                     row_id: data.row_id,
                     stat_cd: status,
-                    msg: this.state.msg
+                    msg: this.state.msg,
+                    fileName: this.state.fileName
                 },
             })
 
             if (response.data.status === 200) {
                 console.log("Record Updated Successfully!")
-                newData.stat_cd = 'pending'
-                this.setState(prevState => ({
-                    data: [
-                        ...prevState.data,
-
-                    ]
-                }))
+                this.setState({
+                    msg: '',
+                })
+                this.getList()
             }
             else {
                 console.log("Could Not Update The Record")
@@ -154,7 +186,7 @@ class ExpenseClaimRequests extends Component {
         this.setState(prevState => ({
             filter: value,
         }))
-
+        this.getList()
         return this.state.data.filter(row => row.stat_cd === this.state.filter)
     }
 
@@ -237,8 +269,8 @@ class ExpenseClaimRequests extends Component {
                             margin="dense"
                             variant="outlined"
                         >
-                            <option value={'pending'}>
-                                {'Pending'}
+                            <option value={'all'}>
+                                {'All'}
                             </option>
                             {filterOptions.map((option, index) => (
                                 <option key={index} value={option.value}>

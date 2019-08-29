@@ -56,12 +56,13 @@ const inputProps = {
 };
 
 const filterOptions = [
+    { name: 'Open', value: 'open' },
+    { name: 'Pending', value: 'pending' },
     { name: 'In Progress', value: 'inProgress' },
     { name: 'Resolved', value: 'resolved' },
-    { name: 'Open', value: 'open' },
-    { name: 'All', value: 'all' },
 ]
 
+let baseState;
 class ITTicketsRequests extends Component {
 
     state = {
@@ -70,11 +71,12 @@ class ITTicketsRequests extends Component {
         page: 0,
         isSearching: false,
         query: '',
-        filter: 'pending',
-        msg: ''
+        filter: 'all',
+        msg: '',
     }
 
     componentDidMount() {
+        baseState = this.state;
         this.getList()
     }
 
@@ -110,10 +112,44 @@ class ITTicketsRequests extends Component {
     }
 
     handleClick = async (status, data) => {
+        
         let response
         let newData = this.state.data.filter(row => {
             return row.row_id === data.row_id
         })[0]
+
+
+        if ((status === 'resolved' || status==='inProgress') && this.state.msg !== '') {
+            try {
+                response = await axios({
+                    method: 'post',
+                    url: '/private/employee/notification/new',
+                    headers: {
+                        'content-type': 'application/json',
+                    },
+                    data: {
+                        ATTRIB_02: status,
+                        stat_cd: 'Unread',
+                        ATTRIB_01: this.state.msg,
+                        emp_id: data.emp_id,
+                        bu_id: this.props.organization,
+                        ATTRIB_03: data.type_cd
+                    },
+                })
+
+                if (response.data.status === 200) {
+                    console.log("Notification Added Successfully!")
+                }
+                else {
+                    console.log("Notification Could not be added")
+                    console.log(response)
+                }
+            }
+            catch (err) {
+                console.log("Could Not Add Notification")
+            }
+
+        }
 
         try {
             response = await axios({
@@ -131,13 +167,10 @@ class ITTicketsRequests extends Component {
 
             if (response.data.status === 200) {
                 console.log("Record Updated Successfully!")
-                newData.stat_cd = 'pending'
-                this.setState(prevState => ({
-                    data: [
-                        ...prevState.data,
-
-                    ]
-                }))
+                this.setState({
+                    msg: '',
+                })
+                this.getList()
             }
             else {
                 console.log("Could Not Update The Record")
@@ -154,7 +187,7 @@ class ITTicketsRequests extends Component {
         this.setState(prevState => ({
             filter: value,
         }))
-
+        this.getList()
         return this.state.data.filter(row => row.stat_cd === this.state.filter)
     }
 
@@ -231,8 +264,8 @@ class ITTicketsRequests extends Component {
                             margin="dense"
                             variant="outlined"
                         >
-                            <option value={'pending'}>
-                                {'Pending'}
+                            <option value={'all'}>
+                                {'All'}
                             </option>
                             {filterOptions.map((option, index) => (
                                 <option key={index} value={option.value}>
@@ -266,7 +299,7 @@ class ITTicketsRequests extends Component {
                                             <ExpansionPanelDetails>
                                                 <div className={classes.flxContainer}>
                                                     <Typography variant="subtitle" color="primary" gutterBottom>
-                                                        <div>Ticket #: {data.ATTRIB_02}</div>
+                                                        <div>Ticket #: {data.row_id}</div>
                                                         <div className={classes.wid80}>Ticket Type: {data.expenseType.val} </div>
                                                         <div className={classes.wid80}>Problem Statement: {data.ATTRIB_01} </div>
                                                         <div className={classes.wid80}
@@ -336,6 +369,8 @@ class ITTicketsRequests extends Component {
                     </div>
                 </Container>
             )
+        }else{
+            return null
         }
     }
 }

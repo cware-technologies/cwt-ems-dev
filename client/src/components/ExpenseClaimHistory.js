@@ -138,7 +138,10 @@ class ExpenseClaimHistory extends Component {
                                         </Typography>
                                     </div>
                                     <Paper className={classes.root} style={data.ATTRIB_04 === null ? { display: 'none' } : {}}>
-                                        <Typography variant="subtitle" color="primary">
+                                        <Typography 
+                                        style={data.ATTRIB_04 === '' ? { display: 'none' } : {}}
+                                        variant="subtitle" 
+                                        color="primary">
                                             Admin Reply
                                         </Typography>
                                         <Typography component="p">

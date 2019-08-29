@@ -44,6 +44,7 @@ const styles = theme => ({
     },
 })
 
+let baseState;
 class ITTicketHistory extends Component {
 
     state = {
@@ -55,6 +56,7 @@ class ITTicketHistory extends Component {
     }
 
     componentDidMount() {
+        baseState = this.state;
         this.getList()
     }
 
@@ -107,7 +109,7 @@ class ITTicketHistory extends Component {
     render() {
         let { data, rowsPerPage, page } = this.state;
         const { classes } = this.props;
-
+        console.log(data)
         return (
             <div>
                 {
@@ -138,8 +140,11 @@ class ITTicketHistory extends Component {
                                         </Typography>
                                     </div>
                                     <Paper className={classes.root} style={data.ATTRIB_04 === null ? { display: 'none' } : {}}>
-                                        <Typography variant="subtitle" color="primary">
-                                            Admin Reply
+                                        <Typography
+                                        style={data.ATTRIB_04 === '' ? { display: 'none' } : {}}
+                                        variant="subtitle" 
+                                        color="primary">
+                                            Admin Reply:
                                         </Typography>
                                         <Typography component="p">
                                             {data.ATTRIB_04}

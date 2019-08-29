@@ -135,7 +135,7 @@ class TableHeader extends React.Component {
                         this.props.actions || this.props.selectMultiple ?
                             <div id='row-actions' className={classes.rowActions}>
                                 {
-                                    this.props.selectMultiple && rowCount > 0 ?
+                                    this.props.selectMultiple && rowCount > 0 && !this.props.removeCheckboxes ?
                                         <TableCell padding="checkbox">
                                             <Checkbox
                                                 indeterminate={numSelected > 0 && numSelected < rowCount}
@@ -666,6 +666,7 @@ class EnhancedDataTable extends React.Component {
                                 onRequestSort={this.handleRequestSort}
                                 onSelectAllClick={this.onSelectAllClick}
                                 selectMultiple={selectMultiple}
+                                removeCheckboxes={this.props.removeCheckboxes}
                                 numSelected={selected.length}
                                 rowCount={data.length}
                                 actions={this.props.actions}
@@ -695,13 +696,13 @@ class EnhancedDataTable extends React.Component {
                                                     this.props.actions || this.props.selectMultiple ?
                                                         <div id='row-actions' className={classes.rowActions}>
                                                             {
-                                                                selectMultiple &&
+                                                                selectMultiple && !this.props.removeCheckboxes ?
                                                                 <TableCell padding="checkbox">
                                                                     <Checkbox
                                                                         checked={isSelected}
                                                                         onClick={event => this.selectEntity(event, data.row_id, data.name )}
                                                                     />
-                                                                </TableCell>
+                                                                </TableCell> : null
                                                             }
                                                             
                                                             {
