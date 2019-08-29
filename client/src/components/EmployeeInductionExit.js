@@ -10,6 +10,7 @@ import { getUserOrganization } from '../reducers/authReducer';
 import ModalTrigger from './ModalTrigger'
 import AutoSuggest from './AutoSuggest';
 import ActionPanel from './ActionPanel';
+import RestrictedComponent from './RestrictedComponent'
 
 import { alertActions } from '../actions';
 
@@ -238,19 +239,23 @@ class EmployeeInduction extends React.Component {
                             }
                         }}
                     />
-                    <ModalTrigger
-                        title="Apply"
-                        button
-                        disabled={!this.state.selected}
+                    <RestrictedComponent
+                        restriction='write'
                     >
-                        <AddEditForm
-                            headerTitle="application"
-                            fields={applicationFormFields}
-                            object={applicationFormData}
-                            handleChange={this.handleChange}
-                            handleSubmit={this.handleApplicationSubmit}
-                        />
-                    </ModalTrigger>
+                        <ModalTrigger
+                            title="Apply"
+                            button
+                            disabled={!this.state.selected}
+                        >
+                            <AddEditForm
+                                headerTitle="application"
+                                fields={applicationFormFields}
+                                object={applicationFormData}
+                                handleChange={this.handleChange}
+                                handleSubmit={this.handleApplicationSubmit}
+                            />
+                        </ModalTrigger>
+                    </RestrictedComponent>
                 </ActionPanel>
 
                 <Checklist

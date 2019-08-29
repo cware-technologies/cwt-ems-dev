@@ -1164,13 +1164,9 @@ module.exports = {
     downloadTicketFile,
     getRequestedTickets,
     updateTicketRequested,
-<<<<<<< HEAD
-}
-=======
     updateHRDocs,
     postNotification,
     getNotifications,
     countNotifications,
     updateNotifications
 }
->>>>>>> d42df8c79343f9dba9601a85e27b9721bb1cdd80
