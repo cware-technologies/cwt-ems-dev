@@ -9,6 +9,7 @@ import { getUser } from '../reducers/authReducer';
 import { getUsersName } from '../reducers/authReducer';
 import { alertActions } from '../actions/alertActions';
 
+let baseState = ''
 class ExpenseClaimNew extends Component {
 
     state = {
@@ -30,6 +31,7 @@ class ExpenseClaimNew extends Component {
     ]
 
     async componentDidMount() {
+        baseState = this.state
         let today = new Date()
         let year = today.getFullYear()
         let month = today.getMonth() + 1
@@ -77,6 +79,7 @@ class ExpenseClaimNew extends Component {
             })
             console.log(response)
             this.props.success("Document Request posted Successfully")
+            this.setState(baseState)
             return
         }
         catch (err) {

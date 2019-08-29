@@ -56,11 +56,12 @@ const inputProps = {
 };
 
 const filterOptions = [
-    { name: 'Resolved', value: 'resolved' },
     { name: 'Open', value: 'open' },
-    { name: 'All', value: 'all' },
+    { name: 'Pending', value: 'pending' },
+    { name: 'Resolved', value: 'resolved' },
 ]
 
+let baseState = ''
 class ExpenseClaimRequests extends Component {
 
     state = {
@@ -97,7 +98,7 @@ class ExpenseClaimRequests extends Component {
                     type_cd: 'hr_docs'
                 }
             })
-
+            console.log(response.data.data)
             this.setState(prevState => ({
                 data: response.data.data,
                 isSearching: false,
@@ -109,15 +110,48 @@ class ExpenseClaimRequests extends Component {
     }
 
     handleClick = async (status, data) => {
+        
         let response
         let newData = this.state.data.filter(row => {
             return row.row_id === data.row_id
         })[0]
 
+        if ((status === 'resolved' || status==='inProgress') && this.state.msg !== '') {
+            try {
+                response = await axios({
+                    method: 'post',
+                    url: '/private/employee/notification/new',
+                    headers: {
+                        'content-type': 'application/json',
+                    },
+                    data: {
+                        ATTRIB_02: status,
+                        stat_cd: 'Unread',
+                        ATTRIB_01: this.state.msg,
+                        emp_id: data.emp_id,
+                        bu_id: this.props.organization,
+                        ATTRIB_03: data.type_cd
+                    },
+                })
+
+                if (response.data.status === 200) {
+                    console.log("Notification Added Successfully!")
+                }
+                else {
+                    console.log("Notification Could not be added")
+                    console.log(response)
+                }
+            }
+            catch (err) {
+                console.log("Could Not Update The Record")
+            }
+
+        }
+
         try {
             response = await axios({
                 method: 'put',
-                url: '/private/employee/ticket/updateTicketRequested',
+                url: '/private/employee/ticket/updateHRDocs',
                 headers: {
                     'content-type': 'application/json',
                 },
@@ -130,13 +164,10 @@ class ExpenseClaimRequests extends Component {
 
             if (response.data.status === 200) {
                 console.log("Record Updated Successfully!")
-                newData.stat_cd = 'pending'
-                this.setState(prevState => ({
-                    data: [
-                        ...prevState.data,
-
-                    ]
-                }))
+                this.setState({
+                    msg: '',
+                })
+                this.getList()
             }
             else {
                 console.log("Could Not Update The Record")
@@ -153,7 +184,7 @@ class ExpenseClaimRequests extends Component {
         this.setState(prevState => ({
             filter: value,
         }))
-
+        this.getList()
         return this.state.data.filter(row => row.stat_cd === this.state.filter)
     }
 
@@ -171,11 +202,29 @@ class ExpenseClaimRequests extends Component {
 
     }
 
+    checkFileSize = (event) => {
+        let files = event.target.files
+        let size = 2000000
+        let err = [];
+        for (var x = 0; x < files.length; x++) {
+            if (files[x].size > size) {
+                console.log("File size toooo large")
+                return false
+            }
+        }
+        return true
+    }
+
     onChangeHandler = event => {
-        this.setState({
-            selectedFile: event.target.files[0],
-            loaded: 0,
-        }, () => this.uploadFile())
+        if (this.checkFileSize(event) === false) {
+            this.props.error({ message: "File Size can't be more than 5mb" })
+        }
+        else {
+            this.setState({
+                selectedFile: event.target.files[0],
+                loaded: 0,
+            }, () => this.uploadFile())
+        }
     }
 
     uploadFile = even => {
@@ -254,8 +303,8 @@ class ExpenseClaimRequests extends Component {
                             margin="dense"
                             variant="outlined"
                         >
-                            <option value={'pending'}>
-                                {'Pending'}
+                            <option value={'all'}>
+                                {'All'}
                             </option>
                             {filterOptions.map((option, index) => (
                                 <option key={index} value={option.value}>
@@ -283,18 +332,19 @@ class ExpenseClaimRequests extends Component {
                                                 <div className={classes.flxContainer}>
                                                     <Typography variant="subtitle2" className={classNames(classes.btn, classes.pstnabslt)} >{data.stat_cd.toUpperCase()}</Typography>
                                                     <Typography variant="subtitle2">{data.requestor.fst_name} {data.requestor.last_name}</Typography>
-                                                    <Typography variant="overline">{data.expenseType.val}</Typography>
+                                                    <Typography variant="overline" >{data.expenseType.val}</Typography>
                                                     <Typography variant="overline">{data.created}</Typography>
                                                 </div>
                                             </ExpansionPanelSummary>
                                             <ExpansionPanelDetails>
                                                 <div className={classes.flxContainer}>
                                                     <Typography variant="subtitle" color="primary" gutterBottom>
-                                                        <div className={classes.wid80}>Problem Statement: {data.ATTRIB_01} </div>
-                                                        <div style={data.stat_cd !== "resolved" ? { display: 'none' } : {}} className={classes.wid80} onClick={(e) => this.handleDownload(e, data.ATTRIB_03)}>File: <DownloadIcon /></div>
+                                                       <div className={classes.wid80}>Problem Statement: {data.ATTRIB_01} </div>
+                                                        <div style={data.stat_cd !== "resolved" || data.ATTRIB_03 === null ? { display: 'none' } : {}} className={classes.wid80} onClick={(e) => this.handleDownload(e, data.ATTRIB_03)}>File: <DownloadIcon /></div>
                                                     </Typography>
                                                     <div style={data.stat_cd === "resolved" ? { display: 'none' } : {}}>
                                                         <input type="file" name="file" onChange={this.onChangeHandler} />
+                                                        <p>File size upto 5mb </p>
                                                     </div>
                                                     <TextField
                                                         style={data.stat_cd === "resolved" ? { display: 'none' } : {}}

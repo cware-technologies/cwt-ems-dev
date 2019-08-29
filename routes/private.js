@@ -44,5 +44,11 @@ router.get('/employee/ticketsCount', privateController.getTicketsCount)
 router.get('/employee/tickets', privateController.getTickets)
 router.get('/employee/ticket/requested', privateController.getRequestedTickets)
 router.put('/employee/ticket/updateTicketRequested', privateController.updateTicketRequested)
+router.put('/employee/ticket/updateHRDocs', privateController.updateHRDocs)
+
+router.post('/employee/notification/new', privateController.postNotification)
+router.get('/employee/notification/my-notifications', privateController.getNotifications)
+router.get('/employee/notification/count-notifications', privateController.countNotifications)
+router.put('/employee/notification/update-notifications', privateController.updateNotifications)
 
 module.exports = router

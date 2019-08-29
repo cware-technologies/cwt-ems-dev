@@ -17,6 +17,9 @@ import MenuIcon from '@material-ui/icons/Menu';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import PersonIcon from '@material-ui/icons/PersonSharp';
 import SearchBar from './SearchBar';
+import axios from 'axios'
+import { getUser } from '../reducers/authReducer';
+import { getUserOrganization } from '../reducers/authReducer';
 
 const styles = theme => ({
     toolbar: {
@@ -64,6 +67,35 @@ class AppBar extends React.Component {
         super(props);
         this.state = {
             userMenuAnchorEl: null,
+            notificationCount: 0
+        }
+    }
+
+    componentDidMount(){
+        this.countNotifications()
+    }
+
+    countNotifications = async () => {
+        let response
+
+        try {
+            response = await axios({
+                method: 'get',
+                url: '/private/employee/notification/count-notifications',
+                params: {
+                    emp_id: this.props.userID,
+                    bu_id: this.props.organization,
+                    stat_cd: 'Unread'
+                }
+            })
+            console.log("RESPONSESS: ", response)
+
+            this.setState(prevProps => ({
+                notificationCount: response.data.data,
+            }))
+        }
+        catch (err) {
+
         }
     }
 
@@ -77,7 +109,7 @@ class AppBar extends React.Component {
 
     render() {
         let { classes, handleDrawerOpen, drawerOpen, match } = this.props;
-        let { userMenuAnchorEl } = this.state;
+        let { userMenuAnchorEl, notificationCount } = this.state;
         const userMenuOpen = Boolean(userMenuAnchorEl);
 
         return (
@@ -110,7 +142,7 @@ class AppBar extends React.Component {
                     <Link to={`${match.url}notifications`} style={{ textDecoration: 'none' }}>
                         <div style={{ color: 'white' }}>
                             <IconButton color="inherit">
-                                <Badge badgeContent={4} color="secondary">
+                                <Badge badgeContent={notificationCount} color="secondary">
                                     <NotificationsIcon />
                                 </Badge>
                             </IconButton>
@@ -168,7 +200,17 @@ AppBar.propTypes = {
     drawerOpen: PropTypes.bool.isRequired,
 };
 
+const mapStateToProps = (state) => {
+    return {
+        organization: getUserOrganization(state),
+        userID: getUser(state),
+    }
+}
+
+
 export default compose(
     withStyles(styles),
-    connect(() => {}, {...authActions})
+    connect(
+        mapStateToProps, {...authActions}
+    )
 )(withRouter(AppBar));

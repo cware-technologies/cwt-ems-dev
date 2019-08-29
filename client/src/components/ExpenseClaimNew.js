@@ -9,6 +9,7 @@ import { getUser } from '../reducers/authReducer';
 import { getUsersName } from '../reducers/authReducer';
 import { alertActions } from '../actions/alertActions';
 
+let baseState = ''
 class ExpenseClaimNew extends Component {
 
     state = {
@@ -33,6 +34,8 @@ class ExpenseClaimNew extends Component {
     ]
 
     async componentDidMount() {
+        baseState = this.state
+
         let today = new Date()
         let year = today.getFullYear()
         let month = today.getMonth() + 1
@@ -80,6 +83,7 @@ class ExpenseClaimNew extends Component {
                 data
             })
             this.props.success("Expense Claim Request posted Successfully")
+            this.setState(baseState)
             return
         }
         catch (err) {
@@ -88,11 +92,29 @@ class ExpenseClaimNew extends Component {
         }
     }
 
+    checkFileSize = (event) => {
+        let files = event.target.files
+        let size = 2000000
+        let err = [];
+        for (var x = 0; x < files.length; x++) {
+            if (files[x].size > size) {
+                console.log("File size toooo large")
+                return false
+            }
+        }
+        return true
+    }
+
     onChangeHandler = event => {
-        this.setState({
-            selectedFile: event.target.files[0],
-            loaded: 0,
-        }, () => this.uploadFile())
+        if (this.checkFileSize(event) === false) {
+            this.props.error({ message: "File Size can't be more than 5mb" })
+        }
+        else {
+            this.setState({
+                selectedFile: event.target.files[0],
+                loaded: 0,
+            }, () => this.uploadFile())
+        }
     }
 
     uploadFile = even => {
@@ -139,6 +161,7 @@ class ExpenseClaimNew extends Component {
                         handleSubmit={this.handleSubmit}
                     />
                     <input type="file" name="file" onChange={this.onChangeHandler} />
+                    <p>File size upto 5mb </p>
                 </ModalTrigger>
             </div>
         )

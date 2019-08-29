@@ -9,15 +9,16 @@ const Op = require('sequelize').Op,
     ListValues = models.C_LST_VAL,
     LeaveRequest = models.C_LV_REQ,
     AdminRequest = models.C_ADM_REQ,
+    Notification = models.C_NOTIFY,
     Sequelize = require('sequelize'),
     sequelize = require('../db/models').sequelize,
     multer = require('multer')
 
-    let fileName = null
+let fileName = null
 
-    function fileNameSet (name) {
-        fileName = name
-    }
+function fileNameSet(name) {
+    fileName = name
+}
 
 async function getEmployee(req, res, next) {
     let employee = req.query
@@ -808,8 +809,8 @@ async function getLeavesCount(req, res, next) {
 
 async function postTicketRequest(req, res, next) {
     let request = req.body
-    console.log("FFFFFFFIIIIIILLLLLEEEE   ",request.fileName) 
-    if(request.fileName===null){
+    console.log("FFFFFFFIIIIIILLLLLEEEE   ", request.fileName)
+    if (request.fileName === null) {
         fileName = null
     }
     try {
@@ -932,7 +933,39 @@ async function getTicketsCount(req, res, next) {
 
 async function updateTicketRequested(req, res, next) {
     let details = req.body
+    
+    try {
+        let data = await AdminRequest.update(
+            {
+                stat_cd: details.stat_cd,
+                ATTRIB_04: details.msg,
+            },
+            {
+                where:
+                {
+                    row_id: details.row_id
+                }
+            })
 
+        res.status(200).json({
+            status: 200,
+            data,
+        })
+    }
+    catch (err) {
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function updateHRDocs(req, res, next) {
+    let details = req.body
+
+    if (details.fileName === null) {
+        fileName = null
+    }
+    
     try {
         let data = await AdminRequest.update(
             {
@@ -992,6 +1025,104 @@ async function downloadTicketFile(req, res, next) {
     res.download(path);
 }
 
+async function postNotification(req, res, next) {
+    let request = req.body
+    try {
+        let data = await Notification.create({
+            ...request,
+        })
+
+        res.status(200).json({
+            status: 200,
+            data,
+        })
+    }
+    catch (err) {
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function getNotifications(req, res, next) {
+    let details = req.query
+
+    try {
+        let data = await Notification.findAll(
+            {
+                where:
+                {
+                    emp_id: details.emp_id,
+                    bu_id: details.bu_id
+                },
+                order: [[ 'created', 'DESC' ]]
+            })
+
+        res.status(200).json({
+            status: 200,
+            data
+        })
+    }
+    catch (err) {
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function countNotifications(req, res, next) {
+    let details = req.query
+
+    try {
+        let data = await Notification.count(
+            {
+                where:
+                {
+                    emp_id: details.emp_id,
+                    bu_id: details.bu_id,
+                    stat_cd: details.stat_cd
+                }
+            })
+
+        res.status(200).json({
+            status: 200,
+            data
+        })
+    }
+    catch (err) {
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function updateNotifications(req, res, next) {
+    let details = req.body
+
+    try {
+        let data = await Notification.update(
+            {
+                stat_cd: details.stat_cd,
+            },
+            {
+                where:
+                {
+                    row_id: details.row_id
+                }
+            })
+
+        res.status(200).json({
+            status: 200,
+            data,
+        })
+    }
+    catch (err) {
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
 module.exports = {
     getEmployee,
     updateEmployeePersonalDetails,
@@ -1029,4 +1160,9 @@ module.exports = {
     downloadTicketFile,
     getRequestedTickets,
     updateTicketRequested,
+    updateHRDocs,
+    postNotification,
+    getNotifications,
+    countNotifications,
+    updateNotifications
 }
