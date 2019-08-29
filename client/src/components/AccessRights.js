@@ -14,6 +14,7 @@ import { Button } from '@material-ui/core';
 import { getUserOrganization } from '../reducers/authReducer';
 import { alertActions } from '../actions';
 import { flattenObject } from '../helpers/utils';
+import RestrictedComponent from './RestrictedComponent'
 
 const responsibilityRows = [
     { id: 'name', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Name' },
@@ -602,9 +603,13 @@ class AddResponsibility extends React.Component {
             //         <CommitIcon /> Commit
             //     </IconButton>
             // </Tooltip>
-            <Button onClick={this.handleUpdate} disabled={!responsibility || isUpdating} variant="contained" color="default" /* className={classNames(classes.button, classes.textField)} */>
-                <CommitIcon /> Commit
-            </Button> 
+            <RestrictedComponent
+                restriction='write'
+            >
+                <Button onClick={this.handleUpdate} disabled={!responsibility || isUpdating} variant="contained" color="default" /* className={classNames(classes.button, classes.textField)} */>
+                    <CommitIcon /> Commit
+                </Button>
+            </RestrictedComponent> 
 
         let RespAddComp = 
             <ModalTrigger
@@ -655,37 +660,41 @@ class AddResponsibility extends React.Component {
             </ModalTrigger>
 
         let ViewAttachComp = 
-            <ModalTrigger
-                IconButton={
-                    <Tooltip title="Add">
-                        <IconButton aria-label="Add">
-                            <AddIcon />
-                        </IconButton>
-                    </Tooltip>
-                }
-                innerRef={node => this.viewModalRef = node}
-                disabled={!responsibility && !isFetchingRespViews }
-                onClose={this.unsetEditMode}
+            <RestrictedComponent
+                restriction='write'
             >
-                <React.Fragment>
-                    <DataTable
-                        headerTitle='view'
-                        rows={viewRows}
-                        data={this.getViewData()}
-                        isSelectable
-                        selectMultiple
-                        setEditMode={this.setEditMode}
-                        unsetEditMode={this.unsetEditMode}
-                        handleDelete={this.handleDelete}
-                        selectEntity={this.selectEntity}
-                        clearSelection={this.clearSelection}
-                        AddComponent={ViewAddComp}
-                    />
-                    <Button onClick={this.handleSubmit} variant="contained" color="primary" /* className={classNames(classes.button, classes.textField)} */>
-                        Add View
-                    </Button>
-                </React.Fragment>
-            </ModalTrigger>
+                <ModalTrigger
+                    IconButton={
+                        <Tooltip title="Add">
+                            <IconButton aria-label="Add">
+                                <AddIcon />
+                            </IconButton>
+                        </Tooltip>
+                    }
+                    innerRef={node => this.viewModalRef = node}
+                    disabled={!responsibility && !isFetchingRespViews }
+                    onClose={this.unsetEditMode}
+                >
+                    <React.Fragment>
+                        <DataTable
+                            headerTitle='view'
+                            rows={viewRows}
+                            data={this.getViewData()}
+                            isSelectable
+                            selectMultiple
+                            setEditMode={this.setEditMode}
+                            unsetEditMode={this.unsetEditMode}
+                            handleDelete={this.handleDelete}
+                            selectEntity={this.selectEntity}
+                            clearSelection={this.clearSelection}
+                            AddComponent={ViewAddComp}
+                        />
+                        <Button onClick={this.handleSubmit} variant="contained" color="primary" /* className={classNames(classes.button, classes.textField)} */>
+                            Add View
+                        </Button>
+                    </React.Fragment>
+                </ModalTrigger>
+            </RestrictedComponent>
 
         return (
             <Container>

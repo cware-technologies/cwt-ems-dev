@@ -2231,26 +2231,13 @@ async function searchEmployeeContracts(req, res, next){
     let query = req.body
 
     try{
-        let data = await ProfileAttribute.findAll({
-            where: {
-                [Op.and]: [
-                    { type: 'contract' },
-                    { [Op.or]: [
-                        { ATTRIB_02: 'rejected' },
-                        { ATTRIB_02: 'accepted' },
-                    ] }
-                ]
-            },
-            include:[
-                {
-                    model: Employee,
-                    as: 'employee',
-                    attributes: ['emp_num', 'full_name', 'fst_name', 'last_name', 'ATTRIB_18', 'ATTRIB_19'],
-                },
-            ],
+        let data = await Employee.findAll({
+            where: sequelize.where(sequelize.fn('datediff', sequelize.col('ATTRIB_19'),  sequelize.fn('NOW')), {
+                [Op.gt]: 30,
+            }),
             order: [
                 // 'employee.fst_name',
-                [{model: Employee, as: 'employee'}, 'ATTRIB_19', 'ASC'],
+                ['ATTRIB_19', 'ASC'],
             ]
         })
         

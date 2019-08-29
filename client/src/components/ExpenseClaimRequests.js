@@ -17,6 +17,7 @@ import Search from './Search'
 import { getUserOrganization } from '../reducers/authReducer';
 import DownloadIcon from '@material-ui/icons/SaveAlt';
 import Container from './MainContainer';
+import RestrictedComponent from './RestrictedComponent';
 
 const styles = theme => ({
 
@@ -280,33 +281,45 @@ class ExpenseClaimRequests extends Component {
                                                             File: <DownloadIcon />
                                                         </div>
                                                     </Typography>
-                                                    <TextField
-                                                        value={this.state.msg}
-                                                        multiline={true}
-                                                        rows="4"
-                                                        label="Your Reply"
-                                                        onChange={this.onMsgChange}
-                                                        style={data.stat_cd === "resolved" ? { display: 'none' } : {}}
-                                                    />
+                                                    <RestrictedComponent
+                                                        restriction='write'
+                                                    >
+                                                        <TextField
+                                                            value={this.state.msg}
+                                                            multiline={true}
+                                                            rows="4"
+                                                            label="Your Reply"
+                                                            onChange={this.onMsgChange}
+                                                            style={data.stat_cd === "resolved" ? { display: 'none' } : {}}
+                                                        />
+                                                    </RestrictedComponent>
                                                     <div className={classes.btnPnl}>
-                                                        <Button
-                                                            id="resolved"
-                                                            onClick={(e) => this.handleClick('resolved', data)}
-                                                            variant="outlined"
-                                                            className={classes.btnP}
-                                                            style={data.stat_cd === "resolved" ? { display: 'none' } : {}}
+                                                        <RestrictedComponent
+                                                            restriction='write'
                                                         >
-                                                            Resolved
-                                            </Button>
-                                                        <Button
-                                                            id="inProgress"
-                                                            onClick={() => this.handleClick('inProgress', data)}
-                                                            variant="outlined"
-                                                            className={classes.btn}
-                                                            style={data.stat_cd === "resolved" ? { display: 'none' } : {}}
+                                                            <Button
+                                                                id="resolved"
+                                                                onClick={(e) => this.handleClick('resolved', data)}
+                                                                variant="outlined"
+                                                                className={classes.btnP}
+                                                                style={data.stat_cd === "resolved" ? { display: 'none' } : {}}
+                                                            >
+                                                                Resolved
+                                                            </Button>
+                                                        </RestrictedComponent>
+                                                        <RestrictedComponent
+                                                            restriction='write'
                                                         >
-                                                            In Progress
-                                            </Button>
+                                                            <Button
+                                                                id="inProgress"
+                                                                onClick={() => this.handleClick('inProgress', data)}
+                                                                variant="outlined"
+                                                                className={classes.btn}
+                                                                style={data.stat_cd === "resolved" ? { display: 'none' } : {}}
+                                                            >
+                                                                In Progress
+                                                            </Button>
+                                                        </RestrictedComponent>
                                                     </div>
                                                 </div>
                                             </ExpansionPanelDetails>

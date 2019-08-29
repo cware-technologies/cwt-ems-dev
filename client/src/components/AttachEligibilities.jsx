@@ -11,6 +11,8 @@ import AutoSuggest from './AutoSuggest';
 import ActionPanel from './ActionPanel';
 import { alertActions } from '../actions';
 
+import RestrictedComponent from './RestrictedComponent'
+
 const style = theme => ({
     actionPanel: {
         display: 'flex',
@@ -228,20 +230,24 @@ class AttachEligibilities extends React.Component {
                             }
                         }}
                     />
-                    <ModalTrigger
-                        title="Attach"
-                        button
-                        disabled={!this.state.user}
+                    <RestrictedComponent
+                        restriction='write'
                     >
-                        <AddEditForm
-                            headerTitle="application"
-                            fields={this.fields}
-                            object={applicationFormData}
-                            handleChange={this.handleChange}
-                            handleSubmit={this.handleApplicationSubmit}
-                            editMode={false}
-                        />
-                    </ModalTrigger>
+                        <ModalTrigger
+                            title="Attach"
+                            button
+                            disabled={!this.state.user}
+                        >
+                            <AddEditForm
+                                headerTitle="application"
+                                fields={this.fields}
+                                object={applicationFormData}
+                                handleChange={this.handleChange}
+                                handleSubmit={this.handleApplicationSubmit}
+                                editMode={false}
+                            />
+                        </ModalTrigger>
+                    </RestrictedComponent>
                 </ActionPanel>
                 
                 <DataTable

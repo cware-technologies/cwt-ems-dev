@@ -8,6 +8,8 @@ import ModalTrigger from './ModalTrigger'
 import AutoSuggest from './AutoSuggest';
 import ActionPanel from './ActionPanel';
 
+import RestrictedComponent from './RestrictedComponent'
+
 const entitlementRows = [
     { id: ['function', 'val'], numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Entitlement' },
     { id: ['function', 'ATTRIB_11'], numeric: true, disablePadding: false, lengthRatio:'Small', label: 'No Of Days' },
@@ -309,19 +311,23 @@ class EmployeeInduction extends React.Component {
                             }
                         }}
                     />
-                    <ModalTrigger
-                        title="Attach"
-                        button
-                        disabled={!this.state.users}
+                    <RestrictedComponent
+                        restriction='write'
                     >
-                        <AddEditForm
-                            headerTitle="application"
-                            fields={leaveTypes}
-                            object={applicationFormData}
-                            handleChange={this.handleChange}
-                            handleSubmit={this.handleApplicationSubmit}
-                        />
-                    </ModalTrigger>
+                        <ModalTrigger
+                            title="Attach"
+                            button
+                            disabled={!this.state.users}
+                        >
+                            <AddEditForm
+                                headerTitle="application"
+                                fields={leaveTypes}
+                                object={applicationFormData}
+                                handleChange={this.handleChange}
+                                handleSubmit={this.handleApplicationSubmit}
+                            />
+                        </ModalTrigger>
+                    </RestrictedComponent>
                 </ActionPanel>
                 
                 <DataTable

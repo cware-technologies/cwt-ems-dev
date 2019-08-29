@@ -8,6 +8,7 @@ import { getUserOrganization } from '../reducers/authReducer';
 import { getUser } from '../reducers/authReducer';
 import { getUsersName } from '../reducers/authReducer';
 import { alertActions } from '../actions/alertActions';
+import RestrictedComponent from './RestrictedComponent'
 
 class ExpenseClaimNew extends Component {
 
@@ -102,20 +103,24 @@ class ExpenseClaimNew extends Component {
 
         return (
             <div mt={2}>
-                <ModalTrigger
-                    title="New Document Request"
-                    button
-                    innerRef={node => this.modalRef = node}
-                    onClose={this.unsetEditMode}
+                <RestrictedComponent
+                    restriction='write'
                 >
-                    <AddEditForm
-                        headerTitle="HR Document Request"
-                        fields={this.ticketRequestFields}
-                        object={ticketRequestForm}
-                        handleChange={this.handleChange}
-                        handleSubmit={this.handleSubmit}
-                    />
-                </ModalTrigger>
+                    <ModalTrigger
+                        title="New Document Request"
+                        button
+                        innerRef={node => this.modalRef = node}
+                        onClose={this.unsetEditMode}
+                    >
+                        <AddEditForm
+                            headerTitle="HR Document Request"
+                            fields={this.ticketRequestFields}
+                            object={ticketRequestForm}
+                            handleChange={this.handleChange}
+                            handleSubmit={this.handleSubmit}
+                        />
+                    </ModalTrigger>
+                </RestrictedComponent>
             </div>
         )
     }

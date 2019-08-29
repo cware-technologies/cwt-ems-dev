@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { getUserOrganization } from '../reducers/authReducer';
 import { getUser } from '../reducers/authReducer';
 import { alertActions } from '../actions/alertActions';
+import RestrictedComponent from './RestrictedComponent'
 
 class ITTicketNew extends Component {
 
@@ -155,21 +156,25 @@ class ITTicketNew extends Component {
 
         return (
             <div mt={2}>
-                <ModalTrigger
-                    title="Lodge New Ticket"
-                    button
-                    innerRef={node => this.modalRef = node}
-                    onClose={this.unsetEditMode}
+                <RestrictedComponent
+                    restriction='write'
                 >
-                    <AddEditForm
-                        headerTitle="Ticket Request"
-                        fields={this.ticketRequestFields}
-                        object={ticketRequestForm}
-                        handleChange={this.handleChange}
-                        handleSubmit={this.handleSubmit}
-                    />
-                    <input type="file" name="file" onChange={this.onChangeHandler} />
-                </ModalTrigger>
+                    <ModalTrigger
+                        title="Lodge New Ticket"
+                        button
+                        innerRef={node => this.modalRef = node}
+                        onClose={this.unsetEditMode}
+                    >
+                        <AddEditForm
+                            headerTitle="Ticket Request"
+                            fields={this.ticketRequestFields}
+                            object={ticketRequestForm}
+                            handleChange={this.handleChange}
+                            handleSubmit={this.handleSubmit}
+                        />
+                        <input type="file" name="file" onChange={this.onChangeHandler} />
+                    </ModalTrigger>
+                </RestrictedComponent>
             </div>
         )
     }

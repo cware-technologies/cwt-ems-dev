@@ -14,6 +14,8 @@ import ModalTrigger from './ModalTrigger'
 import { getCellValue, getDate, getDateFormValue } from '../helpers/utils'
 import { getUserOrganization, getUser } from '../reducers/authReducer';
 
+import RestrictedComponent from './RestrictedComponent'
+
 const styles = theme => ({
     container: {
         display: 'grid',
@@ -194,54 +196,64 @@ class EmployeeDetailSection extends React.Component {
 
     render() {
         let { rows, associations } = this.state
-        let { data, classes, headerTitle, detailType, link, search, expanded, defaultExpanded, indeterminate } = this.props
+        let { data, classes, headerTitle, detailType, link, search, expanded, defaultExpanded, indeterminate, editable } = this.props
         // rows = indeterminate ? this.state.rows : this.props.rows
         console.log(this.props.headerTitle, '  ROWWWWWWSSSSSSSSSSSSSS', rows)
         return (
             <ExpansionPanel expanded={expanded} defaultExpanded={defaultExpanded} >
                 <ExpansionPanelSummary classes={{ content: classes.division }} expandIcon={expanded || <ExpandMoreIcon />}>
-                    <Typography variant="h6" gutterBottom component="h2" className={classes.headerTitle}>
+                    <Typography variant="h6" gutterBottom component="h2" align="center" className={classes.headerTitle}>
                         {headerTitle}
                     </Typography>
-                    {link ? 
-                        <Link to={{ pathname: `/portal/employee-manager`, search: search }} style={{ textDecoration: 'none' }}>
-                            <Button
-                                component="button"
-                                variant="outlined"
-                                color='primary'
-                            >Edit</Button>
-                        </Link>
+                    {editable ? link ? 
+                        <RestrictedComponent
+                            restriction='write'
+                        >
+                            <Link to={{ pathname: `/portal/employee-manager`, search: search }} style={{ textDecoration: 'none' }}>
+                                <Button
+                                    component="button"
+                                    variant="outlined"
+                                    color='primary'
+                                >
+                                    Edit
+                                </Button>
+                            </Link>
+                        </RestrictedComponent>
                     : 
                     <div>
-                        <ModalTrigger
-                            title="Edit"
-                            button
+                        <RestrictedComponent
+                            restriction='write'
                         >
-                            <Formik
-                                initialValues={this.getInitialValues()}
-                                validate={this.props.schema}
-                                onSubmit={(values, formikBag) => this.props.handleSubmit(values, formikBag, detailType, associations || null)}
+                            <ModalTrigger
+                                title="Edit"
+                                button
+                            >
+                                <Formik
+                                    initialValues={this.getInitialValues()}
+                                    validate={this.props.schema}
+                                    onSubmit={(values, formikBag) => this.props.handleSubmit(values, formikBag, detailType, associations || null)}
 
-                                render={formProps => {
-                                    return (
-                                        <Form>
-                                            {
-                                                rows.map(row => getFormElement(row, formProps.values))
-                                            }
-                                            <button
-                                                type="submit"
-                                                disabled={formProps.isSubmitting}
-                                                style={{ display: 'block', marginTop: '10px' }}
-                                            >
-                                                Save
-                                            </button>
-                                        </Form>
-                                    )
-                                }
-                                }
-                            />
-                        </ModalTrigger>
-                    </div>
+                                    render={formProps => {
+                                        return (
+                                            <Form>
+                                                {
+                                                    rows.map(row => getFormElement(row, formProps.values))
+                                                }
+                                                <button
+                                                    type="submit"
+                                                    disabled={formProps.isSubmitting}
+                                                    style={{ display: 'block', marginTop: '10px' }}
+                                                >
+                                                    Save
+                                                </button>
+                                            </Form>
+                                        )
+                                    }
+                                    }
+                                />
+                            </ModalTrigger>
+                        </RestrictedComponent>
+                    </div> : null
                     }
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
@@ -267,7 +279,6 @@ class EmployeeDetailSection extends React.Component {
 
 const mapStateToProps = (state) => ({
     organization: getUserOrganization(state),
-    userID: getUser(state),
 })
 
 export default compose(

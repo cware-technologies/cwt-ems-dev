@@ -116,7 +116,7 @@ passport.use(
                             }
                             // note the return needed with passport local - remove this return for passport JWT
                             req.jwtPayload = {
-                                id: user.row_id,
+                                id: user.emp_id,
                                 username: user.login,
                                 name: user.fst_name + " " + user.last_name,
                                 responsibility: user.resp_id,

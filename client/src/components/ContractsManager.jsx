@@ -14,9 +14,9 @@ import { alertActions } from '../actions';
 const Table = lazy(() => import('./DataTable'))
 
 const rows = [
-    { id: ['employee', 'emp_num'], numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Emp ID' },
-    { id: ['employee', 'fst_name'], numeric: false, disablePadding: true, lengthRatio:'Title', label: 'First Name' },
-    { id: ['employee', 'last_name'], numeric: false, disablePadding: true, lengthRatio:'Title', label: 'Last Name' },
+    { id: 'emp_num', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Emp ID' },
+    { id: 'fst_name', numeric: false, disablePadding: true, lengthRatio:'Title', label: 'First Name' },
+    { id: 'last_name', numeric: false, disablePadding: true, lengthRatio:'Title', label: 'Last Name' },
 ]
 
 const fields = []
@@ -104,8 +104,6 @@ export class ContractsManager extends Component {
 
     clearSelection = (entity, rest) => {
         let newValue = rest
-        if( rest.length <= 0 )
-            newValue = null
 
         let newState = {
             [entity]: newValue,
@@ -119,7 +117,7 @@ export class ContractsManager extends Component {
 
         let RenewComp = 
             <Tooltip title="Renew">
-                <IconButton aria-label="Renew" onClick={this.renewContracts} disabled={employees.length <= 0}>
+                <IconButton aria-label="Renew" onClick={this.renewContracts} disabled={ employees.length <= 0}>
                     <RenewIcon />
                 </IconButton>
             </Tooltip>
