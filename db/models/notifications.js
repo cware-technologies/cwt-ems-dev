@@ -134,10 +134,10 @@ module.exports = (sequelize, DataTypes) => {
     updatedAt: false,
     createdAt: 'created',
   });
-  AdminRequest.associate = function(models) {
-    AdminRequest.belongsTo( models.C_EMP, { as: 'employee', foreignKey: 'emp_id' })
-    AdminRequest.belongsTo( models.C_BU, { as: 'organization', foreignKey: 'bu_id' })
-//     AdminRequest.belongsTo( models.C_LST_VAL, { as: 'expenseType', foreignKey: 'ATTRIB_11' })
+  Notification.associate = function(models) {
+    Notification.belongsTo( models.C_EMP, { as: 'employee', foreignKey: 'emp_id' })
+    Notification.belongsTo( models.C_BU, { as: 'organization', foreignKey: 'bu_id' })
+//     Notification.belongsTo( models.C_LST_VAL, { as: 'expenseType', foreignKey: 'ATTRIB_11' })
   };
   return Notification;
 };
