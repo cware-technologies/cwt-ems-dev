@@ -9,6 +9,7 @@ import { getUserOrganization } from '../reducers/authReducer';
 import { getUser } from '../reducers/authReducer';
 import { alertActions } from '../actions/alertActions';
 import Typography from '@material-ui/core/Typography';
+import RestrictedComponent from './RestrictedComponent';
 
 
 class LeaveRequest extends Component {
@@ -153,23 +154,27 @@ class LeaveRequest extends Component {
         let { leaveRequestForm, requestedDays } = this.state
         return (
             <div mt={2}>
-                <ModalTrigger
-                    title="Request a New Leave"
-                    button
-                    innerRef={node => this.modalRef = node}
-                    onClose={this.unsetEditMode}
+                <RestrictedComponent
+                    restriction='write'
                 >
-                    <AddEditForm
-                        headerTitle="leaveRequestForm"
-                        fields={this.leaveRequestFields}
-                        object={leaveRequestForm}
-                        handleChange={this.handleChange}
-                        handleSubmit={this.handleSubmit}
-                    />
-                    <Badge style={requestedDays === 0 ? { display: 'none' } : {}} color="primary" badgeContent={requestedDays}>
-                        <Typography>Requested Days</Typography>
-                    </Badge>
-                </ModalTrigger>
+                    <ModalTrigger
+                        title="Request a New Leave"
+                        button
+                        innerRef={node => this.modalRef = node}
+                        onClose={this.unsetEditMode}
+                    >
+                        <AddEditForm
+                            headerTitle="leaveRequestForm"
+                            fields={this.leaveRequestFields}
+                            object={leaveRequestForm}
+                            handleChange={this.handleChange}
+                            handleSubmit={this.handleSubmit}
+                        />
+                        <Badge style={requestedDays === 0 ? { display: 'none' } : {}} color="primary" badgeContent={requestedDays}>
+                            <Typography>Requested Days</Typography>
+                        </Badge>
+                    </ModalTrigger>
+                </RestrictedComponent>
             </div>
         )
     }

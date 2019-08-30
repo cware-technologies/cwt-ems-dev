@@ -173,7 +173,7 @@ class AddEditForm extends React.Component {
                     helperText={errors[field.id] && <ul className={classes.errorList}> {errors[field.id].map((error)=>{ return <li className={classes.errorListItem}>{error}</li>})}</ul>}
                     onBlur={this.validate}
                     onChange={(e) => handleChange(e, this.props.headerTitle)}
-                    className={classNames(classes.textField, classes.dense, classes.singleSpanInput)}
+                    className={classNames(classes.textField, classes.dense, classes.fullSpanInput)}
                     classes={{
                         root: classes.inputRoot,
                     }}

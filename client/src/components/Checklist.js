@@ -9,6 +9,9 @@ import ListItemText from '@material-ui/core/ListItemText'
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
 import TextField from '@material-ui/core/TextField'
 
+import RestrictedComponent from './RestrictedComponent'
+import RestrictedHOC from './RestrictedHOC'
+
 const styles = theme => ({
     root: {
         width: '100%',
@@ -98,13 +101,18 @@ class Checklist extends React.Component{
                                         checked={row.FLG_01}
                                         tabIndex={-1}
                                         disableRipple
+                                        disabled={!this.props.writePermission}
                                         onClick={(e) => handleToggle(e, row.row_id)}
                                     />
                                 </ListItemSecondaryAction>
                             </ListItem>
                     ))}
                 </List>
-                <Button variant='outlined' onClick={updateHandler} disabled={!this.props.active}>Update</Button>
+                <RestrictedComponent
+                    restriction = 'write'
+                >
+                    <Button variant='outlined' onClick={updateHandler} disabled={!this.props.active}>Update</Button>
+                </RestrictedComponent>
             </React.Fragment>
         )
     }
@@ -114,4 +122,4 @@ Checklist.defaultProps = {
     filterOptions: []
 }
 
-export default withStyles(styles)(Checklist)
+export default withStyles(styles)(RestrictedHOC(Checklist))

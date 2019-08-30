@@ -418,9 +418,9 @@ class EditEmployee extends React.Component {
 				unsetEditMode={this.unsetEditMode}
 				handleChange={this.handleChange}
 				handleSubmit={this.handleSubmit}
+				ref={node => this.modalRef = node}
 				editMode={editMode}
 				formData={formData}
-				location={location}
 			>
 				<RegisterEmployeeForm
 					employee={formData}

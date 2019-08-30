@@ -15,6 +15,7 @@ import compose from 'recompose/compose';
 import { getUser } from '../reducers/authReducer';
 import { getDate } from '../helpers/utils';
 import Search from './Search'
+import RestrictedComponent from './RestrictedComponent';
 
 const styles = theme => ({
 
@@ -240,25 +241,29 @@ class LeaveEmployeeRequests extends Component {
                                                 <div className={classes.wid80}>Details: {data.ATTRIB_01} </div>
                                             </Typography>
                                             <div className={classes.btnPnl}>
-                                                <Button
-                                                    id="accepted"
-                                                    onClick={(e) => this.handleClick('accepted', data)}
-                                                    variant="outlined"
-                                                    className={classes.btnP}
-                                                    style={data.stat_cd !== "pending" ? { display: 'none' } : {}}
+                                                <RestrictedComponent
+                                                    restriction='write'
                                                 >
-                                                    Accept
-                                            </Button>
-                                                <Button
-                                                    id="rejected"
-                                                    onClick={() => this.handleClick('rejected', data)}
-                                                    variant="outlined"
-                                                    className={classes.btn}
-                                                    style={data.stat_cd !== "pending" ? { display: 'none' } : {}}
+                                                    <Button
+                                                        id="accepted"
+                                                        onClick={(e) => this.handleClick('accepted', data)}
+                                                        variant="outlined"
+                                                        className={classes.btnP}
+                                                        style={data.stat_cd !== "pending" ? { display: 'none' } : {}}
+                                                    >
+                                                        Accept
+                                                    </Button>
+                                                    <Button
+                                                        id="rejected"
+                                                        onClick={() => this.handleClick('rejected', data)}
+                                                        variant="outlined"
+                                                        className={classes.btn}
+                                                        style={data.stat_cd !== "pending" ? { display: 'none' } : {}}
 
-                                                >
-                                                    Reject
-                                            </Button>
+                                                    >
+                                                        Reject
+                                                    </Button>
+                                                </RestrictedComponent>
                                             </div>
                                         </div>
                                     </ExpansionPanelDetails>

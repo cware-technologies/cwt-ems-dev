@@ -60,33 +60,36 @@ const headStyles = theme => ({
         flexGrow: 5,
         paddingLeft: '10px',
         display: 'flex',
-        color: 'white',
         alignItems: 'center',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'wrap',
+        overflowWrap: 'break-word',
     },
     tableCellSmall: {
         flexBasis: '15px',
-        flexGrow: 0,
+        flexGrow: 1,
         padding: 0,
         display: 'flex',
         color: 'white',
-        // justifyContent: 'center',
+        justifyContent: 'center',
         alignItems: 'center',
     },
     tableCellAction: {
         width: '48px',
         flexBasis: '48px',
-        flexGrow: 0,
-        paddingLeft: '10px',
+        flexGrow: 0.5,
+        padding: 0,
         display: 'flex',
         color: 'white',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     tableCellDetail: {
         display: 'flex',
-        alignContent: 'center',
+        alignItems: 'center',
         flexBasis: '70%',
         flexGrow: 10,
         paddingLeft: '10px',
-        color: 'white',
         [theme.breakpoints.down('sm')]: {
             display: 'none',
         }
@@ -173,7 +176,7 @@ class TableHeader extends React.Component {
                                 <TableCell
                                     key={row.id}
                                     align={row.numeric ? 'right' :  row.lengthRatio === 'Small' ? 'center' : 'left'}
-                                    padding={row.disablePadding ? 'none' : 'default'}
+                                    padding={row.disablePadding ? 'dense' : 'none'}
                                     sortDirection={orderBy === row.id ? order : false}
                                     classes={{ root: classes[`tableCell${row.lengthRatio}`] }}
                                 >
@@ -372,7 +375,7 @@ const styles = theme => ({
     },
     row: {
         width: '100%',
-        // height: 'min-content',
+        height: 'max-content',
         display: 'flex',
         cursor: 'pointer',
     },
@@ -536,7 +539,7 @@ class EnhancedDataTable extends React.Component {
             })
         }
         catch(err) {
-            return ""
+            return "None"
         }
 
         return value
@@ -751,7 +754,7 @@ class EnhancedDataTable extends React.Component {
                                                 <div 
                                                     id='selectable-row'
                                                     style={ !isSelectable ? { cursor: 'auto'} : {} }
-                                                    className={classes.selectableRow} 
+                                                    className={classes.selectableRow}
                                                     onClick={isSelectable ? event => this.selectEntity(event, data.row_id, data.name ) : null}
                                                 >
                                                     {
@@ -765,7 +768,7 @@ class EnhancedDataTable extends React.Component {
                                                                         component="th"
                                                                         align={row.numeric ? 'right' :  row.lengthRatio === 'Small' ? 'center' : 'left'}
                                                                         scope="row"
-                                                                        padding={row.disablePadding ? 'none' : 'default'}
+                                                                        padding={row.disablePadding ? 'dense' : 'none'}
                                                                         classes={{ root: classes[`tableCell${row.lengthRatio}`] }}
                                                                     >
                                                                         { 

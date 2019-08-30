@@ -15,6 +15,8 @@ import { getDate, calculateNumOfDays } from '../helpers/utils';
 import { getUser } from '../reducers/authReducer';
 import { alertActions } from '../actions';
 
+import RestrictedComponent from './RestrictedComponent'
+
 const leaveHistoryRows = [
     { id: 'leaveAppliedDate', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Applied Date' },
     { id: 'leaveType', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Type' },
@@ -172,13 +174,17 @@ class LeaveHistory extends Component {
                                             <div>Requested Days: {days}</div>
                                             <div className={classes.wid80}>Details: {data.ATTRIB_01}</div>
                                         </Typography>
-                                        <Button
-                                            onClick={() => this.handleClickDel(data)}
-                                            variant="outlined" className={classes.btn}
-                                            style={data.stat_cd !== "pending" ? { display: 'none' } : {}}
+                                        <RestrictedComponent
+                                            restriction='write'
                                         >
-                                            Withdraw
-                                        </Button>
+                                            <Button
+                                                onClick={() => this.handleClickDel(data)}
+                                                variant="outlined" className={classes.btn}
+                                                style={data.stat_cd !== "pending" ? { display: 'none' } : {}}
+                                            >
+                                                Withdraw
+                                            </Button>
+                                        </RestrictedComponent>
                                     </div>
                                 </ExpansionPanelDetails>
                             </ExpansionPanel>

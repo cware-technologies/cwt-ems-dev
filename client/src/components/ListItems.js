@@ -127,7 +127,8 @@ class MainList extends React.Component {
 
 	isSelected = (path) => {
 		console.log(this.props.location)
-		return this.props.location.pathname.search(path) !== -1
+		let temp =  this.props.location.pathname.split('/')
+		return temp[ temp.length - 1 ] === path
 	}
 
 	handleClick = (e) => {
