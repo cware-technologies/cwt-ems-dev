@@ -11,12 +11,14 @@ import LoadingSpinner from './LoadingSpinner';
 import { getUserOrganization } from '../reducers/authReducer';
 import { alertActions } from '../actions';
 
+import RestrictedComponent from './RestrictedComponent'
+
 const Table = lazy(() => import('./DataTable'))
 
 const rows = [
-    { id: 'emp_num', numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Emp ID' },
-    { id: 'fst_name', numeric: false, disablePadding: true, lengthRatio:'Title', label: 'First Name' },
-    { id: 'last_name', numeric: false, disablePadding: true, lengthRatio:'Title', label: 'Last Name' },
+    { id: ['employee', 'emp_num'], numeric: false, disablePadding: true, lengthRatio: 'Title', label: 'Emp ID' },
+    { id: ['employee', 'fst_name'], numeric: false, disablePadding: true, lengthRatio:'Title', label: 'First Name' },
+    { id: ['employee', 'last_name'], numeric: false, disablePadding: true, lengthRatio:'Title', label: 'Last Name' },
 ]
 
 const fields = []
@@ -77,6 +79,8 @@ export class ContractsManager extends Component {
                     data: employees,
                 })
 
+                console.log("REPPPOOONSE: ", response)
+
                 if(response.data.status === 200){
                     this.setState((state, props) => { return { 
                         data: newData,
@@ -115,12 +119,16 @@ export class ContractsManager extends Component {
     render() {
         const { data, employees } = this.state
 
-        let RenewComp = 
-            <Tooltip title="Renew">
-                <IconButton aria-label="Renew" onClick={this.renewContracts} disabled={ employees.length <= 0}>
-                    <RenewIcon />
-                </IconButton>
-            </Tooltip>
+        let RenewComp =
+            <RestrictedComponent
+                restriction='write'
+            >
+                <Tooltip title="Renew">
+                    <IconButton aria-label="Renew" onClick={this.renewContracts} disabled={ employees.length <= 0}>
+                        <RenewIcon />
+                    </IconButton>
+                </Tooltip>
+            </RestrictedComponent>
 
         return (
             <Container>

@@ -15,7 +15,7 @@ const error = (error) => (dispatch, getState) => {
 
     dispatch({
         type: alertConstants.ERROR,
-        message: error.message,
+        message: error.message || error,
         changed,
     })
 }

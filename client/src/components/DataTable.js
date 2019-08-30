@@ -278,9 +278,9 @@ let EnhancedTableToolbar = props => {
             { selected.length !== 0 &&
                 <div className={classes.selectedChips}>
                     <div className={classes.spacer} />
-                    {selectedData.map(row => 
+                    {selectedData.map((row, index) => 
                         <Chip
-                            label={`${row.name || row.row_id}`}
+                            label={`${row.name || index}`}
                             onDelete={() => handleClearSelection(row.row_id)}
                             className={classes.chip}
                             color="primary"
