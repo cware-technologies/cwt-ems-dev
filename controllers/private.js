@@ -975,7 +975,7 @@ async function updateHRDocs(req, res, next) {
             {
                 stat_cd: details.stat_cd,
                 ATTRIB_04: details.msg,
-                ATTRIB_03: fileName && fileName,
+                ATTRIB_03: fileName,
             },
             {
                 where:

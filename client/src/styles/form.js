@@ -102,6 +102,7 @@ export const formStyle = theme => ({
     },
     errorList: {
         // backgroundColor: 'lightgray',
+        gridColumn: 1 / -1,
         color: 'indianred',
         padding: '10px',
         margin: 0,
@@ -113,6 +114,7 @@ export const formStyle = theme => ({
     },
     successList: {
         // backgroundColor: 'lightgray',
+        gridColumn: 1 / -1,
         color: 'green',
         padding: '10px',
         margin: 0,

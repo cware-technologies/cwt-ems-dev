@@ -66,16 +66,23 @@ let baseState = ''
 class ExpenseClaimRequests extends Component {
 
     state = {
+        selectedFile: null,
         data: [],
         rowsPerPage: 5,
         page: 0,
         isSearching: false,
         query: '',
         filter: 'all',
-        msg: ''
+        msg: '',
+        ticketRequestForm: {
+            fileName: null,
+        },
+        fileName: null,
+        
     }
 
     componentDidMount() {
+        baseState = this.state
         this.getList()
     }
 
@@ -111,13 +118,12 @@ class ExpenseClaimRequests extends Component {
     }
 
     handleClick = async (status, data) => {
-        
         let response
         let newData = this.state.data.filter(row => {
             return row.row_id === data.row_id
         })[0]
 
-        if ((status === 'resolved' || status==='inProgress') && this.state.msg !== '') {
+        if ((status === 'resolved' || status === 'inProgress') && this.state.msg !== '') {
             try {
                 response = await axios({
                     method: 'post',
@@ -159,15 +165,15 @@ class ExpenseClaimRequests extends Component {
                 data: {
                     row_id: data.row_id,
                     stat_cd: status,
-                    msg: this.state.msg
+                    msg: this.state.msg,
+                    fileName: this.state.fileName
                 },
             })
-
-            if (response.data.status === 200) {
+            console.log("before", this.state)
+            if (response.data.status == 200) {
                 console.log("Record Updated Successfully!")
-                this.setState({
-                    msg: '',
-                })
+                this.setState(baseState)
+                console.log("after", this.state)
                 this.getList()
             }
             else {
@@ -216,9 +222,28 @@ class ExpenseClaimRequests extends Component {
         return true
     }
 
+    // onChangeHandler = event => {
+    //     if (this.checkFileSize(event) === false) {
+    //         this.props.error({ message: "File Size can't be more than 5mb" })
+    //     }
+    //     else {
+    //         this.setState({
+    //             selectedFile: event.target.files[0],
+    //             loaded: 0,
+    //         }, () => this.uploadFile())
+    //     }
+    // }
+
     onChangeHandler = event => {
         if (this.checkFileSize(event) === false) {
             this.props.error({ message: "File Size can't be more than 5mb" })
+            this.setState(prevState => ({
+                [`ticketRequestForm`]: {
+                    ...prevState[`ticketRequestForm`],
+                    fileName: null,
+                    selectedfile: null
+                }
+            }))
         }
         else {
             this.setState({
@@ -228,6 +253,22 @@ class ExpenseClaimRequests extends Component {
         }
     }
 
+    // uploadFile = even => {
+    //     const data = new FormData()
+    //     data.append('file', this.state.selectedFile)
+    //     axios.post("/private/employee/ticket/upload", data, {
+
+    //     })
+    //         .then(res => {
+    //             console.log(this.state.selectedFile.name)
+
+    //             this.props.success("File Uploaded Successfully!")
+
+    //         }).catch(err => {
+    //             this.props.error({ message: "File Could Not Be Uploaded!" })
+    //         })
+    // }
+
     uploadFile = even => {
         const data = new FormData()
         data.append('file', this.state.selectedFile)
@@ -235,8 +276,13 @@ class ExpenseClaimRequests extends Component {
 
         })
             .then(res => {
-                console.log(this.state.selectedFile.name)
-
+                this.setState(prevState => ({
+                    [`ticketRequestForm`]: {
+                        ...prevState[`ticketRequestForm`],
+                        
+                    },
+                    fileName: this.state.selectedFile.name,
+                }))
                 this.props.success("File Uploaded Successfully!")
 
             }).catch(err => {
@@ -340,12 +386,16 @@ class ExpenseClaimRequests extends Component {
                                             <ExpansionPanelDetails>
                                                 <div className={classes.flxContainer}>
                                                     <Typography variant="subtitle" color="primary" gutterBottom>
-                                                       <div className={classes.wid80}>Problem Statement: {data.ATTRIB_01} </div>
+                                                        <div
+                                                            className={classes.wid80}
+                                                            style={data.ATTRIB_01 === null ? { display: 'none' } : {}}>
+                                                            Problem Statement: {data.ATTRIB_01}
+                                                        </div>
                                                         <div style={data.stat_cd !== "resolved" || data.ATTRIB_03 === null ? { display: 'none' } : {}} className={classes.wid80} onClick={(e) => this.handleDownload(e, data.ATTRIB_03)}>File: <DownloadIcon /></div>
                                                     </Typography>
                                                     <div style={data.stat_cd === "resolved" ? { display: 'none' } : {}}>
                                                         <input type="file" name="file" onChange={this.onChangeHandler} />
-                                                        <p>File size upto 5mb </p>
+                                                        <p>Max File Size: 5mb </p>
                                                     </div>
                                                     <RestrictedComponent
                                                         restriction='write'

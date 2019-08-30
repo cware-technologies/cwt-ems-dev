@@ -129,7 +129,11 @@ class ExpenseClaimHistory extends Component {
                                 <ExpansionPanelDetails className={classes.root}>
                                     <div className={classes.flxContainer}>
                                         <Typography variant="subtitle" color="primary" gutterBottom>
-                                            <div className={classes.wid80}>Details: {data.ATTRIB_01}</div>
+                                            <div 
+                                            className={classes.wid80}
+                                            style={data.ATTRIB_01 === null ? { display: 'none' } : {}}
+                                            >
+                                                Details: {data.ATTRIB_01}</div>
                                             <div className={classes.wid80}
                                                 style={data.ATTRIB_03 === null ? { display: 'none' } : {}}
                                                 onClick={(e) => this.handleDownload(e, data.ATTRIB_03)}>

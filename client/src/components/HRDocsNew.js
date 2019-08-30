@@ -11,12 +11,21 @@ import { alertActions } from '../actions/alertActions';
 import RestrictedComponent from './RestrictedComponent'
 
 let baseState = ''
+let constraints = {
+    'ATTRIB_11.value': {
+        presence: {
+            allowEmpty: false,
+            message: "Ticket Type is Required"
+        },
+    },
+};
 class ExpenseClaimNew extends Component {
 
     state = {
         selectedFile: null,
         ticketRequestForm: {
-
+            ATTRIB_11: { label: '', value: null },
+            fileName: null,
         },
         ticketNumber: 0,
     }
@@ -24,10 +33,12 @@ class ExpenseClaimNew extends Component {
     ticketRequestFields = [
         { type: 'text', label: 'Name', defaultValue: this.props.user_name, readOnly: true },
         { id: 'created', type: 'text', label: 'Date', },
-        { id: 'ATTRIB_11', type: 'select', label: 'Document Type',indeterminate: true, requestParams: {
-            endPoint: '/admin/hr-doc-type',
-            selectMapping: ['val', 'row_id', null, null], 
-        } },
+        {
+            id: 'ATTRIB_11', type: 'select', label: 'Document Type', indeterminate: true, requestParams: {
+                endPoint: '/admin/hr-doc-type',
+                selectMapping: ['val', 'row_id', null, null],
+            }
+        },
         { id: 'ATTRIB_01', type: 'textarea', label: 'Details' },
     ]
 
@@ -121,6 +132,7 @@ class ExpenseClaimNew extends Component {
                             object={ticketRequestForm}
                             handleChange={this.handleChange}
                             handleSubmit={this.handleSubmit}
+                            schema={constraints}
                         />
                     </ModalTrigger>
                 </RestrictedComponent>
