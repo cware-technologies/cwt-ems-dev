@@ -10,11 +10,27 @@ import { getUsersName } from '../reducers/authReducer';
 import { alertActions } from '../actions/alertActions';
 
 let baseState = ''
+let constraints = {
+    'ATTRIB_11.value': {
+        presence: {
+            allowEmpty: false,
+            message: "Ticket Type is Required"
+        },
+    },
+    ATTRIB_06: {
+        presence: {
+            allowEmpty: false,
+            message: "Amount is Required"
+        },
+    },
+};
 class ExpenseClaimNew extends Component {
 
     state = {
         selectedFile: null,
         ticketRequestForm: {
+            ATTRIB_11: { label: '', value: null },
+            ATTRIB_06: "",
             fileName: null,
         },
         ticketNumber: 0,
@@ -159,9 +175,10 @@ class ExpenseClaimNew extends Component {
                         object={ticketRequestForm}
                         handleChange={this.handleChange}
                         handleSubmit={this.handleSubmit}
+                        schema={constraints}
                     />
                     <input type="file" name="file" onChange={this.onChangeHandler} />
-                    <p>File size upto 5mb </p>
+                    <p>Max File Size: 5mb </p>
                 </ModalTrigger>
             </div>
         )

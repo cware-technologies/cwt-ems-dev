@@ -111,14 +111,14 @@ class ITTicketsRequests extends Component {
     }
 
     handleClick = async (status, data) => {
-        
+
         let response
         let newData = this.state.data.filter(row => {
             return row.row_id === data.row_id
         })[0]
 
 
-        if ((status === 'resolved' || status==='inProgress') && this.state.msg !== '') {
+        if ((status === 'resolved' || status === 'inProgress') && this.state.msg !== '') {
             try {
                 response = await axios({
                     method: 'post',
@@ -147,7 +147,6 @@ class ITTicketsRequests extends Component {
             catch (err) {
                 console.log("Could Not Add Notification")
             }
-
         }
 
         try {
@@ -300,7 +299,10 @@ class ITTicketsRequests extends Component {
                                                     <Typography variant="subtitle" color="primary" gutterBottom>
                                                         <div>Ticket #: {data.row_id}</div>
                                                         <div className={classes.wid80}>Ticket Type: {data.expenseType.val} </div>
-                                                        <div className={classes.wid80}>Problem Statement: {data.ATTRIB_01} </div>
+                                                        <div className={classes.wid80}
+                                                            style={data.ATTRIB_03 === null ? { display: 'none' } : {}}>
+                                                            Problem Statement: {data.ATTRIB_01}
+                                                        </div>
                                                         <div className={classes.wid80}
                                                             style={data.ATTRIB_03 === null ? { display: 'none' } : {}}
                                                             onClick={(e) => this.handleDownload(e, data.ATTRIB_03)}>
@@ -324,7 +326,7 @@ class ITTicketsRequests extends Component {
                                                             style={data.stat_cd === "resolved" ? { display: 'none' } : {}}
                                                         >
                                                             Resolved
-                                            </Button>
+                                                        </Button>
                                                         <Button
                                                             id="inProgress"
                                                             onClick={() => this.handleClick('inProgress', data)}
@@ -360,7 +362,7 @@ class ITTicketsRequests extends Component {
                     </div>
                 </Container>
             )
-        }else{
+        } else {
             return null
         }
     }

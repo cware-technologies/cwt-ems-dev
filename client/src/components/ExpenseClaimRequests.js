@@ -305,7 +305,11 @@ class ExpenseClaimRequests extends Component {
                                                 <div className={classes.flxContainer}>
                                                     <Typography variant="subtitle" color="primary" gutterBottom>
                                                         <div className={classes.wid80}>Expense Type: {data.expenseType.val} </div>
-                                                        <div className={classes.wid80}>Problem Statement: {data.ATTRIB_01} </div>
+                                                        <div
+                                                        style={data.ATTRIB_01 === null ? { display: 'none' } : {}} 
+                                                        className={classes.wid80}
+                                                        >
+                                                        Problem Statement: {data.ATTRIB_01} </div>
                                                         <div className={classes.wid80}
                                                             style={data.ATTRIB_03 === null ? { display: 'none' } : {}}
                                                             onClick={(e) => this.handleDownload(e, data.ATTRIB_03)}>

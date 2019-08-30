@@ -198,6 +198,7 @@ class AddEditForm extends React.Component {
                         mapping={field.requestParams.selectMapping}
                         isDisabled={false}
                         handleSelectChange={this.handleSelectChange}
+                        helperText={errors[`${field.id}.value`]}
                     /> :
                     <TextField
                         id={field.id}
@@ -317,7 +318,7 @@ class AddEditForm extends React.Component {
                             this.getFormElement(field, object)
                         )
                     }
-                    <FormHelperText>{response.status && <ul className={response.status<300?classes.successList:classes.errorList}><li className={classes.errorListItem}>{response.message}</li></ul>}</FormHelperText>
+                    <FormHelperText style={{ gridColumn: '1 / -1' }}>{response.status && <ul className={response.status<300?classes.successList:classes.errorList}><li className={classes.errorListItem}>{response.message}</li></ul>}</FormHelperText>
                     <Button 
                         className={classes.fullSpanInput}
                         style={{width: 100, position: 'absolute', right: '4%', bottom: '4%'}}

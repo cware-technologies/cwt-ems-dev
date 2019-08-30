@@ -2,6 +2,7 @@ import React from 'react'
 import axios from 'axios'
 import Select, { components } from 'react-select'
 import { getCellValue } from '../helpers/utils';
+import FormHelperText from '@material-ui/core/FormHelperText'
 
 const { ValueContainer, Placeholder, Option } = components;
 
@@ -128,68 +129,71 @@ class AsyncSelect extends React.Component {
         let { isDisabled, name, value } = this.props
 
         return (
-            <Select
-                options={[
-                    {label: "None", value:null},
-                    ...options
-                ]}
-                isDisabled={ isDisabled === false ? false : isDisabled === true? true : !isDisabled || isLoading }
-                isLoading={isLoading}
-                isClearable={false}
-                value={this.getValue(value)}
-                onChange={this.handleChange}
-                components={{
-                    ValueContainer: CustomValueContainer,
-                    Option: CustomOption,
-                }}
-                menuPortalTarget={document.body}
-                menuPosition='fixed'
-                menuPlacement='bottom'
-                placeholder={name}
-                styles={{
-                    // control: () => ({
-                    //     width: '99%',
-                    //     gridColumn: 'span 1',
-                    // }),
-                    container: (provided, state) => ({
-                        ...provided,
-                        marginTop: 25,
-                        '@media (max-width: 960px)': {
-                            gridColumn: '1 / -1',
-                          }
-                        // gridColumns: 1 / -1,
-                    }),
-                    menuPortal: base => ({
-                        ...base,
-                        height: 800,
-                        zIndex: 9999
-                    }),
-                    valueContainer: (provided, state) => ({
-                        ...provided,
-                        overflow: "visible",
-                    }),
-                    placeholder: (provided, state) => ({
-                        ...provided,
-                        position: "absolute",
-                        textTransform: 'capitalize',
-                        top: state.hasValue || state.selectProps.inputValue ? -15 : "50%",
-                        transition: "top 0.1s, font-size 0.1s",
-                        fontSize: (state.hasValue || state.selectProps.inputValue) && 13,
-                    }),
-                    groupHeading: (provided, state) => ({
-                        ...provided,
-                        background: 'lightgray',
-                        fontSize: '1.25em',
-                        textAlign: 'center',
-                        color: 'white',
-                    }),
-                    option: (base) => ({
-                        ...base,
-                        borderTop: '1px solid lightgray',
-                        borderBottom: '1px solid lightgray',
-                    }),
-                }}
-            />
+            <div>
+                <Select
+                    options={[
+                        {label: "None", value:null},
+                        ...options
+                    ]}
+                    isDisabled={ isDisabled === false ? false : isDisabled === true? true : !isDisabled || isLoading }
+                    isLoading={isLoading}
+                    isClearable={false}
+                    value={this.getValue(value)}
+                    onChange={this.handleChange}
+                    components={{
+                        ValueContainer: CustomValueContainer,
+                        Option: CustomOption,
+                    }}
+                    menuPortalTarget={document.body}
+                    menuPosition='fixed'
+                    menuPlacement='bottom'
+                    placeholder={name}
+                    styles={{
+                        // control: () => ({
+                        //     width: '99%',
+                        //     gridColumn: 'span 1',
+                        // }),
+                        container: (provided, state) => ({
+                            ...provided,
+                            marginTop: 25,
+                            '@media (max-width: 960px)': {
+                                gridColumn: '1 / -1',
+                            }
+                            // gridColumns: 1 / -1,
+                        }),
+                        menuPortal: base => ({
+                            ...base,
+                            height: 800,
+                            zIndex: 9999
+                        }),
+                        valueContainer: (provided, state) => ({
+                            ...provided,
+                            overflow: "visible",
+                        }),
+                        placeholder: (provided, state) => ({
+                            ...provided,
+                            position: "absolute",
+                            textTransform: 'capitalize',
+                            top: state.hasValue || state.selectProps.inputValue ? -15 : "50%",
+                            transition: "top 0.1s, font-size 0.1s",
+                            fontSize: (state.hasValue || state.selectProps.inputValue) && 13,
+                        }),
+                        groupHeading: (provided, state) => ({
+                            ...provided,
+                            background: 'lightgray',
+                            fontSize: '1.25em',
+                            textAlign: 'center',
+                            color: 'white',
+                        }),
+                        option: (base) => ({
+                            ...base,
+                            borderTop: '1px solid lightgray',
+                            borderBottom: '1px solid lightgray',
+                        }),
+                    }}
+                />
+                { this.props.helperText !== undefined && <FormHelperText error ><ul > {this.props.helperText.map((error)=>{ return <li>{error}</li>})}</ul></FormHelperText> }
+            </div>
         )
     }
 }

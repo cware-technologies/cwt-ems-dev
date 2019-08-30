@@ -10,12 +10,21 @@ import { getUsersName } from '../reducers/authReducer';
 import { alertActions } from '../actions/alertActions';
 
 let baseState = ''
+let constraints = {
+    'ATTRIB_11.value': {
+        presence: {
+            allowEmpty: false,
+            message: "Ticket Type is Required"
+        },
+    },
+};
 class ExpenseClaimNew extends Component {
 
     state = {
         selectedFile: null,
         ticketRequestForm: {
-
+            ATTRIB_11: { label: '', value: null },
+            fileName: null,
         },
         ticketNumber: 0,
     }
@@ -117,6 +126,7 @@ class ExpenseClaimNew extends Component {
                         object={ticketRequestForm}
                         handleChange={this.handleChange}
                         handleSubmit={this.handleSubmit}
+                        schema={constraints}
                     />
                 </ModalTrigger>
             </div>

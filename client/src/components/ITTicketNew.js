@@ -10,14 +10,25 @@ import { alertActions } from '../actions/alertActions';
 import { getUsersName } from '../reducers/authReducer';
 
 let baseState = ''
+let constraints = {
+    'ATTRIB_11.value': {
+        presence: {
+            allowEmpty: false,
+            message: "Ticket Type is Required"
+        },
+    },
+};
+
 class ITTicketNew extends Component {
 
     state = {
         selectedFile: null,
         ticketRequestForm: {
+            ATTRIB_11: { label: '', value: null },
             fileName: null,
         },
         ticketNumber: 0,
+        typeError: "",
     }
 
     ticketRequestFields = [
@@ -88,18 +99,39 @@ class ITTicketNew extends Component {
                 [target]: value,
             }
         }))
+    
+    }
+
+    validate = () => {
+        let isError = false;
+        const errors = {
+            typeError: "",
+        };
+        if (this.state.ticketRequestForm.ATTRIB_11 == undefined) {
+            isError = true;
+            errors.typeError = "Please Select Ticket Type";
+        }
+        this.setState({
+            ...this.state,
+            ...errors
+        });
+        return isError;
     }
 
     handleSubmit = async (event, element) => {
-        this.setState(prevState => ({
-            [`ticketRequestForm`]: {
-                ...prevState[`ticketRequestForm`],
-                bu_id: this.props.organization,
-                emp_id: this.props.userID,
-                type_cd: 'IT-Ticket',
-                stat_cd: 'open'
-            }
-        }), () => { this.sendPostRequest(element, '/private/employee/ticket/request', 'post') })
+        const err = this.validate();
+
+        if (!err) {
+            this.setState(prevState => ({
+                [`ticketRequestForm`]: {
+                    ...prevState[`ticketRequestForm`],
+                    bu_id: this.props.organization,
+                    emp_id: this.props.userID,
+                    type_cd: 'IT-Ticket',
+                    stat_cd: 'open'
+                }
+            }), () => { this.sendPostRequest(element, '/private/employee/ticket/request', 'post') })
+        }
     }
 
     sendPostRequest = async (element, endpoint, method) => {
@@ -113,10 +145,13 @@ class ITTicketNew extends Component {
                 url: `${endpoint}`,
                 data
             })
-            
-            this.props.success("Ticket Request posted Successfully")
-            this.setState(baseState)
-            return
+            if (response.data.status === 200) {
+                this.props.success("Ticket Request posted Successfully")
+                this.setState(baseState)
+                console.log(this.state)
+                return
+            }
+
         }
         catch (err) {
 
@@ -198,9 +233,11 @@ class ITTicketNew extends Component {
                         object={ticketRequestForm}
                         handleChange={this.handleChange}
                         handleSubmit={this.handleSubmit}
+                        schema={constraints}
                     />
+
                     <input type="file" name="file" onChange={this.onChangeHandler} />
-                    <p>File size upto 5mb </p>
+                    <p>Max File Size: 5mb</p>
                 </ModalTrigger>
             </div>
         )

@@ -83,9 +83,6 @@ class Notifictions extends Component {
         if (data) {
             return (
                 <Container>
-                    {/* <Typography variant="caption" display="block" gutterBottom>
-                        Click on a Notification to mark it Read
-                    </Typography> */}
                     <DataTable
                         headerTitle='My Notifications'
                         rows={notificationRows}
@@ -94,6 +91,9 @@ class Notifictions extends Component {
                         removeCheckboxes
                         selectEntity={this.selectNotification}
                     />
+                    <Typography variant="caption" display="block" gutterBottom>
+                        Click on a Notification to mark it Read
+                    </Typography>
                 </Container>
             )
         }
