@@ -2,6 +2,7 @@
 
 const Op = require('sequelize').Op,
     models = require('../db/models'),
+    User = models.C_USER,
     Employee = models.C_EMP,
     Division = models.C_DIV,
     Position = models.C_POSTN,
@@ -196,9 +197,7 @@ function recursiveHierarchy(root) {
                     }
 		    else if(manager === null){
 		    	return resolve(null)
-		    }
-		    console.log("MANAGER: ")
-                    console.log("--> ", manager.get({ plain: true }).fst_name)
+			}
 
                     chain = Promise.resolve().then(() => expand(manager).then((res) => {
                         // console.log("NAME: ", res)
@@ -226,6 +225,7 @@ function recursiveHierarchy(root) {
         ).then(result => {
             resolve(result)
         })
+.catch(err => console.log(err))
     })
 }
 
@@ -240,24 +240,28 @@ async function getEmployeeHierarchy(req, res, next) {
     //   });
     console.log("Query: ", req.query)
     try {
-        const data = await Employee.findOne({
+        const data = await User.findOne({
             where: {
                 row_id: req.query.employee,
             },
         });
 
-        let hierarchy = await recursiveHierarchy(data)
+	let root = data.getEmployee()
+
+        let hierarchy = await recursiveHierarchy(root)
         let plain = data.get({plain: true})
         let response = {
-            name: plain.full_name,
+            name: `${plain.fst_name} ${plain.last_name}`,
             children: hierarchy !== null &&  [ hierarchy ]
         }
+
         res.json({
+	    status: 200,
             data: response,
         })
     }
     catch (err) {
-
+	next(err)
     }
 }
 

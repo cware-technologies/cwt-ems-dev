@@ -28,13 +28,14 @@ import OptionIcon from '@material-ui/icons/SubdirectoryArrowRight';
 // import NewsIcon from '@material-ui/icons/NoteAddTwoTone';
 // import OrgAddIcon from '@material-ui/icons/Business';
 // import EmpAddIcon from '@material-ui/icons/PersonAdd';
-import AdminIcon from '@material-ui/icons/HowToReg';
+import AdminIcon from '@material-ui/icons/VerifiedUser';
 import PersonIcon from '@material-ui/icons/PersonSharp';
 // import EducationIcon from '@material-ui/icons/School';
 // import ContactIcon from '@material-ui/icons/ContactPhone';
 // import SkillIcon from '@material-ui/icons/Stars'
-// import ITTicketIcon from '@material-ui/icons/ConfirmationNumber';
-// import DocumentIcon from '@material-ui/icons/Description';
+import ITTicketIcon from '@material-ui/icons/ConfirmationNumber';
+import DocumentIcon from '@material-ui/icons/Description';
+import MoneyIcon from '@material-ui/icons/AttachMoney';
 // import CertificateIcon from '@material-ui/icons/Book';
 // import ProfileIcon from '@material-ui/icons/Face';
 // import ResponsibilityIcon from '@material-ui/icons/VerifiedUser';
@@ -92,6 +93,9 @@ const catgs = {
 			</SvgIcon>,
 	},
 	"my-services": { label: "My Services", value: "my-services", icon: <SettingsIcon />},
+	"it-tickets": { label: "IT Tickets", value: "it-tickets", icon: <ITTicketIcon />},
+	"hr-docs": { label: "My HR Docs", value: "hr-docs", icon: <DocumentIcon />},
+	"expense-claims": { label: "Expense Claims", value: "expense-claims", icon: <MoneyIcon />},
 	"admin-panel": { label: "Admin Panel", value: "admin-panel", icon: <AdminIcon />},
 }
 
@@ -106,6 +110,9 @@ class MainList extends React.Component {
 			openManager: false,
 			openLeaveManager: false,
 			openAdminPanel: false,
+			openIttickets: false,
+			OpenHrDocs: false,
+			OpenExpenseClaims: false,
 		};
 
 	}

@@ -55,6 +55,9 @@ const ITTicketsRequests = lazy(() => import('./ITTicketsRequests'));
 const ExpenseClaimRequests = lazy(() => import('./ExpenseClaimRequests'));
 const HRDocsRequests = lazy(() => import('./HRDocsRequests'));
 
+const ProfileCompanyAssets = lazy(() => import('./ProfileCompanyAssets'))
+const ProfileEligibilities = lazy(() => import('./ProfileEligibilities'))
+
 const styles = theme => ({
   root: {
     display: 'flex',
@@ -170,6 +173,9 @@ class Portal extends React.Component {
             <PrivateRoute path={`${match.path}it-tickets-requests`} component={ITTicketsRequests} accessFunction={this.requireAuth} />
             <PrivateRoute path={`${match.path}expense-claim-requests`} component={ExpenseClaimRequests} accessFunction={this.requireAuth} />
             <PrivateRoute path={`${match.path}hr-docs-requests`} component={HRDocsRequests} accessFunction={this.requireAuth} />
+
+            <PrivateRoute path={`${match.path}company-assets`} component={ProfileCompanyAssets} accessFunction={this.requireAuth} />
+            <PrivateRoute path={`${match.path}eligibilities`} component={ProfileEligibilities} accessFunction={this.requireAuth} />
             <Redirect from='/' to='/portal/dashboard' />
           </Switch>
         </Suspense>

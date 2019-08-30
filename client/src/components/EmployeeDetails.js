@@ -243,6 +243,7 @@ class EmployeeDetails extends React.Component{
                         headerTitle="Official Details"
                         detailType='official_details'
                         rows={officialRows}
+                        editable
                         link={'/employee-manager'}
                         search={`?id=${object.row_id}`}
                         schema={officialSchema}
@@ -254,6 +255,7 @@ class EmployeeDetails extends React.Component{
                         detailType='bank_details'
                         rows={bankRows}
                         schema={bankSchema}
+                        editable
                         data={data.filter(row => row.type === 'bank_details')}
                         handleSubmit={this.handleSubmit}
                     />
@@ -263,7 +265,8 @@ class EmployeeDetails extends React.Component{
                         indeterminate={true}
                         employee={emp_id}
                         endpoint={`/admin/employee/attachedAssets?emp_id=${emp_id}`}
-                        schema={assetsSchema}                    
+                        schema={assetsSchema}
+                        editable
                         data={data.filter(row => row.type === 'assets_details').map(ele => ({ ...ele, name: ele.function && ele.function.val}))}
                         handleSubmit={this.handleSubmit}
                     />
@@ -273,7 +276,8 @@ class EmployeeDetails extends React.Component{
                         indeterminate={true}
                         employee={emp_id}
                         endpoint={`/admin/employee/attachedEligibilities?emp_id=${emp_id}`}
-                        schema={insuranceSchema}                    
+                        schema={insuranceSchema}
+                        editable                 
                         data={data.filter(row => row.type === 'eligibility_details').map(ele => ({ ...ele, name: ele.function && ele.function.val}))}
                         handleSubmit={this.handleSubmit}
                     />

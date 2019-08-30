@@ -8,6 +8,7 @@ import { getUserOrganization } from '../reducers/authReducer';
 import { getUser } from '../reducers/authReducer';
 import { getUsersName } from '../reducers/authReducer';
 import { alertActions } from '../actions/alertActions';
+import RestrictedComponent from './RestrictedComponent'
 
 let baseState = ''
 let constraints = {
@@ -163,23 +164,27 @@ class ExpenseClaimNew extends Component {
 
         return (
             <div mt={2}>
-                <ModalTrigger
-                    title="Lodge New Claim"
-                    button
-                    innerRef={node => this.modalRef = node}
-                    onClose={this.unsetEditMode}
+                <RestrictedComponent
+                    restriction='write'
                 >
-                    <AddEditForm
-                        headerTitle="Expense Claim Request"
-                        fields={this.ticketRequestFields}
-                        object={ticketRequestForm}
-                        handleChange={this.handleChange}
-                        handleSubmit={this.handleSubmit}
-                        schema={constraints}
-                    />
-                    <input type="file" name="file" onChange={this.onChangeHandler} />
-                    <p>Max File Size: 5mb </p>
-                </ModalTrigger>
+                    <ModalTrigger
+                        title="Lodge New Claim"
+                        button
+                        innerRef={node => this.modalRef = node}
+                        onClose={this.unsetEditMode}
+                    >
+                        <AddEditForm
+                            headerTitle="Expense Claim Request"
+                            fields={this.ticketRequestFields}
+                            object={ticketRequestForm}
+                            handleChange={this.handleChange}
+                            handleSubmit={this.handleSubmit}
+                            schema={constraints}
+                        />
+                        <input type="file" name="file" onChange={this.onChangeHandler} />
+                        <p>Max File Size: 5mb </p>
+                    </ModalTrigger>
+                </RestrictedComponent>
             </div>
         )
     }

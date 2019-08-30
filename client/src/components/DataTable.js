@@ -1,6 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
+import compose from 'recompose/compose'
 import { withStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import Modal from '@material-ui/core/Modal';
@@ -27,6 +28,7 @@ import Container from './MainContainer';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import { getDate } from '../helpers/utils'
+import RestrictedHOC from './RestrictedHOC';
 
 function desc(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -145,7 +147,7 @@ class TableHeader extends React.Component {
                                         null
                                 }
                                 {
-                                    this.props.actions &&
+                                    (this.props.actions && this.props.writePermission) &&
                                     <React.Fragment>
                                         <TableCell
                                             align="left"
@@ -259,7 +261,7 @@ const toolbarStyles = theme => ({
 });
 
 let EnhancedTableToolbar = props => {
-    const { headerTitle, classes, AddComponent, actionBar, selected, selectedData, handleClearSelection } = props;
+    const { headerTitle, classes, AddComponent, actionBar, selected, selectedData, handleClearSelection, writePermission } = props;
 
     return (
         <Toolbar
@@ -275,7 +277,7 @@ let EnhancedTableToolbar = props => {
                     <div className={classes.spacer} />
                     {selectedData.map(row => 
                         <Chip
-                            label={`${row.name}`}
+                            label={`${row.name || row.row_id}`}
                             onDelete={() => handleClearSelection(row.row_id)}
                             className={classes.chip}
                             color="primary"
@@ -284,7 +286,7 @@ let EnhancedTableToolbar = props => {
                 </div>
             }
             <div className={classes.actions}>
-                { AddComponent &&
+                { (AddComponent && writePermission) && 
                     AddComponent
                 }
                 { actionBar && actionBar.map(action => <div className={classes.actionButton}>{action}</div>) }
@@ -370,7 +372,7 @@ const styles = theme => ({
     },
     row: {
         width: '100%',
-        height: 'min-content',
+        // height: 'min-content',
         display: 'flex',
         cursor: 'pointer',
     },
@@ -502,6 +504,7 @@ class EnhancedDataTable extends React.Component {
                         type="checkbox"
                         color="primary"
                         name={defaultValue}
+                        disabled={!this.props.writePermission}
                         defaultChecked={defaultValue === 'active' ? true : defaultValue === 'inactive' ? false : defaultValue}
                         // checked={!!this.props.switchActive}
                         ref={node => this[`checkboxRef${data.row_id}`] = node}
@@ -630,7 +633,7 @@ class EnhancedDataTable extends React.Component {
 
     handleClearSelection = (id) => {
         let newSelected = this.state.selected.filter(row => row !== id)
-
+        console.log(newSelected)
         this.setState(prevProps => ({
             selected: newSelected,
         }), () => this.props.clearSelection(this.props.headerTitle, this.state.selected))
@@ -641,7 +644,7 @@ class EnhancedDataTable extends React.Component {
         const { /* data, */ order, orderBy, rowsPerPage, page, selected } = this.state;
         const { setEditMode, unsetEditMode } = this;
         const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
-
+        console.log("PERMISSION: ", this.props.writePermission)
         return (
                 <Paper className={classes.root}>
                     <EnhancedTableToolbar
@@ -652,6 +655,7 @@ class EnhancedDataTable extends React.Component {
                         selectMultiple
                         selectedData={data.filter(row => selected.find(id => row.row_id === id))}
                         handleClearSelection={this.handleClearSelection}
+                        writePermission={this.props.writePermission}
                     />
                     <div className={classes.tableWrapper}>
                         <Table className={classes.table} aria-labelledby="tableTitle">
@@ -666,6 +670,7 @@ class EnhancedDataTable extends React.Component {
                                 numSelected={selected.length}
                                 rowCount={data.length}
                                 actions={this.props.actions}
+                                writePermission={this.props.writePermission}
                             />
                             <TableBody className={classes.tableBody}>
                                 { data.length === 0 ? 
@@ -701,7 +706,7 @@ class EnhancedDataTable extends React.Component {
                                                             }
                                                             
                                                             {
-                                                                this.props.actions &&
+                                                                (this.props.actions && this.props.writePermission) &&
                                                                     <React.Fragment>
                                                                         <TableCell
                                                                             align="left"
@@ -812,4 +817,5 @@ EnhancedDataTable.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(EnhancedDataTable);
+export default withStyles(styles)(RestrictedHOC(EnhancedDataTable))
+// export default composeRestrictedHOC(EnhancedDataTable)

@@ -18,6 +18,7 @@ import { getUserOrganization } from '../reducers/authReducer';
 import DownloadIcon from '@material-ui/icons/SaveAlt';
 import { alertActions } from '../actions/alertActions';
 import Container from './MainContainer';
+import RestrictedComponent from './RestrictedComponent'
 
 const styles = theme => ({
 
@@ -396,25 +397,33 @@ class ExpenseClaimRequests extends Component {
                                                         <input type="file" name="file" onChange={this.onChangeHandler} />
                                                         <p>Max File Size: 5mb </p>
                                                     </div>
-                                                    <TextField
-                                                        style={data.stat_cd === "resolved" ? { display: 'none' } : {}}
-                                                        value={this.state.msg}
-                                                        multiline={true}
-                                                        rows="4"
-                                                        label="Your Reply"
-                                                        onChange={this.onMsgChange}
-                                                    />
-                                                    <div className={classes.btnPnl}>
-                                                        <Button
-                                                            id="resolved"
-                                                            onClick={(e) => this.handleClick('resolved', data)}
-                                                            variant="outlined"
-                                                            className={classes.btnP}
+                                                    <RestrictedComponent
+                                                        restriction='write'
+                                                    >
+                                                        <TextField
                                                             style={data.stat_cd === "resolved" ? { display: 'none' } : {}}
-                                                        >
-                                                            Resolved
-                                                    </Button>
-                                                    </div>
+                                                            value={this.state.msg}
+                                                            multiline={true}
+                                                            rows="4"
+                                                            label="Your Reply"
+                                                            onChange={this.onMsgChange}
+                                                        />
+                                                    </RestrictedComponent>
+                                                    <RestrictedComponent
+                                                        restriction='write'
+                                                    >
+                                                        <div className={classes.btnPnl}>
+                                                            <Button
+                                                                id="resolved"
+                                                                onClick={(e) => this.handleClick('resolved', data)}
+                                                                variant="outlined"
+                                                                className={classes.btnP}
+                                                                style={data.stat_cd === "resolved" ? { display: 'none' } : {}}
+                                                            >
+                                                                Resolved
+                                                            </Button>
+                                                        </div>
+                                                    </RestrictedComponent>
                                                 </div>
                                             </ExpansionPanelDetails>
                                         </ExpansionPanel>

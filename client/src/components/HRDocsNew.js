@@ -8,6 +8,7 @@ import { getUserOrganization } from '../reducers/authReducer';
 import { getUser } from '../reducers/authReducer';
 import { getUsersName } from '../reducers/authReducer';
 import { alertActions } from '../actions/alertActions';
+import RestrictedComponent from './RestrictedComponent'
 
 let baseState = ''
 let constraints = {
@@ -32,10 +33,12 @@ class ExpenseClaimNew extends Component {
     ticketRequestFields = [
         { type: 'text', label: 'Name', defaultValue: this.props.user_name, readOnly: true },
         { id: 'created', type: 'text', label: 'Date', },
-        { id: 'ATTRIB_11', type: 'select', label: 'Document Type',indeterminate: true, requestParams: {
-            endPoint: '/admin/hr-doc-type',
-            selectMapping: ['val', 'row_id', null, null], 
-        } },
+        {
+            id: 'ATTRIB_11', type: 'select', label: 'Document Type', indeterminate: true, requestParams: {
+                endPoint: '/admin/hr-doc-type',
+                selectMapping: ['val', 'row_id', null, null],
+            }
+        },
         { id: 'ATTRIB_01', type: 'textarea', label: 'Details' },
     ]
 
@@ -114,21 +117,25 @@ class ExpenseClaimNew extends Component {
 
         return (
             <div mt={2}>
-                <ModalTrigger
-                    title="New Document Request"
-                    button
-                    innerRef={node => this.modalRef = node}
-                    onClose={this.unsetEditMode}
+                <RestrictedComponent
+                    restriction='write'
                 >
-                    <AddEditForm
-                        headerTitle="HR Document Request"
-                        fields={this.ticketRequestFields}
-                        object={ticketRequestForm}
-                        handleChange={this.handleChange}
-                        handleSubmit={this.handleSubmit}
-                        schema={constraints}
-                    />
-                </ModalTrigger>
+                    <ModalTrigger
+                        title="New Document Request"
+                        button
+                        innerRef={node => this.modalRef = node}
+                        onClose={this.unsetEditMode}
+                    >
+                        <AddEditForm
+                            headerTitle="HR Document Request"
+                            fields={this.ticketRequestFields}
+                            object={ticketRequestForm}
+                            handleChange={this.handleChange}
+                            handleSubmit={this.handleSubmit}
+                            schema={constraints}
+                        />
+                    </ModalTrigger>
+                </RestrictedComponent>
             </div>
         )
     }

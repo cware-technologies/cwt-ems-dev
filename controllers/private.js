@@ -3,6 +3,7 @@
 
 const Op = require('sequelize').Op,
     models = require('../db/models'),
+    User = models.C_USER,
     Employee = models.C_EMP,
     Position = models.C_POSTN,
     ProfileAttribute = models.C_EMP_XM,
@@ -25,10 +26,13 @@ async function getEmployee(req, res, next) {
     console.log("APPLICATION: ", employee)
 
     try {
-        let data = await Employee.findOne({
+        let data = await User.findOne({
             where: {
                 row_id: employee.employee,
             },
+        })
+
+        let emp = await data.getEmployee({
             include: [
                 {
                     model: Position,
@@ -45,7 +49,7 @@ async function getEmployee(req, res, next) {
 
         res.status(200).json({
             status: 200,
-            result: data,
+            result: emp,
         })
     }
     catch (err) {
@@ -397,7 +401,7 @@ async function updateEmployeeProfessionalAttribute(req, res, next) {
 
 async function getEmployeeEntitlements(req, res, next) {
     let params = req.query
-
+	console.log("PARAMS:" , params)
     try {
         let data = await ProfileAttribute.findAll({
             where: {

@@ -11,7 +11,7 @@ export class InductionExitManager extends Component {
         return (
             <Container>
                 <TabContainer
-                    title="Assets Manager"
+                    title="Induction/Exit Manager"
                     components={
                         [
                             {
