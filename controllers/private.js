@@ -5,6 +5,7 @@ const Op = require('sequelize').Op,
     models = require('../db/models'),
     User = models.C_USER,
     Employee = models.C_EMP,
+    Organization = models.C_BU,
     Position = models.C_POSTN,
     ProfileAttribute = models.C_EMP_XM,
     ListValues = models.C_LST_VAL,
@@ -34,6 +35,11 @@ async function getEmployee(req, res, next) {
 
         let emp = await data.getEmployee({
             include: [
+                {
+                    model: Organization,
+                    as: 'organization',
+                    attributes: ['row_id', 'name', 'desc', 'par_row_id']                    
+                },
                 {
                     model: Position,
                     as: 'position_held',
@@ -483,8 +489,8 @@ async function acceptContract(req, res, next) {
     let contract = req.query
     console.log("APPLICATION: ", contract)
 
-    try {
-        let data = await ProfileAttribute.update(
+    sequelize.transaction(t => {
+        return ProfileAttribute.update(
             {
                 ATTRIB_02: 'accepted',
             },
@@ -492,19 +498,35 @@ async function acceptContract(req, res, next) {
                 where: {
                     row_id: contract.contract_id,
                     type: 'contract',
+                },
+                transaction: t,
+            }
+        ).then(res => 
+            Employee.update(
+                {
+                    ATTRIB_18: sequelize.col('ATTRIB_19'),
+                    ATTRIB_19: sequelize.fn('adddate', sequelize.col('ATTRIB_19'), sequelize.literal('INTERVAL 1 YEAR')),
+                },
+                {
+                    where: {
+                        row_id: contract.employee,
+                    },
+                    transaction: t,
                 }
-            })
-
+            )            
+        )
+    })
+    .then(data =>
         res.status(200).json({
             status: 200,
             result: data,
         })
-    }
-    catch (err) {
+    )
+    .catch(err => {
         err.status = 400
         err.message = `Database Error: ${err}`
         next(err)
-    }
+    })
 }
 
 async function rejectContract(req, res, next) {

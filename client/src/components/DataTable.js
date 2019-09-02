@@ -135,7 +135,7 @@ class TableHeader extends React.Component {
             <TableHead>
                 <TableRow className={classes.row}>
                     {
-                        this.props.actions || this.props.selectMultiple ?
+                        ((this.props.actions || this.props.selectMultiple  && this.props.writePermission)) ?
                             <div id='row-actions' className={classes.rowActions}>
                                 {
                                     this.props.selectMultiple && rowCount > 0 && !this.props.removeCheckboxes ?
@@ -150,7 +150,7 @@ class TableHeader extends React.Component {
                                         null
                                 }
                                 {
-                                    (this.props.actions && this.props.writePermission) &&
+                                    (this.props.actions) &&
                                     <React.Fragment>
                                         <TableCell
                                             align="left"
@@ -696,7 +696,7 @@ class EnhancedDataTable extends React.Component {
                                                 className={isSelected && classes.selected}
                                             >
                                                 {
-                                                    this.props.actions || this.props.selectMultiple ?
+                                                    this.props.actions || this.props.selectMultiple && this.props.writePermission ?
                                                         <div id='row-actions' className={classes.rowActions}>
                                                             {
                                                                 selectMultiple && !this.props.removeCheckboxes ?

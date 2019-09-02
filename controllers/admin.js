@@ -12,6 +12,7 @@ const models = require('../db/models'),
     ListOfValues = models.C_LST_VAL,
     ProfileAttribute = models.C_EMP_XM,
     AdminRequest = models.C_ADM_REQ,
+    Notification = models.C_NO
     Sequelize = require('sequelize'),
     sequelize = require('../db/models').sequelize,
     Op = Sequelize.Op,
@@ -2231,13 +2232,27 @@ async function searchEmployeeContracts(req, res, next){
     let query = req.body
 
     try{
-        let data = await Employee.findAll({
-            where: sequelize.where(sequelize.fn('datediff', sequelize.col('ATTRIB_19'),  sequelize.fn('NOW')), {
-                [Op.gt]: 30,
-            }),
+        let data = await ProfileAttribute.findAll({
+            // where: sequelize.where(sequelize.fn('datediff', sequelize.col('ATTRIB_19'),  sequelize.fn('NOW')), {
+            //     [Op.gt]: 30,
+            // }),
+            where: {
+                [Op.and]:{
+                    type: 'contract',
+                    ATTRIB_02: {
+                        [Op.not]: 'pending'
+                    },
+                }
+            },
+            include: [
+                {
+                    model: Employee,
+                    as: 'employee'
+                }
+            ],
             order: [
                 // 'employee.fst_name',
-                ['ATTRIB_19', 'ASC'],
+                ['created', 'DESC'],
             ]
         })
         
@@ -2254,31 +2269,44 @@ async function searchEmployeeContracts(req, res, next){
 }
 
 async function renewEmployeeContracts(req, res, next){
-    let employees = req.body
-    console.log(employees)
+    let contracts = req.body
+    console.log("contracts:", contracts)
 
-    try{
-        let data = ProfileAttribute.update(
-            { ATTRIB_02: 'pending' }, 
-            {
-                where: {
-                    row_id: {
-                        [Op.in]:employees
-                    }
-                }
-            }
+    return sequelize.transaction(t =>{
+        return Promise.all(
+            contracts.map(contract => 
+                ProfileAttribute.findOne({
+                    where: { row_id: contract },
+                    raw: true,
+                })
+                .then(res =>
+                    ProfileAttribute.upsert(
+                        {
+                            row_id: contract,
+                            emp_id: res.emp_id,
+                            type: 'contract',
+                            ATTRIB_02: 'pending',
+                        },
+                        { transaction:  t }
+                    )
+                )  
+            )
         )
-
+        .then(contracts => {
+            return contracts
+        })
+    })
+    .then(data =>
         res.status(200).json({
             status: 200,
             data,
         })
-    }
-    catch(err){
+    )
+    .catch(err => {
         err.status = 400
         err.message = `Database Error: ${err}`
         next(err)
-    }
+    })
 }
 
 async function deleteEmployeeContracts(req, res, next){

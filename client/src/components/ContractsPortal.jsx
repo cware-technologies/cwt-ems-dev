@@ -28,6 +28,7 @@ import { alertActions } from '../actions';
 import { getUser } from '../reducers/authReducer';
 import EmployeeBadge from './EmployeeBadge';
 import ContractContent from './ContractContent';
+import { getDate } from '../helpers/utils'
 
 const portalStyles = theme => ({
     root: {
@@ -69,6 +70,7 @@ export class ContractsPortal extends Component {
         user: {},
         contracts: [],
         selected: null,
+        extendedDate: null,
         contractDialogOpen: false,
         acceptDialogOpen: false,
         rejectDialogOpen: false,
@@ -129,26 +131,38 @@ export class ContractsPortal extends Component {
     acceptContract = async () => {
         let response
 
+        // await this.extendDate()
+
         try {
             response = await axios({
                 method: 'get',
                 url: '/private/employee/contracts/accept',
                 params: {
-                    contract_id: this.state.selected.row_id
+                    contract_id: this.state.selected.row_id,
+                    employee: this.state.selected.emp_id,
+                    extension: this.state.extendedDate,
                 },
             })
             console.log(response)
-            if(response.status === 200){
+            if (response.data.status === 200) {
                 this.props.success("Your acceptance has been sent to HR for further processing.")
                 this.recomputeContracts()
             }
-            else{
-                this.props.error({message: "Your action was unsuccessful, Please try again!"})
+            else {
+                this.props.error({ message: "Your action was unsuccessful, Please try again!" })
             }
         }
         catch (err) {
-            this.props.error({message: "Your action was unsuccessful, Please try again!"})
+            this.props.error({ message: "Your action was unsuccessful, Please try again!" })
         }
+    }
+
+    extendDate = (date) => {
+        return new Promise((resolve, reject) => {
+            this.setState(prevState => ({
+                extendedDate: date,
+            }), () => resolve())
+        })
     }
 
     handleReject = () => {
@@ -170,16 +184,16 @@ export class ContractsPortal extends Component {
             })
             console.log(response)
 
-            if(response.status === 200){
+            if (response.status === 200) {
                 this.props.success("Your rejection has been sent to HR for further processing.")
                 this.recomputeContracts(response.data.result.row_id)
             }
-            else{
-                this.props.error({message: "Your action was unsuccessful, Please try again!"})
+            else {
+                this.props.error({ message: "Your action was unsuccessful, Please try again!" })
             }
         }
         catch (err) {
-            this.props.error({message: "Your action was unsuccessful, Please try again!"})
+            this.props.error({ message: "Your action was unsuccessful, Please try again!" })
         }
     }
 
@@ -228,34 +242,39 @@ export class ContractsPortal extends Component {
                                         disableRipple
                                         onClick={this.handleToggle(row.row_id, row.path)}
                                     /> */}
-                                    <ListItemText primary={row.ATTRIB_01} />
+                                    <ListItemText primary={row.name} />
                                     <ListItemSecondaryAction>
                                         <IconButton aria-label="View" onClick={(e) => this.handleModalOpen(e, row)}>
                                             <ViewIcon />
                                         </IconButton>
                                     </ListItemSecondaryAction>
                                 </ListItem>
+                                <EnhancedContractModal
+                                    title={selected && selected.ATTRIB_01}
+                                    modalOpen={contractDialogOpen}
+                                    handleModalClose={this.handleModalClose}
+                                    aria-labelledby="View Contract"
+                                    aria-describedby="Contract"
+                                    actions={[
+                                        { label: 'Accept', eventHandler: this.handleAccept, enabled: true },
+                                        { label: 'Reject', eventHandler: this.handleReject, enabled: true },
+                                    ]}
+                                >
+                                    {
+                                        selected &&
+                                        <ContractContent
+                                            employee={user}
+                                            publishDate={getDate(row.created)}
+                                            prevContractDate={getDate(user.ATTRIB_18)}
+                                            prevContractExpiry={getDate(user.ATTRIB_19)}
+                                            extendDate={this.extendDate}
+                                            extension={1}
+                                      />
+                                    }
+                                </EnhancedContractModal>
                             </React.Fragment>
+
                         ))}
-
-                        <EnhancedContractModal
-                            title={selected && selected.ATTRIB_01}
-                            modalOpen={contractDialogOpen}
-                            handleModalClose={this.handleModalClose}
-                            aria-labelledby="View Contract"
-                            aria-describedby="Contract"
-                            actions={[
-                                { label: 'Accept', eventHandler: this.handleAccept, enabled: true },
-                                { label: 'Reject', eventHandler: this.handleReject, enabled: true },
-                            ]}
-                        >
-                            {
-                                selected &&
-                                    <ContractContent
-
-                                    />
-                            }
-                        </EnhancedContractModal>
 
                     <EnhancedContractModal
                         title="Contract Renewal Confirmation"

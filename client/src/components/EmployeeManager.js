@@ -317,7 +317,10 @@ class EditEmployee extends React.Component {
 
 			if (response.data.status >= 200 && response.data.status < 300) {
 				this.setState(prevState => ({
-					data: response.data.data,
+					data: [
+						...newData,
+						response.data.data,
+					]
 				}))
 
 				this.props.success('User Updated Succesfully')

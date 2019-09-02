@@ -7,6 +7,7 @@ const passport = require('passport'),
     models = require('../db/models'),
     Employee = models.C_EMP,
     User = models.C_USER,
+    ProfileAttribute = models.C_EMP_XM,
     bcrypt = require('bcryptjs'),
     debug = require('debug')('passport'),
     { secret } = require('../config/jwtSecret.json');
@@ -66,7 +67,14 @@ passport.use(
                                         div_id: user.div_id.value,
                                         fst_name: user.fst_name,
                                         last_name: user.last_name,
-                                    }, { transaction: t });
+                                    }, { transaction: t }).then(usr => {
+                                        return ProfileAttribute.create({
+                                            emp_id: emp.row_id,
+                                            name: 'Employment',
+                                            type: 'contract',
+                                            ATTRIB_02: 'accepted',
+                                        },{ transaction: t })
+                                    });
                                 });
                             }).then(result => {
                                 debug("User Created");
