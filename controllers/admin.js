@@ -699,7 +699,7 @@ async function deleteHRDocs(req, res, next){
 async function uploadHRDoc(req, res, next){
     var storage = multer.diskStorage({
         destination: (req, file, cb) => {
-            cb(null, 'public/uploads/documents')
+            cb(null, `${process.env.ROOT_DIRECTORY}public/uploads/documents`)
         },
         filename: (req, file, cb) => {
             var fileExtension = file.originalname.split('.')

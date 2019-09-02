@@ -148,11 +148,12 @@ class HRDocsUpload extends React.Component {
             },
         }
 
-        return axios.post(
-            '/admin/hr-docs/upload',
-            formData,
-            config,
-        )
+        return axios({
+            method: 'post',
+            url: '/admin/hr-docs/upload',
+            data: formData,
+            ...config,
+        })
     }
 
     handleChange = (event) => {
@@ -174,7 +175,7 @@ class HRDocsUpload extends React.Component {
     }
 
     handleDownload = async(e, path) => {
-        window.open(`${process.env.REACT_APP_API_URL}/admin/hr-docs/download?path=${path}`)
+        window.open(`http://${process.env.REACT_APP_API_URL}/admin/hr-docs/download?path=${path}`)
         
         // let response
         // try{
@@ -339,7 +340,7 @@ const UploadModal = ({ onFormSubmit, fileName, handleChange, modalOpen, handleMo
             aria-describedby="simple-modal-description"
         >
             <div className={classNames(classes.modal, classes.paper)}>
-                <form ref={node => formRef = node}>
+                <form ref={node => formRef = node} onSubmit={(e) => onFormSubmit(e, formRef)}>
                     <FormControl className={classes.formControl} style={{ marginBottom: '10px', }}>
                         <InputLabel htmlFor="file" shrink={true} style={{zIndex:'1',marginLeft:'5px',}}><PhotoCamera />Document</InputLabel>
                         <FilledInput name="file" type="file" accept="image/*" id="file" onChange={handleChange}/>

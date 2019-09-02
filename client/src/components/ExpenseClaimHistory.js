@@ -92,7 +92,7 @@ class ExpenseClaimHistory extends Component {
 
     handleDownload = async (e, path) => {
         console.log(path)
-        window.open(`${process.env.REACT_APP_API_URL}/private/employee/ticket/download?path=${path}`)
+        window.open(`http://${process.env.REACT_APP_API_URL}/private/employee/ticket/download?path=${path}`)
     }
 
     handleChangePage = (event, page) => {
