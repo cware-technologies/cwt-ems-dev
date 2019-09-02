@@ -1022,13 +1022,13 @@ async function uploadTicketFile(req, res, next) {
     let time = Date.now()
     var storage = multer.diskStorage({
         destination: function (req, file, cb) {
-            cb(null, 'public/my_services_files')
+            cb(null, `${process.env.ROOT_DIRECTORY}public/my_services_files`)
         },
 
         filename: function (req, file, cb) {
             var fileExtension = file.originalname.split('.')
             cb(null, `${file.fieldname}-${time}.${fileExtension[fileExtension.length - 1]}`)
-            let name = 'public/my_services_files/' + `${file.fieldname}-${time}.${fileExtension[fileExtension.length - 1]}`
+            let name = `${process.env.ROOT_DIRECTORY}/public/my_services_files/` + `${file.fieldname}-${time}.${fileExtension[fileExtension.length - 1]}`
             fileNameSet(name)
             console.log("FILLLLEEEEEE NAAAAMMEE ", fileName)
         },
