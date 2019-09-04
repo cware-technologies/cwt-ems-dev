@@ -1,6 +1,6 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles'
-
+import { withRouter } from 'react-router-dom'
 import { Typography, Tabs, Tab } from '@material-ui/core'
 
 import Container from './MainContainer'
@@ -44,6 +44,15 @@ class TabContainer extends React.Component {
 
     state = {
         value: 0,
+    }
+
+    componentDidMount(){
+        let params = new URLSearchParams(this.props.location.search);
+        if (params.get("tabState")) {
+            this.setState(prevProps => ({
+                value: params.get("tabState")
+            }))
+        }
     }
 
     handleChange = (event, value) => {
@@ -97,4 +106,4 @@ class ViewContainer extends React.Component {
 }
 
 ViewContainer = withStyles(viewContainerStyles)(ViewContainer)
-export default withStyles(tabContainerStyles)(TabContainer);
+export default withStyles(tabContainerStyles)(withRouter(TabContainer));

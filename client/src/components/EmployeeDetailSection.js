@@ -209,7 +209,7 @@ class EmployeeDetailSection extends React.Component {
                         <RestrictedComponent
                             restriction='write'
                         >
-                            <Link to={{ pathname: `/portal/employee-manager`, search: search }} style={{ textDecoration: 'none' }}>
+                            <Link to={{ pathname: `/portal/${link}`, search: search }} style={{ textDecoration: 'none' }}>
                                 <Button
                                     component="button"
                                     variant="outlined"

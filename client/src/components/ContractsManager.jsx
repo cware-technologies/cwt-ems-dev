@@ -11,6 +11,8 @@ import LoadingSpinner from './LoadingSpinner';
 import { getUserOrganization } from '../reducers/authReducer';
 import { alertActions } from '../actions';
 
+import ActionPanel from './ActionPanel'
+import Search from './Search'
 import RestrictedComponent from './RestrictedComponent'
 
 const Table = lazy(() => import('./DataTable'))
@@ -27,11 +29,53 @@ export class ContractsManager extends Component {
     state = {
         data: [],
         employees: [],
+        filter: 'name',
+		query: '',
+		searchQuery: '',
+		isSearching: false,
+		active: false,
     }
 
     componentDidMount(){
         this.getContracts()
     }
+
+    changeSearchFilter = (filter) => {
+		console.log("CHANGE SEARCH FILTER")
+		if (filter) {
+			this.setState(prevProps => ({
+				filter: filter,
+				searchQuery: `${filter}=${prevProps.query}`
+			}), () => console.log(this.state))
+		}
+	}
+
+	onSearchChange = (e) => {
+		let value = e.target.value
+		this.setState(prevState => ({
+			query: value,
+			searchQuery: `${this.state.filter}=${value}`,
+		}))
+	}
+
+	onSearchSubmit = async () => {
+        this.setState({
+            isSearching: true,
+        })
+        try{
+            await this.search()
+
+            this.setState(prevState => ({
+                isSearching: false,
+            }))
+        }
+        catch(err){
+            this.setState({
+                isSearching: true,
+            })
+            this.props.error("Search Failed")
+        }
+	}
 
     getContracts = async() => {
         let response
@@ -39,7 +83,7 @@ export class ContractsManager extends Component {
         try{
             response = await axios({
                 method: 'get',
-                url: '/admin/employee/contracts',
+                url: `/admin/employee/contracts`,
             })
 
             console.log(response)
@@ -49,7 +93,27 @@ export class ContractsManager extends Component {
             }))
         }
         catch(err){
+            throw(err)
+        }
+    }
 
+    search = async() => {
+        let response
+
+        try{
+            response = await axios({
+                method: 'get',
+                url: `/admin/employee/contracts/search?${this.state.searchQuery}`,
+            })
+
+            console.log(response)
+
+            this.setState(prevState => ({
+                data: response.data.data,
+            }))
+        }
+        catch(err){
+            throw err
         }
     }
 
@@ -117,7 +181,7 @@ export class ContractsManager extends Component {
     }
 
     render() {
-        const { data, employees } = this.state
+        const { data, employees, query, isSearching } = this.state
 
         let RenewComp =
             <RestrictedComponent
@@ -132,6 +196,27 @@ export class ContractsManager extends Component {
 
         return (
             <Container>
+                <ActionPanel>
+					<Search
+						title="Employee"
+						query={query}
+						submitHandler={this.onSearchSubmit}
+						changeHandler={this.onSearchChange}
+						isSearching={isSearching}
+						searchFilterProps={{
+							changeFilter: this.changeSearchFilter,
+							filters: ['id', 'name', 'location', 'organization', 'division', 'status'],
+							filterMapping: {
+								id: 'emp_num',
+								name: 'name',
+								location: 'ATTRIB_01',
+								organization: 'bu_id',
+								division: 'div_id',
+								status: 'FLG_01',
+							}
+						}}
+					/>
+				</ActionPanel>
                 <Suspense fallback={<LoadingSpinner/>}>
                     <Table
                         headerTitle="employees"

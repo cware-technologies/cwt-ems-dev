@@ -2,6 +2,7 @@ import React from 'react'
 import axios from 'axios'
 import compose from 'recompose/compose'
 import { withStyles } from '@material-ui/core/styles'
+import { withRouter } from 'react-router-dom'
 import { connect } from 'react-redux'
 import SelectableTable from './SelectableTable'
 import Container from './MainContainer';
@@ -45,15 +46,32 @@ class AttachAssets extends React.Component {
     }
 
     fields = [
-        { id: 'ATTRIB_11', type: 'select', label: 'Asset', indeterminate: true, requestParams: {
-            params: { bu_id: this.props.organization },
-            endPoint: '/admin/employee/assets',
-            selectMapping: ['val', 'row_id', null, null], 
-        }},
+        {
+            id: 'ATTRIB_11', type: 'select', label: 'Asset', indeterminate: true, requestParams: {
+                params: { bu_id: this.props.organization },
+                endPoint: '/admin/employee/assets',
+                selectMapping: ['val', 'row_id', null, null],
+            }
+        },
     ]
 
+    componentDidMount() {
+        let params = new URLSearchParams(this.props.location.search);
+        if (params.get("id")) {
+            this.setState(prevProps => ({
+                filter: 'id',
+                query: `id=${params.get("id")}`,
+            }), () => {
+                this.onSearch()
+                .then(res => {
+                    this.selectEmployee(this.state.usersData[0])
+                })
+            })
+        }
+    }
+
     changeSearchFilter = (filter) => {
-        if(filter){
+        if (filter) {
             this.setState(prevProps => ({
                 filter,
                 query: `${this.state.filter}=${prevProps.value}`
@@ -119,10 +137,10 @@ class AttachAssets extends React.Component {
         }), () => this.getChecklist())
     }
 
-    getChecklist = async() => {
+    getChecklist = async () => {
         let response
         console.log(this.state)
-        try{
+        try {
             let response = await axios({
                 method: 'get',
                 url: '/admin/employee/attachedAssets',
@@ -135,15 +153,15 @@ class AttachAssets extends React.Component {
             this.setState(prevState => ({
                 checklistData: response.data.result,
             }))
-        }catch(err){
+        } catch (err) {
             console.log("RESRESRES: ", response)
         }
     }
 
-    handleUpdate = async() => {
+    handleUpdate = async () => {
         let response
 
-        try{
+        try {
             let response = await axios({
                 method: 'put',
                 url: '/admin/application/induction-exit',
@@ -152,18 +170,18 @@ class AttachAssets extends React.Component {
                     updates: this.state.updates,
                 }
             })
-        }catch(err){
+        } catch (err) {
 
         }
     }
 
-    handleDelete = async(id) => {
+    handleDelete = async (id) => {
         let response
         let newData = this.state.checklistData.filter(row => {
             return row.row_id !== id
         })
 
-        try{
+        try {
             response = await axios({
                 method: 'delete',
                 url: '/admin/employee/detachAsset',
@@ -181,7 +199,7 @@ class AttachAssets extends React.Component {
 
             this.props.success("Asset dettached successfully.")
         }
-        catch(err){
+        catch (err) {
             this.props.error({ message: "Asset dettachment failed." })
         }
     }
@@ -205,7 +223,7 @@ class AttachAssets extends React.Component {
                 })
                 console.log("RESPONSE: ", response)
 
-                if(response.data.status < 300){
+                if (response.data.status < 300) {
                     this.setState(prevState => ({
                         checklistData: [
                             ...prevState.checklistData,
@@ -239,7 +257,7 @@ class AttachAssets extends React.Component {
                         isLoading={isFetching}
                         searchFilterProps={{
                             changeFilter: this.changeSearchFilter,
-                            filters: [ 'id', 'name', 'location', 'position', 'division', 'responsibility' ],
+                            filters: ['id', 'name', 'location', 'position', 'division', 'responsibility'],
                             filterMapping: {
                                 id: 'emp_num',
                                 name: 'name',
@@ -269,7 +287,7 @@ class AttachAssets extends React.Component {
                         </ModalTrigger>
                     </RestrictedComponent>
                 </ActionPanel>
-                
+
                 <DataTable
                     headerTitle="Employee Assets"
                     rows={rows}
@@ -292,5 +310,5 @@ const mapStateToProps = (state) => {
 
 export default compose(
     withStyles(style),
-    connect(mapStateToProps, {...alertActions})
-)(AttachAssets)
+    connect(mapStateToProps, { ...alertActions })
+)(withRouter(AttachAssets))

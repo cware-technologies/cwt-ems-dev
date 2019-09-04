@@ -78,7 +78,8 @@ router.get('/employee/details', adminController.searchEmployeeDetails)
 router.post('/employee/details', adminController.upsertEmployeeDetails)
 router.put('/employee/details', adminController.updateEmployeeDetails)
 
-router.get('/employee/contracts', adminController.searchEmployeeContracts)
+router.get('/employee/contracts', adminController.getEmployeeContracts)
+router.get('/employee/contracts/search', adminController.searchEmployeeContracts)
 router.post('/employee/contracts', adminController.renewEmployeeContracts)
 router.delete('/employee/contracts', adminController.deleteEmployeeContracts)
 

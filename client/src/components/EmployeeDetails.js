@@ -73,7 +73,8 @@ const dependantFields = [
         {value:'father', name:'Father'},
         {value:'mother', name:'Mother'},
         {value:'sibling', name:'Sibling'},
-        {value:'child', name:'Child'},
+        {value:'son', name:'Son'},
+        {value:'daughter', name: 'Daughter'}
     ], label: 'Relation' },
     { id: 'name', type: 'text', label: 'First Name' },
     { id: 'ATTRIB_01', type: 'text', label: 'Last Name'},
@@ -244,7 +245,7 @@ class EmployeeDetails extends React.Component{
                         detailType='official_details'
                         rows={officialRows}
                         editable
-                        link={'/employee-manager'}
+                        link={'employee-manager'}
                         search={`?id=${object.row_id}`}
                         schema={officialSchema}
                         data={object}
@@ -263,6 +264,8 @@ class EmployeeDetails extends React.Component{
                         headerTitle="Assets Details"
                         detailType='assets_details'
                         indeterminate={true}
+                        link={'asset-manager'}
+                        search={`?id=${object.row_id}&tabState=${1}`}
                         employee={emp_id}
                         endpoint={`/admin/employee/attachedAssets?emp_id=${emp_id}`}
                         schema={assetsSchema}
@@ -274,6 +277,8 @@ class EmployeeDetails extends React.Component{
                         headerTitle="Eligibility Details"
                         detailType='eligibility_details'
                         indeterminate={true}
+                        link={'eligibility-manager'}
+                        search={`?id=${object.row_id}&tabState=${1}`}
                         employee={emp_id}
                         endpoint={`/admin/employee/attachedEligibilities?emp_id=${emp_id}`}
                         schema={insuranceSchema}

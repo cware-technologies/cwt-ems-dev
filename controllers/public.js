@@ -21,7 +21,12 @@ async function searchEmployee(req, res, next) {
         resp_id: 'C_RESP',
     }
 
-    if (search.name) {
+    if(search.id){
+        where = {
+            row_id: search.id
+        }
+    }
+    else if (search.name) {
         let query = search.name.split(' ')
 
         where = {

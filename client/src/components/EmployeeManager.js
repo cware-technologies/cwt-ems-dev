@@ -456,20 +456,20 @@ class EditEmployee extends React.Component {
 						}}
 					/>
 				</ActionPanel>
-					<DataTable
-						headerTitle="Employee List"
-						rows={employeeRows}
-						params={{ organization: organization }}
-						data={data}
-						actions
-						selectEntity={this.selectEmployee}
-						setEditMode={this.setEditMode}
-						unsetEditMode={this.unsetEditMode}
-						handleDelete={this.handleDelete}
-						handleSwitchChange={this.handleSwitchChange}
-						editMode={editMode}
-						actionBar={[AddComponent]}
-					/>
+				<DataTable
+					headerTitle="Employee List"
+					rows={employeeRows}
+					params={{ organization: organization }}
+					data={data}
+					actions
+					selectEntity={this.selectEmployee}
+					setEditMode={this.setEditMode}
+					unsetEditMode={this.unsetEditMode}
+					handleDelete={this.handleDelete}
+					handleSwitchChange={this.handleSwitchChange}
+					editMode={editMode}
+					actionBar={[AddComponent]}
+				/>
 			</Container>
 		);
 	}

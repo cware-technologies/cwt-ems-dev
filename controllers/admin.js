@@ -1654,7 +1654,13 @@ async function searchEmployees(req, res, next){
 
     console.log(search)
 
-    if(search.emp_num){
+    if(search.id){
+        where = {
+            row_id: search.id
+        }
+    }
+
+    else if(search.emp_num){
         let tempSQL1 = sequelize.dialect.QueryGenerator.selectQuery('C_EMP', {
             attributes: ['row_id'],
             where: {
@@ -1668,7 +1674,7 @@ async function searchEmployees(req, res, next){
             bu_id: {
                 [Op.not]: 1,
             },
-            emp_id: {
+            emp_num: {
                 [Op.in]: Sequelize.literal(`(${tempSQL1})`)
             },
         }
@@ -2228,21 +2234,28 @@ async function updateEmployeeDesignation(req, res, next){
     }
 }
 
-async function searchEmployeeContracts(req, res, next){
+async function getEmployeeContracts(req, res, next){
     let query = req.body
+
+    let tempSQL1 = sequelize.dialect.QueryGenerator.selectQuery('C_EMP', {
+        attributes: ['row_id'],
+        where: sequelize.where(sequelize.fn('DATEDIFF', sequelize.col('ATTRIB_19'), sequelize.fn('CURDATE')), {
+            [Op.lt]: 30,
+        }),
+    }).slice(0,-1)
 
     try{
         let data = await ProfileAttribute.findAll({
-            // where: sequelize.where(sequelize.fn('datediff', sequelize.col('ATTRIB_19'),  sequelize.fn('NOW')), {
-            //     [Op.gt]: 30,
-            // }),
             where: {
-                [Op.and]:{
-                    type: 'contract',
-                    ATTRIB_02: {
-                        [Op.not]: 'pending'
+                // [Op.and]:{
+                    emp_id: {
+                        [Op.in]: Sequelize.literal(`(${tempSQL1})`),
                     },
-                }
+                    ATTRIB_02: {
+                        [Op.not]: 'pending',
+                    },
+                    type: 'contract',
+                // }
             },
             include: [
                 {
@@ -2251,11 +2264,50 @@ async function searchEmployeeContracts(req, res, next){
                 }
             ],
             order: [
-                // 'employee.fst_name',
                 ['created', 'DESC'],
             ]
         })
-        
+
+        res.status(200).json({
+            status: 200,
+            data,
+        })
+    }
+    catch(err){
+        err.status = 400
+        err.message = `Database Error: ${err}`
+        next(err)
+    }
+}
+
+async function searchEmployeeContracts(req, res, next){
+    console.log("QUERY: ", req.query)
+    try{
+        let searchResult = await Employee.search(req.query)
+        let employees = searchResult.map(ele => ele.row_id)
+
+        console.log("Employees: ", employees)
+
+        let data = await ProfileAttribute.findAll({
+            where: {
+                // [Op.and]:{
+                    emp_id: {
+                        [Op.in]: employees,
+                    },
+                    type: 'contract',
+                // }
+            },
+            include: [
+                {
+                    model: Employee,
+                    as: 'employee'
+                }
+            ],
+            order: [
+                ['created', 'DESC'],
+            ]
+        })
+
         res.status(200).json({
             status: 200,
             data,
@@ -2672,6 +2724,7 @@ module.exports = {
     updateEmployee,
     deleteEmployee,
     changeEmployeeStatus,
+    getEmployeeContracts,
     searchEmployeeContracts,
     renewEmployeeContracts,
     deleteEmployeeContracts,

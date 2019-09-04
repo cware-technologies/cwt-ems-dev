@@ -1,6 +1,10 @@
 'use strict';
 const Sequelize = require('sequelize');
-require('sequelize-hierarchy')(Sequelize);
+const models = require('./index'),
+      Organization = models.C_BU,
+      Division = models.C_DIV,
+      Position = models.C_POSTN,
+      Responsibility = models.C_RESP
 
 module.exports = (sequelize, DataTypes) => {
   const Employee = sequelize.define('C_EMP', {
@@ -212,5 +216,119 @@ module.exports = (sequelize, DataTypes) => {
     Employee.belongsTo( models.C_POSTN, { as: 'primary_access_position', foreignKey: 'pr_postn_id' })
     Employee.belongsTo( models.C_RESP, { as: 'responsibility', foreignKey: 'resp_id' })
   };
+
+  Employee.search = async function(query) {
+    let search =  query
+    let where
+
+    let tableMapping = {
+        bu_id: 'C_BU',
+        div_id: 'C_DIV',
+        postn_held_id: 'C_POSTN',
+        resp_id: 'C_RESP',
+    }
+
+    console.log(search)
+
+    if(search.id){
+      where = {
+        row_id: search.id
+      }
+    }
+
+    else if(search.FLG_01){
+      where = {
+        FLG_01: {
+          [Op.eq]: search.FLG_01 === 'active' ? 1 : 0,
+        }
+      }
+    }
+
+    else if(search.emp_num){
+        let tempSQL1 = sequelize.dialect.QueryGenerator.selectQuery('C_EMP', {
+          attributes: ['row_id'],
+          where: {
+              emp_num: {
+                  [Op.substring]: search.emp_num,
+              }
+          }
+        }).slice(0,-1)
+
+        where = {
+          bu_id: {
+            [Op.not]: 1,
+          },
+          emp_num: {
+            [Op.substring]: search.emp_num,
+          },
+        }
+    }
+    else if(search.ATTRIB_01){
+        where = {
+            bu_id: {
+              [Op.not]: 1,
+            },
+            ATTRIB_01: {
+              [Op.substring]: search.ATTRIB_01,
+            },
+        }
+    }
+    else if(search.name){
+        let query = search.name.split(' ')
+        where = {
+            bu_id: {
+              [Op.not]: 1,
+            },
+            [Op.or]: { 
+              fst_name: {
+                [Op.substring]: query[0],
+              },
+              last_name: {
+                [Op.substring]: query[1] || query[0],
+              },
+            }
+        }
+    }
+    else if(Object.keys(search).length > 0){
+        let keys = Object.keys(search)
+        keys.forEach(key => {
+            let tempSQL1 = sequelize.dialect.QueryGenerator.selectQuery(tableMapping[key], {
+              attributes: ['row_id'],
+              where: {
+                name: {
+                  [Op.substring]: search[key],
+                }
+              }
+            }).slice(0,-1)
+
+            console.log(tempSQL1, [key])
+
+            where = {
+                ...where,
+                [key]: {
+                  [Op.in]: Sequelize.literal(`(${tempSQL1})`)
+                }
+            }
+        })
+        
+        where.bu_id = {
+          ...where.bu_id,
+          [Op.not]: 1,
+        }
+    }
+    console.log(where)
+
+    try{
+        let data = await Employee.findAll({
+          where,
+        })
+
+        return data
+      }
+      catch(err){
+        throw err
+      }
+  }
+
   return Employee;
 };

@@ -64,6 +64,7 @@ const headStyles = theme => ({
         textOverflow: 'ellipsis',
         whiteSpace: 'wrap',
         overflowWrap: 'break-word',
+        color: 'white',
     },
     tableCellSmall: {
         flexBasis: '15px',
@@ -73,6 +74,7 @@ const headStyles = theme => ({
         color: 'white',
         justifyContent: 'center',
         alignItems: 'center',
+        color: 'white',
     },
     tableCellAction: {
         width: '48px',
@@ -90,6 +92,7 @@ const headStyles = theme => ({
         flexBasis: '70%',
         flexGrow: 10,
         paddingLeft: '10px',
+        color: 'white',
         [theme.breakpoints.down('sm')]: {
             display: 'none',
         }
@@ -103,6 +106,7 @@ const headStyles = theme => ({
         width: '100%',
         display: 'flex',
         backgroundColor: theme.palette.grey[800],
+        color: 'white',
     },
     rowActions: {
         flexBasis: '105px',

@@ -1,6 +1,5 @@
 import React, { Component, lazy, Suspense } from 'react'
 import { connect } from 'react-redux'
-
 import Container from './MainContainer';
 import TabContainer from './TabContainer';
 import LoadingSpinner from './LoadingSpinner';

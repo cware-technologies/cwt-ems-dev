@@ -2,6 +2,7 @@ import React from 'react'
 import axios from 'axios'
 import compose from 'recompose/compose'
 import { withStyles } from '@material-ui/core/styles'
+import { withRouter } from 'react-router-dom'
 import { connect } from 'react-redux'
 import DataTable from './DataTable'
 import AddEditForm from './AddEditForm'
@@ -48,6 +49,21 @@ class AttachEligibilities extends React.Component {
             selectMapping: ['val', 'row_id', null, null], 
         }},
     ]
+
+    componentDidMount() {
+        let params = new URLSearchParams(this.props.location.search);
+        if (params.get("id")) {
+            this.setState(prevProps => ({
+                filter: 'id',
+                query: `id=${params.get("id")}`,
+            }), () => {
+                this.onSearch()
+                .then(res => {
+                    this.selectEmployee(this.state.usersData[0])
+                })
+            })
+        }
+    }
 
     changeSearchFilter = (filter) => {
         if(filter){
@@ -273,4 +289,4 @@ const mapStateToProps = (state) => {
 export default compose(
     withStyles(style),
     connect(mapStateToProps, {...alertActions})
-)(AttachEligibilities)
+)(withRouter(AttachEligibilities))
